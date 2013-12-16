@@ -1,6 +1,8 @@
 package interfaces;
 
-import Player.Token;
+import board.MorrisBoard;
+
+
 
 /**
  * The Player Interface is used for the creation of players and is critical for
@@ -11,6 +13,10 @@ import Player.Token;
  */
 public interface PlayerInterface {
 	
-	Token makeMove(GameStateInterface gs);
+	int getTokensRemaining();
+	char getChar();
+	void removeToken();
+	String getName();
+	
 
 }
