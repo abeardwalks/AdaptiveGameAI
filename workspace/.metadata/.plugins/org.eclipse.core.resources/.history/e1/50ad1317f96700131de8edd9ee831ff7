@@ -1,0 +1,37 @@
+package view;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.event.MouseListener;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+import javax.swing.JPanel;
+
+public class PlayingView extends JPanel {
+	
+	private Image board;
+	
+	public PlayingView(MouseListener m){
+		super();
+		setOpaque(false);
+		setSize(800,600);
+		setBackground(Color.white);
+		
+		addMouseListener(m);
+		
+		try {
+			board = ImageIO.read(new File("src/NineMensMorris.jpg"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void paint(Graphics g){
+		Graphics 
+	}
+
+}

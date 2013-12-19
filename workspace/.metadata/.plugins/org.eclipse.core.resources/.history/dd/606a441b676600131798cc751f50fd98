@@ -1,0 +1,193 @@
+package controller;
+
+import interfaces.GameStateInterface;
+import interfaces.PlayerInterface;
+
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.List;
+
+import board.MorrisBoard;
+
+import view.ApplicationView;
+import view.PlayingView;
+import view.SetupView;
+
+public class GameController {
+	
+	private GameStateInterface gs;
+	private PlayerInterface[] players;
+	private ApplicationView primaryView;
+	private Thread thread;
+	private PlayingView gameView;
+	private SetupView setupView;
+	
+	public GameController(){
+		
+		primaryView = new ApplicationView();
+		
+		List<PlayerInterface> players = getPlayers();
+		gs = new MorrisBoard();
+		
+		setupView = new SetupView(new SetupMouseListener(), players, gs);
+
+	}
+	
+	private void start() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
+	private List<PlayerInterface> getPlayers() {
+		List<PlayerInterface> players = new ArrayList<PlayerInterface>();
+		File dir = new File("bin" + System.getProperty("file.separator") + "players" );
+		for(String file : dir.list()){
+			PlayerInterface player = null;
+			if(!file.contains("$")){
+				try {
+					player = loadPlyaer("players." + file.substring(0, file.length() - 6));
+				} catch (Throwable e) {}
+			}
+			
+			if (player != null){
+				players.add(player);
+			}
+		}
+		return players;
+	}
+
+	private PlayerInterface loadPlyaer(String playerClass) {
+		PlayerInterface player = null;
+		try {
+			Class<?> theClass = Class.forName(playerClass);
+			Constructor<?>[] cons = theClass.getConstructors();
+			player = (PlayerInterface) cons[0].newInstance();
+		} catch (Throwable e) {}
+		return player;
+	}
+	
+	private class SetupMouseListener extends MouseAdapter {
+
+		/*
+		 * This method causes the 'GO!' option to be circled
+		 * when the mouse hovers over it.  This simply feedback
+		 * for the user, telling them that a click will cause
+		 * the game to start.
+		 * @see java.awt.event.MouseListener#mouseEntered(java.awt.event.MouseEvent)
+		 */
+        public void mouseEntered(MouseEvent e) {
+        	if(e.getSource() instanceof GoButton) {
+	        	GoButton source = (GoButton) e.getSource();
+	        	source.hover(true);
+	        	source.invalidate();
+	        	source.repaint();
+        	}
+        }
+        
+        /*
+         * This method makes the circle of the 'GO!' option
+         * disappear when the mouse is no longer hovering over it.
+         * @see java.awt.event.MouseListener#mouseExited(java.awt.event.MouseEvent)
+         */
+		public void mouseExited(MouseEvent e) {
+			if(e.getSource() instanceof GoButton) {
+	        	GoButton source = (GoButton) e.getSource();
+	        	source.hover(false);
+	        	source.invalidate();
+	        	source.repaint();
+        	}
+		}
+		
+		/*
+		 * This method will start the game if the mouse button is clicked
+		 * on the 'GO!' option.
+		 * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
+		 */
+        public void mousePressed(MouseEvent e) {
+        	if(e.getSource() instanceof GoButton) {
+	        	go();
+        	}
+        }
+    }
+	
+	/*
+	 * This MouseListener deals with the pause menu
+	 */
+	private class OptionMouseListener extends MouseAdapter {
+
+		/*
+		 * This method highlights the option that the mouse
+		 * is hovering over.
+		 * @see java.awt.event.MouseListener#mouseEntered(java.awt.event.MouseEvent)
+		 */
+        public void mouseEntered(MouseEvent e) {
+        	if(e.getSource() instanceof ButtonPanel) {
+	        	ButtonPanel source = (ButtonPanel) e.getSource();
+	        	source.drawCircle(true);
+	        	source.invalidate();
+	        	source.repaint();
+        	}
+        }
+        
+        /*
+         * This method removes the highlight when the mouse
+         * is no longer hovering over an option.
+         * @see java.awt.event.MouseListener#mouseExited(java.awt.event.MouseEvent)
+         */
+		public void mouseExited(MouseEvent e) {
+			if(e.getSource() instanceof ButtonPanel) {
+	        	ButtonPanel source = (ButtonPanel) e.getSource();
+	        	source.drawCircle(false);
+	        	source.invalidate();
+	        	source.repaint();
+        	}
+		}
+		
+		/*
+		 * This method handles in-game (not setup screen) mouse clicks
+		 * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
+		 */
+		public void mousePressed(MouseEvent e) {
+        	
+        	if((e.getModifiers() & InputEvent.BUTTON3_MASK) == InputEvent.BUTTON3_MASK) {
+        		showMenu(true);
+        		return;
+        	}
+        	if(e.getSource() instanceof ButtonPanel) {
+	        	if(((ButtonPanel)e.getSource()).getName().equals("Restart")) {
+	        		interrupted = true;
+	        		gs.reset();
+	        		showMenu(false);
+	        		reset();
+	        		gameThread.interrupt();
+	        		start();
+	        		return;
+	        	}
+	        	if(((ButtonPanel)e.getSource()).getName().equals("Quit")) {
+	        		System.exit(0);
+	        	}
+	        	if(((ButtonPanel)e.getSource()).getName().equals("Continue")) {
+	        		if(!((ButtonPanel)e.getSource()).isScribbledOut()) {
+	        			showMenu(false);
+	        		}
+	        		return;
+	        	}
+	        	if(((ButtonPanel)e.getSource()).getName().equals("Setup")) {
+	        		interrupted = true;
+	        		gameThread.interrupt();
+	        		showMenu(false);
+	        		gs.reset();
+	        		reset();
+	        		frame.getContentPane().remove(gsv.getView());
+	        		frame.getContentPane().add(setupPanel);
+	        		frame.setPreferredSize(frame.getSize());
+	        		frame.pack();
+	        	}
+        	}
+        }
+    }
+}
