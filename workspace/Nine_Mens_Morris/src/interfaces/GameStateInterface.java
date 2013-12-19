@@ -22,7 +22,7 @@ public interface GameStateInterface {
 	 *  >  1 signifies a valid placement and the creation of a mill.
 	 *  >  2 Game won.
 	 */
-	int addToken(char token, int position);
+	void addToken(char token, int position);
 	
 	/**
 	 * Removes a players token from the game and updates the phase of 
@@ -34,7 +34,7 @@ public interface GameStateInterface {
 	 *  >  0 signifies a valid removal.
 	 *  >  2 Game won.
 	 */
-	int removeToken(char token, int position);
+	void removeToken(char token, int position);
 	
 	/**
 	 * Moves a selected Token from one point to another.
@@ -48,7 +48,7 @@ public interface GameStateInterface {
 	 *  >  1 signifies a valid move an a mill created.
 	 *  >  2 signifies game won.
 	 */
-	int moveToken(char token, int x, int y);
+	void moveToken(char token, int x, int y);
 	
 	/**
 	 * Returns the current state of the game. 

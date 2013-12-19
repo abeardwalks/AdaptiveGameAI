@@ -1,16 +1,12 @@
 package board;
 
-import java.awt.Color;
+
 import java.util.Collection;
-import java.util.Deque;
 import java.util.Observable;
 import java.util.Stack;
-
-import javax.xml.crypto.KeySelector.Purpose;
-
 import interfaces.GameStateInterface;
 
-public class MorrisBoard implements GameStateInterface{
+public class MorrisBoard extends Observable implements GameStateInterface {
 	
 	private String state;
 	private Collection<String> history;
@@ -36,12 +32,13 @@ public class MorrisBoard implements GameStateInterface{
 	}
 
 	@Override
-	public int addToken(char token, int position) {
-		
+	public void addToken(char token, int position) {
+		Integer result = 0;  		//for MVC
 		char[] stateArray = state.toCharArray();
 		
 		if(stateArray[position] != 'N'){
-			return -1;
+			result = -1; 		//for MVC
+//			return -1;
 		}
 		if(token == 'R'){
 			playerOneTokensToPlace--;
@@ -58,11 +55,15 @@ public class MorrisBoard implements GameStateInterface{
 		state = new String(stateArray);
 
 		if(partOfMill(position)){
-			return 1;
+			result = 1;			//for MVC
+//			return 1;
 		}else if(gameWon()){
-			return 2;
+			result = 2;			//for MVC
+//			return 2;
 		}
-		return 0;
+		BoardDetails details = new BoardDetails(state, result); //for MVC
+		notifyObservers(details);//for MVC
+//		return 0;
 	}
 
 	private boolean gameWon() {
@@ -259,11 +260,13 @@ public class MorrisBoard implements GameStateInterface{
 	}
 
 	@Override
-	public int removeToken(char token, int position) {
+	public void removeToken(char token, int position) {
+		Integer result = 0;			//for MVC
 		char candidate = state.charAt(position);
 		char[] stateArray = state.toCharArray();
 		if(candidate == 'N' || candidate == token || partOfMill(position)){
-			return -1;
+			result = -1;			//for MVC
+//			return -1;
 		}else{
 			if(token == 'R'){
 				playerTwoTokensRemaining--;
@@ -279,30 +282,39 @@ public class MorrisBoard implements GameStateInterface{
 		}
 		
 		if(gameWon()){
-			return 2;
+			result = 2;				//for MVC
+//			return 2;
 		}
-		return 0;
+		BoardDetails details = new BoardDetails(state, result); //for MVC
+		notifyObservers(details);	//for MVC
+//		return 0;
 	}
 
 	@Override
-	public int moveToken(char token, int x, int y) {
+	public void moveToken(char token, int x, int y) {
+		Integer result = 0;			//for MVC
 		char[] stateArray = state.toCharArray();
 		if(validMove(x, y)){
 			stateArray[x] = 'N';
 			stateArray[y] = token;
 			state = new String(stateArray);
 		}else{
-			return -1;
+			result = -1;			//for MVC
+//			return -1;
 		}
 		
 		if(partOfMill(y)){
-			return 1;
+			result = 1;				//for MVC
+//			return 1;
 		}
 		
 		if(gameWon()){
-			return 2;
+			result = 2;				//for MVC
+//			return 2;
 		}
-		return 0;
+		BoardDetails details = new BoardDetails(state, result); //for MVC
+		notifyObservers(details);	//for MVC
+//		return 0;
 	}
 
 	private boolean validMove(int x, int y) {
@@ -473,6 +485,24 @@ public class MorrisBoard implements GameStateInterface{
 	@Override
 	public void setPhase(Phase phase) {
 		gamePhase = phase;
+	}
+	
+	private class BoardDetails{
+		private String gs;
+		private int result;
+		
+		public BoardDetails(String gs, int result){
+			this.gs = gs;
+			this.result = result;
+		}
+		
+		public String getGS(){
+			return gs;
+		}
+		
+		public int getResult(){
+			return result;
+		}
 	}
 
 }
