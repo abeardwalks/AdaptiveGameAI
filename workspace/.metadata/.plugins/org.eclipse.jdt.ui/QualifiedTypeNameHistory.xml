@@ -46,4 +46,5 @@
 <fullyQualifiedTypeName name="java.awt.Color"/>
 <fullyQualifiedTypeName name="java.util.Observer"/>
 <fullyQualifiedTypeName name="board.MorrisBoard.boardDetails"/>
+<fullyQualifiedTypeName name="board.BoardDetails"/>
 </qualifiedTypeNameHistroy>

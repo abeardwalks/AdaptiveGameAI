@@ -17,7 +17,7 @@ public class MorrisBoard extends Observable implements GameStateInterface {
 	private int playerOneTokensToPlace, playerTwoTokensToPlace, playerOneTokensRemaining, playerTwoTokensRemaining;
 	
 	public MorrisBoard(){
-		state = "NNNNNNNNNNNNNNNNNNNNNNN";
+		state = "NNNNNNNNNNNNNNNNNNNNNNNN";
 		
 		history = new Stack<String>();
 		history.add(state);
@@ -61,7 +61,7 @@ public class MorrisBoard extends Observable implements GameStateInterface {
 			result = 2;			//for MVC
 //			return 2;
 		}
-		BoardDetails details = new BoardDetails(state, result); //for MVC
+		BoardDetails details = new BoardDetails(state, result, playerOneTokensRemaining, playerTwoTokensRemaining); //for MVC
 		notifyObservers(details);//for MVC
 //		return 0;
 	}
@@ -285,7 +285,7 @@ public class MorrisBoard extends Observable implements GameStateInterface {
 			result = 2;				//for MVC
 //			return 2;
 		}
-		BoardDetails details = new BoardDetails(state, result); //for MVC
+		BoardDetails details = new BoardDetails(state, result, playerOneTokensRemaining, playerTwoTokensRemaining); //for MVC
 		notifyObservers(details);	//for MVC
 //		return 0;
 	}
@@ -312,7 +312,7 @@ public class MorrisBoard extends Observable implements GameStateInterface {
 			result = 2;				//for MVC
 //			return 2;
 		}
-		BoardDetails details = new BoardDetails(state, result); //for MVC
+		BoardDetails details = new BoardDetails(state, result, playerOneTokensRemaining, playerTwoTokensRemaining); //for MVC
 		notifyObservers(details);	//for MVC
 //		return 0;
 	}
@@ -485,24 +485,6 @@ public class MorrisBoard extends Observable implements GameStateInterface {
 	@Override
 	public void setPhase(Phase phase) {
 		gamePhase = phase;
-	}
-	
-	private class BoardDetails{
-		private String gs;
-		private int result;
-		
-		public BoardDetails(String gs, int result){
-			this.gs = gs;
-			this.result = result;
-		}
-		
-		public String getGS(){
-			return gs;
-		}
-		
-		public int getResult(){
-			return result;
-		}
 	}
 
 }
