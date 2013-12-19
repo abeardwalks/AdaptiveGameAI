@@ -1,0 +1,14 @@
+package view;
+
+import java.awt.event.MouseListener;
+
+import javax.swing.JPanel;
+
+public class PlayingView extends JPanel {
+	
+	public PlayingView(MouseListener m){
+		this.addMouseListener(m);
+		
+	}
+
+}

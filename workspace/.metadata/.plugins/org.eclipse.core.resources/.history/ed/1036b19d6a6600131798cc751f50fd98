@@ -1,0 +1,93 @@
+package controller;
+
+import interfaces.GameStateInterface;
+import interfaces.PlayerInterface;
+
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.plaf.basic.BasicButtonListener;
+import javax.swing.plaf.basic.BasicOptionPaneUI;
+import javax.swing.plaf.basic.BasicOptionPaneUI.ButtonActionListener;
+
+import board.MorrisBoard;
+
+import view.ApplicationView;
+import view.PlayingView;
+import view.SetupView;
+
+public class GameController {
+	
+	private GameStateInterface gs;
+	private PlayerInterface[] players;
+	private ApplicationView primaryView;
+	private Thread thread;
+	private PlayingView gameView;
+	private SetupView setupView;
+	
+	public GameController(){
+		
+		primaryView = new ApplicationView();
+		
+		List<PlayerInterface> players = getPlayers();
+		gs = new MorrisBoard();
+		
+		setupView = new SetupView(new SetupActionListener(), players, gs);
+		primaryView.addPane(setupView);
+		
+		primaryView.setVisible(true);
+	
+	}
+	
+	private void start() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
+	private List<PlayerInterface> getPlayers() {
+		List<PlayerInterface> players = new ArrayList<PlayerInterface>();
+		File dir = new File("bin" + System.getProperty("file.separator") + "players" );
+		for(String file : dir.list()){
+			PlayerInterface player = null;
+			if(!file.contains("$")){
+				try {
+					player = loadPlyaer("players." + file.substring(0, file.length() - 6));
+				} catch (Throwable e) {}
+			}
+			
+			if (player != null){
+				players.add(player);
+			}
+		}
+		return players;
+	}
+
+	private PlayerInterface loadPlyaer(String playerClass) {
+		PlayerInterface player = null;
+		try {
+			Class<?> theClass = Class.forName(playerClass);
+			Constructor<?>[] cons = theClass.getConstructors();
+			player = (PlayerInterface) cons[0].newInstance();
+		} catch (Throwable e) {}
+		return player;
+	}
+	
+	private class SetupActionListener implements ActionListener {
+		public SetupActionListener(BasicOptionPaneUI basicOptionPaneUI, int buttonIndex) {
+			basicOptionPaneUI.super(buttonIndex);
+		}
+
+		public void act(MouseEvent e){
+			if(e.getSource() instanceof StartButton){
+				start();
+			}
+		}
+	}
+
+}
