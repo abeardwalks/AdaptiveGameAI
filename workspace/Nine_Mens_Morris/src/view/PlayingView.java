@@ -39,13 +39,11 @@ public class PlayingView extends JPanel implements Observer {
 	private int x0,x1,x2,x3,x4,x5,x6;
 	private int y0,y1,y2,y3,y4,y5,y6;
 	
-	public PlayingView(MouseListener m){
+	public PlayingView(){
 		super();
 		setOpaque(false);
 		setSize(800,600);
 		setBackground(Color.white);
-		
-		addMouseListener(m);
 		
 		gs = "NNNNNNNNNNNNNNNNNNNNNNNN";
 		result = -2;
@@ -374,7 +372,6 @@ public class PlayingView extends JPanel implements Observer {
 		result = bd.getResult();
 		playerOneTokens = bd.getPlayerOneRemaining();
 		playerTwoTokens = bd.getPlayerTwoRemaining();
-		
 		repaint();
 	}
 	

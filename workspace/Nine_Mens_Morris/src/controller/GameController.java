@@ -12,10 +12,14 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.plaf.basic.BasicButtonListener;
 import javax.swing.plaf.basic.BasicOptionPaneUI;
 import javax.swing.plaf.basic.BasicOptionPaneUI.ButtonActionListener;
+
+import players.Human;
 
 import board.MorrisBoard;
 
@@ -23,7 +27,7 @@ import view.ApplicationView;
 import view.PlayingView;
 import view.SetupView;
 
-public class GameController {
+public class GameController implements Observer{
 	
 	private GameStateInterface gs;
 	private PlayerInterface[] players;
@@ -31,18 +35,25 @@ public class GameController {
 	private Thread thread;
 	private PlayingView gameView;
 	private SetupView setupView;
+	private PlayerInterface p1;
+	private PlayerInterface p2;
+	
 	
 	public GameController(){
 		
 		primaryView = new ApplicationView();
 		
-		List<PlayerInterface> players = getPlayers();
+		List<PlayerInterface> players1 = getPlayers();
+		List<PlayerInterface> players2 = getPlayers();
 		gs = new MorrisBoard();
 		
-		setupView = new SetupView(new SetupActionListener(), players);
+		setupView = new SetupView(new SetupActionListener(), players1, players2);
 		primaryView.addPane(setupView);
 		
-		gameView = new PlayingView(new HumanPlayerListener());
+		gameView = new PlayingView();
+		gameView.addMouseListener(new HumanMouseListener());
+	    ((Observable) gs).addObserver(gameView);
+	    ((Observable) gs).addObserver(this);
 		
 		primaryView.setVisible(true);
 	
@@ -50,6 +61,21 @@ public class GameController {
 	
 	private void start() {
 		primaryView.remove(setupView);
+		p1 = setupView.getPlayerOne();
+		p2 = setupView.getPlayerTwo();
+		
+		p1.setChar('R');
+		p2.setChar('B');
+		p1.setGameState(gs);
+		p1.setTurn();
+		p2.setGameState(gs);
+		p1.intializeCordinates();
+		p2.intializeCordinates();
+		
+		System.out.println("PlayeOne turn: " + p1.getTurn());
+		System.out.println("PlayerTwo turn: " + p2.getTurn());
+		
+
 		primaryView.addPane(gameView);
 		primaryView.repaint();
 	}
@@ -67,9 +93,11 @@ public class GameController {
 			}
 			
 			if (player != null){
+				System.err.println("Player Added");
 				players.add(player);
 			}
 		}
+		System.err.println(players.size());
 		return players;
 	}
 
@@ -89,38 +117,40 @@ public class GameController {
 		}
 	}
 	
-	private class HumanPlayerListener implements MouseListener {
+	private class HumanMouseListener implements MouseListener {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			System.out.println(e.getX());
-			System.out.println(e.getY());
 		}
 
 		@Override
 		public void mouseEntered(MouseEvent e) {
-			// TODO Auto-generated method stub
-			
 		}
 
 		@Override
 		public void mouseExited(MouseEvent e) {
-			// TODO Auto-generated method stub
-			
 		}
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			// TODO Auto-generated method stub
-			
 		}
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			// TODO Auto-generated method stub
-			
+			int x = e.getX();
+			int y = e.getY();
+			if(p1 instanceof Human && p1.getTurn()){	
+				((Human) p1).makeHumanMove(x, y);
+			} else if(p2 instanceof Human) {
+				((Human) p2).makeHumanMove(x, y);
+			}
 		}
-		
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		p1.setTurn();
+		p2.setTurn();
 	}
 
 }

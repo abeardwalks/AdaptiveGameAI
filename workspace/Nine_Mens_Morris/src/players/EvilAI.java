@@ -1,10 +1,13 @@
 package players;
 
+import interfaces.GameStateInterface;
 import interfaces.PlayerInterface;
 
 public class EvilAI implements PlayerInterface {
 
 	private final String name = "EvilAI";
+	private char playerChar;
+	private boolean turn = false;
 	
 	@Override
 	public int getTokensRemaining() {
@@ -14,8 +17,7 @@ public class EvilAI implements PlayerInterface {
 
 	@Override
 	public char getChar() {
-		// TODO Auto-generated method stub
-		return 0;
+		return playerChar;
 	}
 
 	@Override
@@ -29,4 +31,39 @@ public class EvilAI implements PlayerInterface {
 		return name;
 	}
 
+	@Override
+	public void setChar(char playerChar) {
+		this.playerChar = playerChar;
+	}
+
+	@Override
+	public void setGameState(GameStateInterface gs) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void setTurn() {
+		if(turn){
+			turn = false;
+		}else{
+			turn = true;
+		}
+	}
+	
+	public boolean getTurn(){
+		return turn;
+	}
+
+	@Override
+	public void setPlayerChar(char playerChar) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void intializeCordinates() {
+		// TODO Auto-generated method stub
+		
+	}
 }

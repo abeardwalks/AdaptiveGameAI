@@ -25,11 +25,12 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class SetupView extends JPanel implements ActionListener, MouseListener{
+public class SetupView extends JPanel implements ActionListener{
 	
 	private static final long serialVersionUID = 1229785926175762299L;
 	
-	private List<PlayerInterface> players;
+	private List<PlayerInterface> players1;
+	private List<PlayerInterface> players2;
 	
 	private JLabel playerOneLabel, playerTwoLabel;
 	private JComboBox<String> playerOneSelect, playerTwoSelect;
@@ -37,7 +38,7 @@ public class SetupView extends JPanel implements ActionListener, MouseListener{
 	private PlayerInterface playerOne, playerTwo;
 	private Image background;
 
-	public SetupView(ActionListener a, List<PlayerInterface> players) {
+	public SetupView(ActionListener a, List<PlayerInterface> players1, List<PlayerInterface> players2) {
 		super();
 		setOpaque(false);
 		setSize(800,600);
@@ -48,8 +49,11 @@ public class SetupView extends JPanel implements ActionListener, MouseListener{
 		playerOneSelect = new JComboBox<String>();
 		playerTwoSelect = new JComboBox<String>();
 		
-		for (PlayerInterface p : players) {
+		for (PlayerInterface p : players1) {
 			playerOneSelect.addItem(p.getName());
+		}
+		
+		for (PlayerInterface p : players2) {
 			playerTwoSelect.addItem(p.getName());
 		}
 		playerOneSelect.setName("Player One");
@@ -57,15 +61,15 @@ public class SetupView extends JPanel implements ActionListener, MouseListener{
 		playerOneSelect.addActionListener(this);
 		playerTwoSelect.addActionListener(this);
 		
-		playerOne = players.get(0);
-		playerTwo = players.get(0);
+		playerOne = players1.get(0);
+		playerTwo = players2.get(0);
 		
 		start = new JButton("Start");
 		start.addActionListener(a);
 		
 		fillView();
-		this.addMouseListener(this);
-		this.players = players;
+		this.players1 = players1;
+		this.players2 = players2;
 		
 		try {
 			background = ImageIO.read(new File("src/NineMensMorris.jpg"));
@@ -117,9 +121,9 @@ public class SetupView extends JPanel implements ActionListener, MouseListener{
 		JComboBox<String> selectie = (JComboBox<String>)e.getSource();
 		
 		if(selectie.getName().equals("Player One")){
-			playerOne = players.get(selectie.getSelectedIndex());
+			playerOne = players1.get(selectie.getSelectedIndex());
 		} else{
-			playerTwo = players.get(selectie.getSelectedIndex());
+			playerTwo = players2.get(selectie.getSelectedIndex());
 		}
 	}
 	
@@ -129,36 +133,6 @@ public class SetupView extends JPanel implements ActionListener, MouseListener{
 	
 	public PlayerInterface getPlayerTwo(){
 		return playerTwo;
-	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		System.out.println(e.getX());
-		System.out.println(e.getY());
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

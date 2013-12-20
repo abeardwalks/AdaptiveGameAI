@@ -1,6 +1,10 @@
 package interfaces;
 
 
+import java.util.Observer;
+
+import view.PlayingView;
+
 import board.Phase;
 
 /**
@@ -9,7 +13,7 @@ import board.Phase;
  * @author Andy
  *
  */
-public interface GameStateInterface {
+public interface GameStateInterface{
 	
 	/**
 	 * Adds a players token to the game and updates the phase of
@@ -22,7 +26,7 @@ public interface GameStateInterface {
 	 *  >  1 signifies a valid placement and the creation of a mill.
 	 *  >  2 Game won.
 	 */
-	void addToken(char token, int position);
+	int addToken(char token, int position);
 	
 	/**
 	 * Removes a players token from the game and updates the phase of 
@@ -34,7 +38,7 @@ public interface GameStateInterface {
 	 *  >  0 signifies a valid removal.
 	 *  >  2 Game won.
 	 */
-	void removeToken(char token, int position);
+	int removeToken(char token, int position);
 	
 	/**
 	 * Moves a selected Token from one point to another.
@@ -48,7 +52,7 @@ public interface GameStateInterface {
 	 *  >  1 signifies a valid move an a mill created.
 	 *  >  2 signifies game won.
 	 */
-	void moveToken(char token, int x, int y);
+	int moveToken(char token, int x, int y);
 	
 	/**
 	 * Returns the current state of the game. 
@@ -96,5 +100,6 @@ public interface GameStateInterface {
 	 * Re-does the previous undone action.
 	 */
 	void redo();
+
 	
 }
