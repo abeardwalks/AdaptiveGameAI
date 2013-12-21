@@ -1,0 +1,12 @@
+package players;
+
+import interfaces.GameStateInterface;
+import interfaces.PlayerInterface;
+
+public class SimpleAI extends AbstractPlayer {
+	
+	public SimpleAI(){
+		super();
+	}
+	
+}

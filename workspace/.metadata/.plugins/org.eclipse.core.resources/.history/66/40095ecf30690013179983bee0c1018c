@@ -1,0 +1,9 @@
+package players;
+
+import interfaces.AbstractPlayer;
+
+
+public class SimpleAI extends AbstractPlayer {
+	
+	
+}

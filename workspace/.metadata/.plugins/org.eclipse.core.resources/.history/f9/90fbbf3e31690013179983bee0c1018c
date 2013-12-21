@@ -1,0 +1,17 @@
+package players;
+
+import interfaces.AbstractPlayer;
+import interfaces.GameStateInterface;
+import interfaces.PlayerInterface;
+
+public class SimpleAI extends AbstractPlayer {
+	
+	private final String name = "SimpleAI";
+	private char playerChar;
+	private boolean turn = false;
+	
+	public SimpleAI(){
+		super();
+	}
+
+}

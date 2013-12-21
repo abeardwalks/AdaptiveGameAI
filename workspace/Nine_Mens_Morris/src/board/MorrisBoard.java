@@ -296,7 +296,8 @@ public class MorrisBoard extends Observable implements GameStateInterface {
 	public int moveToken(char token, int x, int y) {
 		Integer result = 0;			//for MVC
 		char[] stateArray = state.toCharArray();
-		if(validMove(x, y)){
+
+		if((stateArray[x] == token) && validMove(x, y)){
 			stateArray[x] = 'N';
 			stateArray[y] = token;
 			state = new String(stateArray);
@@ -325,7 +326,7 @@ public class MorrisBoard extends Observable implements GameStateInterface {
 		if(stateArray[y] != 'N'){
 			return false;
 		}
-		
+
 		switch(x){
 		case 0:
 			if((y != 1) && (y != 9)){
@@ -485,6 +486,10 @@ public class MorrisBoard extends Observable implements GameStateInterface {
 	@Override
 	public void setPhase(Phase phase) {
 		gamePhase = phase;
+	}
+	
+	public Phase getPhase(){
+		return gamePhase;
 	}
 
 	

@@ -1,0 +1,170 @@
+package controller;
+
+import interfaces.GameStateInterface;
+import interfaces.PlayerInterface;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.File;
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
+
+import javax.swing.plaf.basic.BasicButtonListener;
+import javax.swing.plaf.basic.BasicOptionPaneUI;
+import javax.swing.plaf.basic.BasicOptionPaneUI.ButtonActionListener;
+
+import players.Human;
+
+import board.MorrisBoard;
+
+import view.ApplicationView;
+import view.PlayingView;
+import view.SetupView;
+
+public class GameController implements Observer{
+	
+	private GameStateInterface gs;
+	private PlayerInterface[] players;
+	private ApplicationView primaryView;
+	private Thread thread;
+	private PlayingView gameView;
+	private SetupView setupView;
+	private PlayerInterface p1;
+	private PlayerInterface p2;
+	private boolean turn;
+	
+	public GameController(){
+		
+		primaryView = new ApplicationView();
+		
+		List<PlayerInterface> players1 = getPlayers();
+		List<PlayerInterface> players2 = getPlayers();
+		gs = new MorrisBoard();
+		
+		setupView = new SetupView(new SetupActionListener(), players1, players2);
+		primaryView.addPane(setupView);
+		
+		gameView = new PlayingView();
+		gameView.addMouseListener(new HumanMouseListener());
+	    ((Observable) gs).addObserver(gameView);
+//	    ((Observable) gs).addObserver(this);
+		
+		primaryView.setVisible(true);
+	
+	}
+	
+	private void start() {
+		primaryView.remove(setupView);
+		p1 = setupView.getPlayerOne();
+		p2 = setupView.getPlayerTwo();
+		
+		p1.setChar('R');
+		p2.setChar('B');
+		p1.setGameState(gs);
+		p1.setTurn();
+		p2.setGameState(gs);
+		p1.intializeCordinates();
+		p2.intializeCordinates();
+		
+		System.out.println("PlayeOne turn: " + p1.getTurn());
+		System.out.println("PlayerTwo turn: " + p2.getTurn());
+		
+
+		primaryView.addPane(gameView);
+		primaryView.repaint();
+	}
+	
+	
+	private List<PlayerInterface> getPlayers() {
+		List<PlayerInterface> players = new ArrayList<PlayerInterface>();
+		File dir = new File("bin" + System.getProperty("file.separator") + "players" );
+		for(String file : dir.list()){
+			PlayerInterface player = null;
+			if(!file.contains("$")){
+				try {
+					player = loadPlyaer("players." + file.substring(0, file.length() - 6));
+				} catch (Throwable e) {}
+			}
+			
+			if (player != null){
+				System.err.println("Player Added");
+				players.add(player);
+			}
+		}
+		System.err.println(players.size());
+		return players;
+	}
+
+	private PlayerInterface loadPlyaer(String playerClass) {
+		PlayerInterface player = null;
+		try {
+			Class<?> theClass = Class.forName(playerClass);
+			Constructor<?>[] cons = theClass.getConstructors();
+			player = (PlayerInterface) cons[0].newInstance();
+		} catch (Throwable e) {}
+		return player;
+	}
+	
+	private class SetupActionListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			start();
+		}
+	}
+	
+	private class HumanMouseListener implements MouseListener {
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			int x = e.getX();
+			int y = e.getY();
+			System.out.println("Adding");
+			if(p1 instanceof Human && p1.getTurn()){
+				
+				((Human) p1).makeHumanMove(x, y);
+				p1.setTurn();
+				p2.setTurn();
+			}
+			if(p2 instanceof Human && p2.getTurn()){
+				((Human) p2).makeHumanMove(x, y);
+				p1.setTurn();
+				p2.setTurn();
+			}
+		}
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+
+	}
+
+}

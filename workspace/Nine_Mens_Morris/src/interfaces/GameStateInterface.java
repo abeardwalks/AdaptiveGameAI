@@ -101,5 +101,7 @@ public interface GameStateInterface{
 	 */
 	void redo();
 
+	Phase getPhase();
+
 	
 }

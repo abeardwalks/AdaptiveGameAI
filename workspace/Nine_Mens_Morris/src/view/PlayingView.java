@@ -369,6 +369,7 @@ public class PlayingView extends JPanel implements Observer {
 	public void update(Observable o, Object arg) {
 		BoardDetails bd = (BoardDetails)arg;
 		gs = bd.getGS();
+		System.err.println("Gamestate: " + gs);
 		result = bd.getResult();
 		playerOneTokens = bd.getPlayerOneRemaining();
 		playerTwoTokens = bd.getPlayerTwoRemaining();
