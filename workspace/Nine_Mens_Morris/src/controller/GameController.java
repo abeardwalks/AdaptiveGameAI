@@ -28,7 +28,6 @@ public class GameController implements Observer{
 	
 	private GameStateInterface gs;
 	private Phase phase;
-//	private PlayerInterface[] players;
 	private ApplicationView primaryView;
 	private Thread thread;
 	private PlayingView gameView;
@@ -65,14 +64,20 @@ public class GameController implements Observer{
 		primaryView.remove(setupView);
 		p1 = setupView.getPlayerOne();
 		p2 = setupView.getPlayerTwo();
+//		if(p1 instanceof Human){
+//			((Observable) gs).addObserver((Human)p1);
+//			gameView.addMouseListener((Human)p1);
+//			System.out.println("Added");
+//		}
+//		if(p2 instanceof Human){
+//			((Observable) gs).addObserver((Human)p2);
+//			gameView.addMouseListener((Human)p2);
+//		}
 		
-		p1.setChar('R');
-		p2.setChar('B');
-		p1.setGameState(gs);
-		p1.setTurn();
-		p2.setGameState(gs);
-		p1.intializeCordinates();
-		p2.intializeCordinates();
+		p1.setTokenColour('R');
+		p2.setTokenColour('B');
+		p1.intialize(gs);
+		p2.intialize(gs);
 
 
 		primaryView.addPane(gameView);
@@ -124,16 +129,13 @@ public class GameController implements Observer{
 			if(phase.equals(Phase.ONE) || result == 1 || phase.equals(Phase.THREE)){
 				int x = e.getX();
 				int y = e.getY();
-				if(p1 instanceof Human && p1.getChar() == turn){	
+				if(p1 instanceof Human && p1.getTokenColour() == turn){	
 					((Human) p1).makeHumanPlacement(x, y);
 				} else if(p2 instanceof Human) {
 					((Human) p2).makeHumanPlacement(x, y);
 				}
 				phase = gs.getPhase();
-			}
-			
-			
-			
+			}	
 		}
 
 		@Override
@@ -157,7 +159,7 @@ public class GameController implements Observer{
 			if((phase.equals(Phase.TWO) || phase.equals(Phase.THREE)) && (result == 0 || result == -1)){
 				int x2 = e.getX();
 				int y2 = e.getY();
-				if(p1 instanceof Human && p1.getChar() == turn){	
+				if(p1 instanceof Human && p1.getTokenColour() == turn){	
 					((Human) p1).makeHumanMove(x, y, x2, y2);
 				}else if(p2 instanceof Human) {
 					((Human) p2).makeHumanMove(x, y, x2, y2);
@@ -172,6 +174,8 @@ public class GameController implements Observer{
 		BoardDetails bd = (BoardDetails) arg;
 		result = bd.getResult();
 		turn = bd.getTurn();
+		System.out.println("Result: " + result );
+		System.out.println("  Turn:"  + turn);
 	}
 
 }

@@ -1,6 +1,5 @@
 package interfaces;
 
-import board.MorrisBoard;
 
 
 
@@ -13,17 +12,10 @@ import board.MorrisBoard;
  */
 public interface PlayerInterface {
 	
-	void setTurn();
-	boolean getTurn();
-	int getTokensRemaining();
-	char getChar();
-	void removeToken();
 	String getName();
-	void setChar(char c);
-	public void setGameState(GameStateInterface gs);
-	
-	public void setPlayerChar(char playerChar);
-	public void intializeCordinates();
-	
+	char getTokenColour();
+	void setTokenColour(char c);
+	void intialize(GameStateInterface gs);
+	void makeMove();
 
 }

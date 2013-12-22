@@ -42,15 +42,15 @@
 <fullyQualifiedTypeName name="players.Human"/>
 <fullyQualifiedTypeName name="java.lang.System"/>
 <fullyQualifiedTypeName name="java.util.Observable"/>
-<fullyQualifiedTypeName name="interfaces.GameStateInterface"/>
-<fullyQualifiedTypeName name="java.util.Observer"/>
-<fullyQualifiedTypeName name="interfaces.PlayerInterface"/>
 <fullyQualifiedTypeName name="controller.GameController.HumanMouseListener"/>
 <fullyQualifiedTypeName name="players.AbstractPlayer"/>
 <fullyQualifiedTypeName name="players.SimpleAI"/>
 <fullyQualifiedTypeName name="java.lang.AbstractMethodError"/>
 <fullyQualifiedTypeName name="interfaces.AbstractPlayer"/>
 <fullyQualifiedTypeName name="board.BoardDetails"/>
-<fullyQualifiedTypeName name="java.awt.event.MouseListener"/>
 <fullyQualifiedTypeName name="board.Phase"/>
+<fullyQualifiedTypeName name="interfaces.PlayerInterface"/>
+<fullyQualifiedTypeName name="interfaces.GameStateInterface"/>
+<fullyQualifiedTypeName name="java.awt.event.MouseListener"/>
+<fullyQualifiedTypeName name="java.util.Observer"/>
 </qualifiedTypeNameHistroy>
