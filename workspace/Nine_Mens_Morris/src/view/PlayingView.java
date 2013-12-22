@@ -5,7 +5,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
-import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.Observable;
@@ -32,6 +31,7 @@ public class PlayingView extends JPanel implements Observer {
 	private final int p2StartY = 15;
 	
 	private String gs;
+	@SuppressWarnings("unused")
 	private int result;
 	private int playerOneTokens;
 	private int playerTwoTokens;
@@ -369,7 +369,6 @@ public class PlayingView extends JPanel implements Observer {
 	public void update(Observable o, Object arg) {
 		BoardDetails bd = (BoardDetails)arg;
 		gs = bd.getGS();
-		System.err.println("Gamestate: " + gs);
 		result = bd.getResult();
 		playerOneTokens = bd.getPlayerOneRemaining();
 		playerTwoTokens = bd.getPlayerTwoRemaining();

@@ -5,14 +5,16 @@ public class BoardDetails{
 	private int result;
 	private int playerOneRemaining;
 	private int playerTwoRemaining;
+	private char turn;
 	
 
 
-	public BoardDetails(String gs, int result, int playerOneRemaining, int playerTwoRemaining){
+	public BoardDetails(String gs, int result, int playerOneRemaining, int playerTwoRemaining, char turn){
 		this.gs = gs;
 		this.result = result;
 		this.playerOneRemaining = playerOneRemaining;
 		this.playerTwoRemaining = playerTwoRemaining;
+		this.turn = turn;
 	}
 	
 	public String getGS(){
@@ -29,6 +31,10 @@ public class BoardDetails{
 
 	public int getPlayerTwoRemaining() {
 		return playerTwoRemaining;
+	}
+	
+	public char getTurn(){
+		return turn;
 	}
 	
 }

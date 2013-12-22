@@ -15,15 +15,9 @@ public class Human implements PlayerInterface{
 	private int x0,x1,x2,x3,x4,x5,x6;
 	private int y0,y1,y2,y3,y4,y5,y6;
 	private int result = -2;
-	public boolean turn = false;
+	public boolean turn = true;
 	public boolean change = true;
 	private char playerChar;
-	
-//	public Human(GameStateInterface gs, char playerChar){
-//		this.gs = gs;
-//		this.playerChar = playerChar;
-//		intializeCordinates();
-//	}
 
 	public void setGameState(GameStateInterface gs){
 		result = -2;
@@ -176,11 +170,6 @@ public class Human implements PlayerInterface{
 	
 	@Override
 	public void setTurn() {
-		if(turn){
-			turn = false;
-		}else{
-			turn = true;
-		}
 	}
 	
 	public boolean getTurn(){

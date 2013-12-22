@@ -16,7 +16,7 @@ public class MorrisBoard extends Observable implements GameStateInterface {
 	private static final int STRING_LENGTH = 23;
 	private Phase gamePhase;
 	private int playerOneTokensToPlace, playerTwoTokensToPlace, playerOneTokensRemaining, playerTwoTokensRemaining;
-	
+	private char turn;
 	
 	public MorrisBoard(){
 	
@@ -30,6 +30,8 @@ public class MorrisBoard extends Observable implements GameStateInterface {
 		playerTwoTokensToPlace = 9;
 		playerOneTokensRemaining = 9;
 		playerTwoTokensRemaining = 9;
+		
+		turn = 'R';
 
 	}
 
@@ -37,44 +39,143 @@ public class MorrisBoard extends Observable implements GameStateInterface {
 	public int addToken(char token, int position) {
 		Integer result = 0;  		//for MVC
 		char[] stateArray = state.toCharArray();
-		
-		if(stateArray[position] != 'N'){
-			result = -1; 		//for MVC
+		if(turn == token){
+			if(stateArray[position] != 'N'){
+				result = -1; 		//for MVC
+				BoardDetails details = new BoardDetails(state, result, playerOneTokensToPlace, playerTwoTokensToPlace, turn); //for MVC
+				setChanged();
+				notifyObservers(details);//for MVC
+				return result = -1;
+			}
+			if(token == 'R'){
+				playerOneTokensToPlace--;
+			}else{
+				playerTwoTokensToPlace--;
+			}
+			
+			if(playerOneTokensToPlace == 0 && playerTwoTokensToPlace == 0){
+				gamePhase = Phase.TWO;
+			}
+			
+			history.add(state);
+			
+				stateArray[position] = token;
+				state = new String(stateArray);
+			
+	
+			if(partOfMill(position)){
+				result = 1;			//for MVC
+			}else if(gameWon()){
+				result = 2;			//for MVC
+			}
+			if(result == 0){
+				setTurn();
+			}
+	
+			BoardDetails details = new BoardDetails(state, result, playerOneTokensToPlace, playerTwoTokensToPlace, turn); //for MVC
+			setChanged();
+			notifyObservers(details);//for MVC
 		}
-		if(token == 'R'){
-			playerOneTokensToPlace--;
-		}else{
-			playerTwoTokensToPlace--;
+		return result;
+	}
+	
+	@Override
+	public int removeToken(char token, int position) {
+		Integer result = 0;			//for MVC
+		char candidate = state.charAt(position);
+		char[] stateArray = state.toCharArray();
+		if(turn == token){
+			if(candidate == 'N' || candidate == token || ((partOfMill(position) && !onlyAvailable(token, position)))){
+				result = -1; 		//for MVC
+				BoardDetails details = new BoardDetails(state, result, playerOneTokensToPlace, playerTwoTokensToPlace, turn); //for MVC
+				setChanged();
+				notifyObservers(details);//for MVC
+				return result = -1;
+			}else{
+				if(token == 'R'){
+					playerTwoTokensRemaining--;
+				}else{
+					playerOneTokensRemaining--;
+				}
+				
+				if(playerTwoTokensRemaining == 3 || playerOneTokensRemaining == 3){
+					gamePhase = Phase.THREE;
+				}
+				stateArray[position] = 'N';
+				state = new String(stateArray);
+			}
+			
+			if(gameWon()){
+				result = 2;				//for MVC
+			}
+			if(result == 0){
+				setTurn();
+			}
+			BoardDetails details = new BoardDetails(state, result, playerOneTokensToPlace, playerTwoTokensToPlace, turn); //for MVC
+			setChanged();
+			notifyObservers(details);	//for MVC
 		}
-		
-		if(playerOneTokensToPlace == 0 && playerTwoTokensToPlace == 0){
-			gamePhase = Phase.TWO;
-		}
-		
-		history.add(state);
-		
-			stateArray[position] = token;
-			state = new String(stateArray);
-		
-
-		if(partOfMill(position)){
-			result = 1;			//for MVC
-		}else if(gameWon()){
-			result = 2;			//for MVC
-		}
-		BoardDetails details = new BoardDetails(state, result, playerOneTokensToPlace, playerTwoTokensToPlace); //for MVC
-		setChanged();
-		notifyObservers(details);//for MVC
-		
 		return result;
 	}
 
+	private boolean onlyAvailable(char token, int position) {
+		
+		char[] stateArray = state.toCharArray();
+		for (int i = 0; i < stateArray.length; i++) {
+			if((stateArray[i] != token && stateArray[i] != 'N') && i != position){
+				if(!partOfMill(i)){
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public int moveToken(char token, int x, int y) {
+		Integer result = 0;			//for MVC
+		char[] stateArray = state.toCharArray();
+		if(turn == token){
+			if((stateArray[x] == token) && validMove(x, y)){
+				stateArray[x] = 'N';
+				stateArray[y] = token;
+				state = new String(stateArray);
+			}else{
+				result = -1; 		//for MVC
+				BoardDetails details = new BoardDetails(state, result, playerOneTokensToPlace, playerTwoTokensToPlace, turn); //for MVC
+				setChanged();
+				notifyObservers(details);//for MVC
+				return result = -1;
+			}
+			
+			if(partOfMill(y)){
+				result = 1;				//for MVC
+			}
+			
+			if(gameWon()){
+				result = 2;				//for MVC
+			}
+			if(result == 0){
+				setTurn();
+			}
+			BoardDetails details = new BoardDetails(state, result, playerOneTokensToPlace, playerTwoTokensToPlace, turn); //for MVC
+			setChanged();
+			notifyObservers(details);	//for MVC
+		}
+		return result;
+	}
+
+	private void setTurn(){
+		if(turn == 'R'){
+			turn = 'B';
+		}else{
+			turn = 'R';
+		}
+	}
 	private boolean gameWon() {
-		if(playerOneTokensRemaining >= 3 && playerTwoTokensRemaining >= 3){
+		if((playerOneTokensRemaining >= 3 && playerTwoTokensRemaining >= 3) && playersCanMove()){
 			return false;
-		}else if(playersCanMove()){
-			return false;
-		} 
+		}
 		return true;
 	}
 
@@ -262,61 +363,7 @@ public class MorrisBoard extends Observable implements GameStateInterface {
 		return false;
 	}
 
-	@Override
-	public int removeToken(char token, int position) {
-		Integer result = 0;			//for MVC
-		char candidate = state.charAt(position);
-		char[] stateArray = state.toCharArray();
-		if(candidate == 'N' || candidate == token || partOfMill(position)){
-			result = -1;			//for MVC
-		}else{
-			if(token == 'R'){
-				playerTwoTokensRemaining--;
-			}else{
-				playerOneTokensRemaining--;
-			}
-			
-			if(playerTwoTokensRemaining == 2 || playerOneTokensRemaining == 2){
-				gamePhase = Phase.THREE;
-			}
-			stateArray[position] = 'N';
-			state = new String(stateArray);
-		}
-		
-		if(gameWon()){
-			result = 2;				//for MVC
-		}
-		BoardDetails details = new BoardDetails(state, result, playerOneTokensToPlace, playerTwoTokensToPlace); //for MVC
-		setChanged();
-		notifyObservers(details);	//for MVC
-		return result;
-	}
 
-	@Override
-	public int moveToken(char token, int x, int y) {
-		Integer result = 0;			//for MVC
-		char[] stateArray = state.toCharArray();
-
-		if((stateArray[x] == token) && validMove(x, y)){
-			stateArray[x] = 'N';
-			stateArray[y] = token;
-			state = new String(stateArray);
-		}else{
-			result = -1;			//for MVC
-		}
-		
-		if(partOfMill(y)){
-			result = 1;				//for MVC
-		}
-		
-		if(gameWon()){
-			result = 2;				//for MVC
-		}
-		BoardDetails details = new BoardDetails(state, result, playerOneTokensToPlace, playerTwoTokensToPlace); //for MVC
-		setChanged();
-		notifyObservers(details);	//for MVC
-		return result;
-	}
 
 	private boolean validMove(int x, int y) {
 		
@@ -325,6 +372,10 @@ public class MorrisBoard extends Observable implements GameStateInterface {
 		
 		if(stateArray[y] != 'N'){
 			return false;
+		}
+		
+		if(gamePhase == Phase.THREE){
+			return true;
 		}
 
 		switch(x){
