@@ -1,5 +1,7 @@
 package players;
 
+import java.util.Observable;
+
 import interfaces.GameStateInterface;
 import interfaces.PlayerInterface;
 
@@ -30,6 +32,11 @@ public class EvilAI implements PlayerInterface {
 	}
 	@Override
 	public void makeMove() {		
+	}
+	@Override
+	public void update(Observable o, Object arg) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

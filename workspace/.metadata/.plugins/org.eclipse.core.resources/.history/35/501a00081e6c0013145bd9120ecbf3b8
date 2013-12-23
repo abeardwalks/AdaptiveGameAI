@@ -1,6 +1,5 @@
 package interfaces;
 
-import board.MorrisBoard;
 
 
 
@@ -11,12 +10,12 @@ import board.MorrisBoard;
  * @author Andy
  *
  */
-public interface PlayerInterface {
+public interface PlayerInterface extends Observer{
 	
-	int getTokensRemaining();
-	char getChar();
-	void removeToken();
 	String getName();
-	
+	char getTokenColour();
+	void setTokenColour(char c);
+	void intialize(GameStateInterface gs);
+	void makeMove();
 
 }

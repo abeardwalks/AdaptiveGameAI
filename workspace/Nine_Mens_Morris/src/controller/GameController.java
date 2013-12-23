@@ -30,6 +30,7 @@ public class GameController implements Observer{
 	private Phase phase;
 	private ApplicationView primaryView;
 	private Thread thread;
+	private boolean interrupted; 
 	private PlayingView gameView;
 	private SetupView setupView;
 	private char turn;
@@ -64,24 +65,33 @@ public class GameController implements Observer{
 		primaryView.remove(setupView);
 		p1 = setupView.getPlayerOne();
 		p2 = setupView.getPlayerTwo();
-//		if(p1 instanceof Human){
-//			((Observable) gs).addObserver((Human)p1);
-//			gameView.addMouseListener((Human)p1);
-//			System.out.println("Added");
-//		}
-//		if(p2 instanceof Human){
-//			((Observable) gs).addObserver((Human)p2);
-//			gameView.addMouseListener((Human)p2);
-//		}
+		((Observable) gs).addObserver(p1);
+		((Observable) gs).addObserver(p2);
 		
 		p1.setTokenColour('R');
 		p2.setTokenColour('B');
 		p1.intialize(gs);
 		p2.intialize(gs);
+		thread = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				play();
+			}
+		});
 
 
 		primaryView.addPane(gameView);
 		primaryView.repaint();
+		thread.start();
+	}
+	
+	private void play() {
+		interrupted = false; 
+		while(result != 2 || interrupted){
+			p1.makeMove();
+			p2.makeMove();
+		}
 	}
 	
 	

@@ -47,10 +47,13 @@
 <fullyQualifiedTypeName name="players.SimpleAI"/>
 <fullyQualifiedTypeName name="java.lang.AbstractMethodError"/>
 <fullyQualifiedTypeName name="interfaces.AbstractPlayer"/>
-<fullyQualifiedTypeName name="board.BoardDetails"/>
 <fullyQualifiedTypeName name="board.Phase"/>
 <fullyQualifiedTypeName name="interfaces.PlayerInterface"/>
-<fullyQualifiedTypeName name="interfaces.GameStateInterface"/>
 <fullyQualifiedTypeName name="java.awt.event.MouseListener"/>
+<fullyQualifiedTypeName name="java.lang.Runnable"/>
+<fullyQualifiedTypeName name="interfaces.GameStateInterface"/>
+<fullyQualifiedTypeName name="board.BoardDetails"/>
+<fullyQualifiedTypeName name="java.util.Random"/>
 <fullyQualifiedTypeName name="java.util.Observer"/>
+<fullyQualifiedTypeName name="java.lang.Thread"/>
 </qualifiedTypeNameHistroy>

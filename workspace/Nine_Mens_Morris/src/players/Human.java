@@ -11,7 +11,7 @@ import board.Phase;
 import interfaces.GameStateInterface;
 import interfaces.PlayerInterface;
 
-public class Human implements PlayerInterface, MouseListener, Observer{
+public class Human implements PlayerInterface, Observer{
 	
 	private final String name = "Human";
 	
@@ -71,7 +71,6 @@ public class Human implements PlayerInterface, MouseListener, Observer{
 		if(turn == tokenColour){
 			if((phase.equals(Phase.ONE) || result == -2 || result == 1 || phase.equals(Phase.THREE))){
 				makeHumanPlacement(xc, yc);
-				System.out.println("Move Made");
 			}
 			if((phase.equals(Phase.TWO) || phase.equals(Phase.THREE)) && (result == 0 || result == -1)){
 				makeHumanMove(xc, yc, xr, yr);
@@ -175,38 +174,6 @@ public class Human implements PlayerInterface, MouseListener, Observer{
 		y4 = 371;
 		y5 = 462;
 		y6 = 552;
-	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		xr = e.getX();
-		yr = e.getY();
-		if(phase.equals(Phase.ONE) || result == 1){
-			makeMove();
-		}
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-			xc = e.getX();
-			yc = e.getY();
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		 xr = e.getX();
-		 yr = e.getY();
-		 if(phase.equals(Phase.TWO) || phase.equals(Phase.THREE)){
-			 makeMove();
-		 }
 	}
 
 	@Override

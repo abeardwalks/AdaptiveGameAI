@@ -1,5 +1,7 @@
 package interfaces;
 
+import java.util.Observer;
+
 
 
 
@@ -10,7 +12,7 @@ package interfaces;
  * @author Andy
  *
  */
-public interface PlayerInterface {
+public interface PlayerInterface extends Observer{
 	
 	String getName();
 	char getTokenColour();
