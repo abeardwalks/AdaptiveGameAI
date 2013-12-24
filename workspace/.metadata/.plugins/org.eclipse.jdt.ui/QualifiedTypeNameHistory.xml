@@ -1,12 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="Player.Token"/>
-<fullyQualifiedTypeName name="javax.xml.crypto.KeySelector.Purpose"/>
-<fullyQualifiedTypeName name="java.util.Collection"/>
-<fullyQualifiedTypeName name="java.util.Deque"/>
-<fullyQualifiedTypeName name="java.util.Stack"/>
-<fullyQualifiedTypeName name="javax.swing.JFrame"/>
-<fullyQualifiedTypeName name="view.MainMenuPanel"/>
 <fullyQualifiedTypeName name="java.awt.List"/>
 <fullyQualifiedTypeName name="java.util.List"/>
 <fullyQualifiedTypeName name="java.io.File"/>
@@ -45,17 +38,26 @@
 <fullyQualifiedTypeName name="players.SimpleAI"/>
 <fullyQualifiedTypeName name="java.lang.AbstractMethodError"/>
 <fullyQualifiedTypeName name="interfaces.AbstractPlayer"/>
-<fullyQualifiedTypeName name="board.Phase"/>
 <fullyQualifiedTypeName name="java.awt.event.MouseListener"/>
 <fullyQualifiedTypeName name="java.lang.Runnable"/>
 <fullyQualifiedTypeName name="board.BoardDetails"/>
-<fullyQualifiedTypeName name="java.util.Random"/>
-<fullyQualifiedTypeName name="java.util.Observer"/>
 <fullyQualifiedTypeName name="java.lang.Thread"/>
 <fullyQualifiedTypeName name="interfaces.GameStateInterface"/>
 <fullyQualifiedTypeName name="view.ApplicationView"/>
-<fullyQualifiedTypeName name="view.PlayingView"/>
-<fullyQualifiedTypeName name="view.SetupView"/>
 <fullyQualifiedTypeName name="interfaces.PlayerInterface"/>
 <fullyQualifiedTypeName name="board.MorrisBoard2"/>
+<fullyQualifiedTypeName name="interfaces.GameStateInterface2"/>
+<fullyQualifiedTypeName name="board.Phase"/>
+<fullyQualifiedTypeName name="controller.MoveChecker"/>
+<fullyQualifiedTypeName name="view.SetupView"/>
+<fullyQualifiedTypeName name="controller.GameController2.SetupActionListener"/>
+<fullyQualifiedTypeName name="view.PlayingView"/>
+<fullyQualifiedTypeName name="java.util.Observer"/>
+<fullyQualifiedTypeName name="interfaces.PlayerInterface2"/>
+<fullyQualifiedTypeName name="view.SetupView2"/>
+<fullyQualifiedTypeName name="interfaces.IntPairInterface"/>
+<fullyQualifiedTypeName name="java.util.Random"/>
+<fullyQualifiedTypeName name="controller.GameController2"/>
+<fullyQualifiedTypeName name="controller.GameController2.HumanMouseListener"/>
+<fullyQualifiedTypeName name="players.Human2"/>
 </qualifiedTypeNameHistroy>

@@ -1,0 +1,12 @@
+package interfaces;
+
+public interface PlayerInterface2 {
+	
+	int placeToken();
+	int removeToken();
+	IntPairInterface moveToken();
+	String getName();
+	void setTokenColour(char c);
+	char getTokenColour();
+
+}

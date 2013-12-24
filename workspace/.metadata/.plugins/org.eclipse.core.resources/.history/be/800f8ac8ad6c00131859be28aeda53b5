@@ -1,0 +1,19 @@
+package players;
+
+import interfaces.IntPairInterface;
+
+public class IntPair implements IntPairInterface {
+
+	@Override
+	public int getFirstInt() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getSecondInt() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+}

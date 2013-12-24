@@ -1,0 +1,103 @@
+package board;
+
+
+import java.util.Collection;
+import java.util.Observable;
+import java.util.Stack;
+
+import view.PlayingView;
+import interfaces.GameStateInterface2;
+
+public class MorrisBoard2 extends Observable implements GameStateInterface2 {
+	
+	private String state;
+	private Collection<String> history;
+	@SuppressWarnings("unused")
+	private static final int STRING_LENGTH = 23;
+	private Phase gamePhase;
+	private int playerOneTokensToPlace, playerTwoTokensToPlace, playerOneTokensRemaining, playerTwoTokensRemaining;
+	private char turn;
+	private boolean won;
+	
+	public MorrisBoard2(){
+	
+		state = "NNNNNNNNNNNNNNNNNNNNNNNN";
+		history = new Stack<String>();
+		history.add(state);
+		
+		gamePhase = Phase.ONE;
+		
+		playerOneTokensToPlace = 9;
+		playerTwoTokensToPlace = 9;
+		playerOneTokensRemaining = 9;
+		playerTwoTokensRemaining = 9;
+		won = false;
+		turn = 'R';
+
+	}
+
+	
+	public void addToken(char token, int position) {
+		char[] stateArray = state.toCharArray();
+		stateArray[position] = token;
+		state = new String(stateArray);
+		BoardDetails details = new BoardDetails(state, 2, playerOneTokensToPlace, playerTwoTokensToPlace, turn); //for MVC
+		setChanged();
+		notifyObservers(details);//for MVC
+	}
+	
+	
+	public void removeToken(int position) {
+		char[] stateArray = state.toCharArray();
+		stateArray[position] = 'N';
+		BoardDetails details = new BoardDetails(state, 2, playerOneTokensToPlace, playerTwoTokensToPlace, turn); //for MVC
+		setChanged();
+		notifyObservers(details);	//for MVC
+	}
+
+
+
+	public void moveToken(int x, int y) {
+		char[] stateArray = state.toCharArray();
+		char moving = stateArray[x];
+		stateArray[x] = 'N';
+		stateArray[y] = moving;
+		BoardDetails details = new BoardDetails(state, 2, playerOneTokensToPlace, playerTwoTokensToPlace, turn); //for MVC
+		setChanged();
+		notifyObservers(details);	//for MVC
+	}
+
+	public void setState(String state){
+		this.state = state;
+	}
+
+	@Override
+	public void reset() {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void undo() {
+		
+	}
+
+	@Override
+	public void redo() {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public String getState() {
+		return state;
+	}
+
+	@Override
+	public void setPhase(Phase phase) {
+		gamePhase = phase;
+	}
+	
+	public Phase getPhase(){
+		return gamePhase;
+	}
+
+}

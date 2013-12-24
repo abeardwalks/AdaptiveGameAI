@@ -1,0 +1,56 @@
+package players;
+
+import java.util.Random;
+
+import interfaces.IntPairInterface;
+import interfaces.PlayerInterface2;
+
+public class RandomAI2 implements PlayerInterface2 {
+
+	private Random rdm;
+	
+	@Override
+	public int placeToken(String state) {
+		rdm = new Random();
+		boolean found = false;
+		int position = 0;
+		while(!found){
+			position = rdm.nextInt(24);
+			if(state.charAt(position) == 'N'){
+				found = true;
+			}
+		}
+		return position;
+	}
+
+	@Override
+	public int removeToken(String state) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public IntPairInterface moveToken(String state) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setTokenColour(char c) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public char getTokenColour() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+}
