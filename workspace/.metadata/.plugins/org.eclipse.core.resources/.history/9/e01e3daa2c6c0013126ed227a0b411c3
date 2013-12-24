@@ -1,0 +1,19 @@
+package controller;
+
+import view.ApplicationView;
+import view.PlayingView;
+import view.SetupView;
+import interfaces.GameStateInterface;
+import interfaces.PlayerInterface;
+
+public class GameController2 {
+	
+	private GameStateInterface gs;
+	private ApplicationView primaryView;
+	private Thread thread;
+	private PlayingView gameView;
+	private SetupView setupView;
+	private PlayerInterface p1;
+	private PlayerInterface p2;
+
+}

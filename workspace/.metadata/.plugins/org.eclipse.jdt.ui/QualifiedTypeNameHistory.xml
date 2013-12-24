@@ -15,7 +15,6 @@
 <fullyQualifiedTypeName name="java.lang.reflect.Constructor"/>
 <fullyQualifiedTypeName name="view.GameView"/>
 <fullyQualifiedTypeName name="controller.GameController"/>
-<fullyQualifiedTypeName name="view.ApplicationView"/>
 <fullyQualifiedTypeName name="board.MorrisBoard"/>
 <fullyQualifiedTypeName name="java.awt.event.MouseAdapter"/>
 <fullyQualifiedTypeName name="java.awt.event.MouseEvent"/>
@@ -34,7 +33,6 @@
 <fullyQualifiedTypeName name="java.awt.Image"/>
 <fullyQualifiedTypeName name="java.awt.Graphics"/>
 <fullyQualifiedTypeName name="java.awt.Graphics2D"/>
-<fullyQualifiedTypeName name="view.PlayingView"/>
 <fullyQualifiedTypeName name="controller.GameController.HumanPlayerListener"/>
 <fullyQualifiedTypeName name="java.awt.RenderingHints"/>
 <fullyQualifiedTypeName name="java.awt.Color"/>
@@ -48,12 +46,16 @@
 <fullyQualifiedTypeName name="java.lang.AbstractMethodError"/>
 <fullyQualifiedTypeName name="interfaces.AbstractPlayer"/>
 <fullyQualifiedTypeName name="board.Phase"/>
-<fullyQualifiedTypeName name="interfaces.PlayerInterface"/>
 <fullyQualifiedTypeName name="java.awt.event.MouseListener"/>
 <fullyQualifiedTypeName name="java.lang.Runnable"/>
-<fullyQualifiedTypeName name="interfaces.GameStateInterface"/>
 <fullyQualifiedTypeName name="board.BoardDetails"/>
 <fullyQualifiedTypeName name="java.util.Random"/>
 <fullyQualifiedTypeName name="java.util.Observer"/>
 <fullyQualifiedTypeName name="java.lang.Thread"/>
+<fullyQualifiedTypeName name="interfaces.GameStateInterface"/>
+<fullyQualifiedTypeName name="view.ApplicationView"/>
+<fullyQualifiedTypeName name="view.PlayingView"/>
+<fullyQualifiedTypeName name="view.SetupView"/>
+<fullyQualifiedTypeName name="interfaces.PlayerInterface"/>
+<fullyQualifiedTypeName name="board.MorrisBoard2"/>
 </qualifiedTypeNameHistroy>
