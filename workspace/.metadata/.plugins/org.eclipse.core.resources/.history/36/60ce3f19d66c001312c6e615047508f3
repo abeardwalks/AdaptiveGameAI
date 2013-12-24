@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Observable;
 
 import players.Human;
+import players.Human2;
 
 import board.BoardDetails;
 import board.MorrisBoard2;
@@ -39,7 +40,7 @@ public class GameController2 {
 	private MoveChecker mc;
 	private Phase phase;
 	private int result;
-
+	private boolean millMade;
 	
 	public GameController2(){
 		
@@ -51,7 +52,7 @@ public class GameController2 {
 		result = -2;
 		mc = new MoveChecker();
 		phase = phase.ONE;
-		
+		millMade = false;
 		setupView = new SetupView2(new SetupActionListener(), players1, players2);
 		primaryView.addPane(setupView);
 		
@@ -93,23 +94,27 @@ public class GameController2 {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				executeMove('R', p1);
+				if(turn == 'R'){
+					executeMove('R', p1);
+				}
 			}
+				
+			if(!p2.getName().equals("Human")){
 				try {
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			if(!p2.getName().equals("Human")){
-				executeMove('B', p2);
+				if(turn == 'B'){
+					executeMove('B', p2);
+				}
 			}
 		}
 	}
 	
 	private void executeMove(char tokenColour, PlayerInterface2 player){
 		boolean played = false;
-		boolean millMade = false;
 		while(!played){
 			int previousResult = result;
 			if(phase.equals(Phase.ONE) && (result == -2 || result == 0 || result == -1)){
@@ -158,10 +163,12 @@ public class GameController2 {
 				System.out.println(phase);
 			}
 		}
-		if(tokenColour == 'R'){
-			turn = 'B';
-		}else{
-			turn = 'R';
+		if(!millMade){
+			if(turn == 'R'){
+				turn = 'B';
+			}else{
+				turn = 'R';
+			}
 		}
 	}
 	
@@ -206,20 +213,66 @@ public class GameController2 {
 		
 		private int x0,x1,x2,x3,x4,x5,x6;
 		private int y0,y1,y2,y3,y4,y5,y6;
-		
 		boolean mill = false;
+		
+		public HumanMouseListener(){
+			initializeCordinates();
+		}
+		
+		
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			if(phase.equals(Phase.ONE) || result == 1 || result == -2 || phase.equals(Phase.THREE)){
 				int x = e.getX();
 				int y = e.getY();
-				if(p1 instanceof Human && p1.getTokenColour() == turn){	
-					if(result == -1 || result == -2 || result == 0){
-						position = mc.addToken(p1.getTokenColour(), position)
-				} else if(p2 instanceof Human) {
-					((Human) p2).makeHumanPlacement(x, y);
+				System.out.println("Clicking");
+				int position = findNodeClicked(x, y);
+				if(p1 instanceof Human2 && p1.getTokenColour() == turn && position != -1){	
+					System.out.println("In if");
+					if(phase.equals(Phase.ONE) && (result == -1 || result == -2 || result == 0)){
+						result = mc.addToken(p1.getTokenColour(), position);
+						if(result != -1){
+							gs.lowerPlayerOneCount();
+							gs.addToken(p1.getTokenColour(), position);
+						}
+						if(result == 1){
+							mill = true;
+						}
+					}else if(mill && (result == -1 || result == 1)){
+						result = mc.removeToken(p1.getTokenColour(), position);
+						if(result != -1){
+							gs.removeToken(position);
+							mill = false;
+						}
+					}
+				} else if(p2 instanceof Human2 && p2.getTokenColour() == turn && position != -1){	
+					System.out.println("In if");
+					if(phase.equals(Phase.ONE) && (result == -1 || result == -2 || result == 0)){
+						result = mc.addToken(p2.getTokenColour(), position);
+						if(result != -1){
+							gs.lowerPlayerTwoCount();
+							gs.addToken(p2.getTokenColour(), position);
+						}
+						if(result == 1){
+							mill = true;
+						}
+					}else if(mill && (result == -1 || result == 1)){
+						result = mc.removeToken(p2.getTokenColour(), position);
+						if(result != -1){
+							gs.removeToken(position);
+							mill = false;
+						}
+					}
 				}
-			}	
+			}
+			if(!mill && result != -1){
+				if(turn == 'R'){
+					turn = 'B';
+				}else{
+					turn = 'R';
+				}
+			}
+			phase = mc.getPhase();
 		}
 
 		@Override
@@ -240,16 +293,55 @@ public class GameController2 {
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
+			
 			if((phase.equals(Phase.TWO) || phase.equals(Phase.THREE)) && (result == 0 || result == -1)){
+				System.out.println("Moving phase");
 				int x2 = e.getX();
 				int y2 = e.getY();
-				if(p1 instanceof Human && p1.getTokenColour() == turn){	
-					((Human) p1).makeHumanMove(x, y, x2, y2);
-				}else if(p2 instanceof Human) {
-					((Human) p2).makeHumanMove(x, y, x2, y2);
+				int firstNode = findNodeClicked(x, y);
+				int secondNode = findNodeClicked(x2, y2);
+				System.out.println("Node One: " + firstNode + ", Second Node: " + secondNode); 
+				System.err.println(turn);
+				if((p1 instanceof Human2 && p1.getTokenColour() == turn) && (firstNode != -1 && secondNode != -1)){
+					System.out.println("Above to move");
+					if(result == -1 || result == 0){
+						result = mc.moveToken(p1.getTokenColour(), firstNode, secondNode);
+						System.err.println("Result of move: " + result);
+						if(result != -1){
+							System.out.println("Made move...");
+							gs.moveToken(firstNode, secondNode);
+						}
+						if(result == 1){
+							mill = true;
+						}
+					}
+				} else if((p2 instanceof Human2 && p2.getTokenColour() == turn) && (firstNode != -1 && secondNode != -1)){	
+					System.out.println("Above to move");
+					if(result == -1 || result == 0){
+						result = mc.moveToken(p2.getTokenColour(), firstNode, secondNode);
+						if(result != -1){
+							System.out.println("Made move...");
+							gs.moveToken(firstNode, secondNode);
+						}
+						if(result == 1){
+							mill = true;
+						}
+					}
 				}
 			}
+			if((phase.equals(Phase.TWO) || phase.equals(Phase.THREE)) && !mill && result != -1){
+				if(turn == 'R'){
+					turn = 'B';
+				}else{
+					turn = 'R';
+				}
+			}
+			
+			phase = mc.getPhase();
+			System.out.println("Result: " + result + ", " + phase);
 		}
+
+		
 		
 		private void initializeCordinates() {
 			x0 = 102;
@@ -267,6 +359,59 @@ public class GameController2 {
 			y4 = 371;
 			y5 = 462;
 			y6 = 552;
+		}
+		
+		private int findNodeClicked(int x, int y){
+			if((x >= x0 && x <= (x0 + 40)) && (y >= y0 && y <= (y0 + 40))){
+				return 0;
+			} else if((x >= x1 && x <= x1 + 40) && (y >= y0 && y <= y0 + 40)){
+				return 1;
+			} else if((x >= x2 && x <= x2 + 40) && (y >= y0 && y <= y0 + 40)){
+				return 2;
+			} else if((x >= x3 && x <= x3 + 40) && (y >= y1 && y <= y1 + 40)){
+				return 3;
+			} else if((x >= x1 && x <= x1 + 40) && (y >= y1 && y <= y1 + 40)){
+				return 4;
+			} else if((x >= x4 && x <= x4 + 40) && (y >= y1 && y <= y1 + 40)){
+				return 5;
+			} else if((x >= x5 && x <= x5 + 40) && (y >= y2 && y <= y2 + 40)){
+				return 6;
+			} else if((x >= x1 && x <= x1 + 40) && (y >= y2 && y <= y2 + 40)){
+				return 7;
+			} else if((x >= x6 && x <= x6 + 40) && (y >= y2 && y <= y2 + 40)){
+				return 8;
+			} else if((x >= x0 && x <= x0 + 40) && (y >= y3 && y <= y3 + 40)){
+				return 9;
+			} else if((x >= x3 && x <= x3 + 40) && (y >= y3 && y <= y3 + 40)){
+				return 10;
+			} else if((x >= x5 && x <= x5 + 40) && (y >= y3 && y <= y3 + 40)){
+				return 11;
+			} else if((x >= x6 && x <= x6 + 40) && (y >= y3 && y <= y3 + 40)){
+				return 12;
+			} else if((x >= x4 && x <= x4 + 40) && (y >= y3 && y <= y3 + 40)){
+				return 13;
+			} else if((x >= x2 && x <= x2 + 40) && (y >= y3 && y <= y3 + 40)){
+				return 14;
+			} else if((x >= x5 && x <= x5 + 40) && (y >= y4 && y <= y4 + 40)){
+				return 15;
+			} else if((x >= x1 && x <= x1 + 40) && (y >= y4 && y <= y4 + 40)){
+				return 16;
+			} else if((x >= x6 && x <= x6 + 40) && (y >= y4 && y <= y4 + 40)){
+				return 17;
+			} else if((x >= x3 && x <= x3 + 40) && (y >= y5 && y <= y5 + 40)){
+				return 18;
+			} else if((x >= x1 && x <= x1 + 40) && (y >= y5 && y <= y5 + 40)){
+				return 19;
+			} else if((x >= x4 && x <= x4 + 40) && (y >= y5 && y <= y5 + 40)){
+				return 20;
+			} else if((x >= x0 && x <= x0 + 40) && (y >= y6 && y <= y6 + 40)){
+				return 21;
+			} else if((x >= x1 && x <= x1 + 40) && (y >= y6 && y <= y6 + 40)){
+				return 22;
+			} else if((x >= x2 && x <= x2 + 40) && (y >= y6 && y <= y6 + 40)){
+				return 23;
+			}
+			return -1;
 		}
 	}
 

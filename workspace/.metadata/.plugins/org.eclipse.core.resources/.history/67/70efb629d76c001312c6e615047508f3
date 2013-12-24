@@ -213,22 +213,55 @@ public class GameController2 {
 		
 		private int x0,x1,x2,x3,x4,x5,x6;
 		private int y0,y1,y2,y3,y4,y5,y6;
-		boolean mill = false;
 		
 		public HumanMouseListener(){
 			initializeCordinates();
 		}
 		
+		boolean mill = false;
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if(result != 2){
+			if(phase.equals(Phase.ONE) || result == 1 || result == -2 || phase.equals(Phase.THREE)){
 				int x = e.getX();
 				int y = e.getY();
+				System.out.println("Clicking");
 				int position = findNodeClicked(x, y);
 				if(p1 instanceof Human2 && p1.getTokenColour() == turn && position != -1){	
-					humanClick(position, p1);
+					System.out.println("In if");
+					if(phase.equals(Phase.ONE) && (result == -1 || result == -2 || result == 0) && !mill){
+						result = mc.addToken(p1.getTokenColour(), position);
+						if(result != -1){
+							gs.lowerPlayerOneCount();
+							gs.addToken(p1.getTokenColour(), position);
+						}
+						if(result == 1){
+							mill = true;
+						}
+					}else if(mill && (result == -1 || result == 1)){
+						result = mc.removeToken(p1.getTokenColour(), position);
+						if(result != -1){
+							gs.removeToken(position);
+							mill = false;
+						}
+					}
 				} else if(p2 instanceof Human2 && p2.getTokenColour() == turn && position != -1){	
-					humanClick(position, p2);
+					System.out.println("In if");
+					if(phase.equals(Phase.ONE) && (result == -1 || result == -2 || result == 0)){
+						result = mc.addToken(p2.getTokenColour(), position);
+						if(result != -1){
+							gs.lowerPlayerTwoCount();
+							gs.addToken(p2.getTokenColour(), position);
+						}
+						if(result == 1){
+							mill = true;
+						}
+					}else if(mill && (result == -1 || result == 1)){
+						result = mc.removeToken(p2.getTokenColour(), position);
+						if(result != -1){
+							gs.removeToken(position);
+							mill = false;
+						}
+					}
 				}
 			}
 			if(!mill && result != -1){
@@ -307,28 +340,7 @@ public class GameController2 {
 			System.out.println("Result: " + result + ", " + phase);
 		}
 
-		private void humanClick(int position, PlayerInterface2 player){
-			if(phase.equals(Phase.ONE) && (result == -1 || result == -2 || result == 0) && !mill){
-				result = mc.addToken(player.getTokenColour(), position);
-				if(result != -1){
-					if(turn == 'R'){
-						gs.lowerPlayerOneCount();
-					}else{
-						gs.lowerPlayerTwoCount();
-					}
-					gs.addToken(player.getTokenColour(), position);
-				}
-				if(result == 1){
-					mill = true;
-				}
-			}else if(mill && (result == -1 || result == 1)){
-				result = mc.removeToken(player.getTokenColour(), position);
-				if(result != -1){
-					gs.removeToken(position);
-					mill = false;
-				}
-			}
-		}
+		
 		
 		private void initializeCordinates() {
 			x0 = 102;

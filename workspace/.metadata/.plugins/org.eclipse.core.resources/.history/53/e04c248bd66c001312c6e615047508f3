@@ -219,12 +219,15 @@ public class GameController2 {
 			initializeCordinates();
 		}
 		
+		
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if(result != 2){
+			if(phase.equals(Phase.ONE) || result == 1 || result == -2 || phase.equals(Phase.THREE)){
 				int x = e.getX();
 				int y = e.getY();
+				
 				int position = findNodeClicked(x, y);
+				
 				if(p1 instanceof Human2 && p1.getTokenColour() == turn && position != -1){	
 					humanClick(position, p1);
 				} else if(p2 instanceof Human2 && p2.getTokenColour() == turn && position != -1){	
@@ -308,10 +311,10 @@ public class GameController2 {
 		}
 
 		private void humanClick(int position, PlayerInterface2 player){
-			if(phase.equals(Phase.ONE) && (result == -1 || result == -2 || result == 0) && !mill){
+			if(phase.equals(Phase.ONE) && (result == -1 || result == -2 || result == 0)){
 				result = mc.addToken(player.getTokenColour(), position);
 				if(result != -1){
-					if(turn == 'R'){
+					if(player.getTokenColour() == 'R'){
 						gs.lowerPlayerOneCount();
 					}else{
 						gs.lowerPlayerTwoCount();
@@ -329,6 +332,7 @@ public class GameController2 {
 				}
 			}
 		}
+		
 		
 		private void initializeCordinates() {
 			x0 = 102;

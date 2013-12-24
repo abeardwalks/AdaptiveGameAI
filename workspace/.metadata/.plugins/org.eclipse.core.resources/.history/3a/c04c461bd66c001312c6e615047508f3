@@ -7,12 +7,13 @@ public interface GameStateInterface2 {
 
 	void addToken(char token, int position);
 	
+
 	void removeToken(int position);
 	
+
 	void moveToken(int x, int y);
 	
 	void lowerPlayerOneCount();
-	
 	void lowerPlayerTwoCount();
 	
 	/**

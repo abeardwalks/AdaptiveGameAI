@@ -221,7 +221,7 @@ public class GameController2 {
 		
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if(result != 2){
+			if(phase.equals(Phase.ONE) || result == 1 || result == -2 || phase.equals(Phase.THREE)){
 				int x = e.getX();
 				int y = e.getY();
 				int position = findNodeClicked(x, y);
