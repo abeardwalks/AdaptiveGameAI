@@ -1,12 +1,11 @@
 package board;
 
 
+import interfaces.GameStateInterface;
+
 import java.util.Collection;
 import java.util.Observable;
 import java.util.Stack;
-
-import view.PlayingView;
-import interfaces.GameStateInterface;
 
 public class MorrisBoard extends Observable implements GameStateInterface {
 	

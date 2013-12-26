@@ -9,6 +9,7 @@ public class EvilAI implements PlayerInterface {
 
 	private final String name = "EvilAI";
 	private char tokenColour;
+	@SuppressWarnings("unused")
 	private GameStateInterface gs;
 	
 	

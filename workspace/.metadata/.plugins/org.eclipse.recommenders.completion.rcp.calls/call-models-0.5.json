@@ -8,5 +8,10 @@
     "location": "C:\\Users\\Andy\\Documents\\CS408\\workspace\\Nine_Mens_Morris\\src",
     "status": "UNRESOLVED",
     "error": "No class path info available for \u0027C:\\Users\\Andy\\Documents\\CS408\\workspace\\Nine_Mens_Morris\\src\u0027. Skipped."
+  },
+  "C:\\Users\\Andy\\Documents\\CS408\\workspace\\NMM_MVC\\src": {
+    "location": "C:\\Users\\Andy\\Documents\\CS408\\workspace\\NMM_MVC\\src",
+    "status": "UNRESOLVED",
+    "error": "No class path info available for \u0027C:\\Users\\Andy\\Documents\\CS408\\workspace\\NMM_MVC\\src\u0027. Skipped."
   }
 }

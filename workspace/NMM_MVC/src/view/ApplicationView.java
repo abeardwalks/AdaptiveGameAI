@@ -1,41 +1,61 @@
 package view;
 
 import java.awt.Color;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 public class ApplicationView extends JFrame {
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -1892187361371589841L;
-//	private Image background;
 
 	public ApplicationView(){
 		setTitle("Nine Mens Morris");
-		setSize(800, 625);
+		setSize(800, 650);
 		setBackground(Color.WHITE);
 		setResizable(false);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-//		try {
-//			background = ImageIO.read(new File("src/NineMensMorris.jpg"));
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
+		addMouseListener(new ml());
 	}
 
 	public void addPane(JPanel panel){
 		this.getContentPane().add(panel);
 	}
 	
-//	public void paint(Graphics g){
-////		g.drawImage(background, 0, 30, null);
-////		super.paint(g);
-////		System.out.println("Height: " + this.getSize().height + ", Width:" + this.getSize().width);
-//	}
+	private class ml implements MouseListener{
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			System.err.println("Mouse X:" + e.getX());
+			System.err.println("Mouse Y:" + e.getY());
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
 
 }

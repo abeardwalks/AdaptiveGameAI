@@ -1,10 +1,6 @@
 package interfaces;
 
 
-import java.util.Observer;
-
-import view.PlayingView;
-
 import board.Phase;
 
 /**

@@ -35,6 +35,7 @@ public class PlayingView extends JPanel implements Observer {
 	private int result;
 	private int playerOneTokens;
 	private int playerTwoTokens;
+	private char turn;
 	
 	private int x0,x1,x2,x3,x4,x5,x6;
 	private int y0,y1,y2,y3,y4,y5,y6;
@@ -42,13 +43,14 @@ public class PlayingView extends JPanel implements Observer {
 	public PlayingView(){
 		super();
 		setOpaque(false);
-		setSize(800,600);
+		setSize(800,650);
 		setBackground(Color.white);
 		
 		gs = "NNNNNNNNNNNNNNNNNNNNNNNN";
 		result = -2;
 		playerOneTokens = 9;
 		playerTwoTokens = 9;
+		turn = 'R';
 		
 		intializeCordinates();
 		
@@ -67,7 +69,7 @@ public class PlayingView extends JPanel implements Observer {
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 			    RenderingHints.VALUE_ANTIALIAS_ON);
 		g2.setColor(Color.white);
-		g2.fillRect(0, 0, 800, 600);
+		g2.fillRect(0, 0, 800, 650);
 		g2.drawImage(board, 95, 0, null);
 		
 		int incrementY = 0;
@@ -359,8 +361,17 @@ public class PlayingView extends JPanel implements Observer {
 			g2.setColor(p2);
 			g2.fillOval(x2 + 5, y6 + 5, tokenWidth - 10, tokenWidth - 10);
 		}
-
 		
+			g2.setColor(Color.black);
+		if(turn == 'R'){
+			g2.fillOval(35, 540, tokenWidth, tokenWidth);
+			g2.setColor(Color.gray);
+			g2.fillOval(40, 545, tokenWidth - 10, tokenWidth - 10);
+		}else{
+			g2.fillOval(710, 540, tokenWidth, tokenWidth);
+			g2.setColor(Color.gray);
+			g2.fillOval(715, 545, tokenWidth - 10, tokenWidth - 10);
+		}
 		super.paint(g2);
 		
 	}
@@ -372,6 +383,7 @@ public class PlayingView extends JPanel implements Observer {
 		result = bd.getResult();
 		playerOneTokens = bd.getPlayerOneRemaining();
 		playerTwoTokens = bd.getPlayerTwoRemaining();
+		turn = bd.getTurn();
 		repaint();
 	}
 	

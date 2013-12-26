@@ -53,7 +53,6 @@ public class RandomAI implements PlayerInterface, Observer {
 
 		if(turn == tokenColour){
 			System.out.println("In If: " + tokenColour);
-			int lastResult = result;
 			int node;
 			boolean nodeFound = true;
 			if(phase.equals(Phase.ONE)){

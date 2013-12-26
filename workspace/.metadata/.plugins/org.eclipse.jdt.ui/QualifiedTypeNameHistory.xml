@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="java.lang.Throwable"/>
 <fullyQualifiedTypeName name="java.util.ArrayList"/>
 <fullyQualifiedTypeName name="java.lang.reflect.Constructor"/>
 <fullyQualifiedTypeName name="view.GameView"/>
@@ -21,21 +20,17 @@
 <fullyQualifiedTypeName name="java.awt.Insets"/>
 <fullyQualifiedTypeName name="javax.swing.JPanel"/>
 <fullyQualifiedTypeName name="java.awt.Image"/>
-<fullyQualifiedTypeName name="java.awt.Graphics"/>
 <fullyQualifiedTypeName name="java.awt.Graphics2D"/>
 <fullyQualifiedTypeName name="controller.GameController.HumanPlayerListener"/>
 <fullyQualifiedTypeName name="java.awt.RenderingHints"/>
-<fullyQualifiedTypeName name="java.awt.Color"/>
 <fullyQualifiedTypeName name="board.MorrisBoard.boardDetails"/>
 <fullyQualifiedTypeName name="players.Human"/>
 <fullyQualifiedTypeName name="java.lang.System"/>
 <fullyQualifiedTypeName name="java.util.Observable"/>
-<fullyQualifiedTypeName name="controller.GameController.HumanMouseListener"/>
 <fullyQualifiedTypeName name="players.AbstractPlayer"/>
 <fullyQualifiedTypeName name="players.SimpleAI"/>
 <fullyQualifiedTypeName name="java.lang.AbstractMethodError"/>
 <fullyQualifiedTypeName name="interfaces.AbstractPlayer"/>
-<fullyQualifiedTypeName name="java.awt.event.MouseListener"/>
 <fullyQualifiedTypeName name="java.lang.Runnable"/>
 <fullyQualifiedTypeName name="board.BoardDetails"/>
 <fullyQualifiedTypeName name="java.lang.Thread"/>
@@ -48,7 +43,6 @@
 <fullyQualifiedTypeName name="controller.MoveChecker"/>
 <fullyQualifiedTypeName name="view.SetupView"/>
 <fullyQualifiedTypeName name="controller.GameController2.SetupActionListener"/>
-<fullyQualifiedTypeName name="view.PlayingView"/>
 <fullyQualifiedTypeName name="java.util.Observer"/>
 <fullyQualifiedTypeName name="interfaces.PlayerInterface2"/>
 <fullyQualifiedTypeName name="view.SetupView2"/>
@@ -60,4 +54,10 @@
 <fullyQualifiedTypeName name="controller.players.Human2"/>
 <fullyQualifiedTypeName name="model.Phase"/>
 <fullyQualifiedTypeName name="java.lang.SuppressWarnings"/>
+<fullyQualifiedTypeName name="java.awt.event.MouseListener"/>
+<fullyQualifiedTypeName name="view.PlayingView"/>
+<fullyQualifiedTypeName name="java.awt.Color"/>
+<fullyQualifiedTypeName name="java.awt.event.MouseMotionListener"/>
+<fullyQualifiedTypeName name="controller.GameController.HumanMouseListener"/>
+<fullyQualifiedTypeName name="java.awt.Graphics"/>
 </qualifiedTypeNameHistroy>

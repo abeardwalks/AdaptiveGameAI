@@ -1,15 +1,13 @@
 package players;
 
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import interfaces.GameStateInterface;
+import interfaces.PlayerInterface;
+
 import java.util.Observable;
 import java.util.Observer;
 
 import board.BoardDetails;
 import board.Phase;
-
-import interfaces.GameStateInterface;
-import interfaces.PlayerInterface;
 
 public class Human implements PlayerInterface, Observer{
 	

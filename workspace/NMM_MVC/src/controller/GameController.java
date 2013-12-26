@@ -4,10 +4,13 @@ import interfaces.GameStateInterface;
 import interfaces.IntPairInterface;
 import interfaces.PlayerInterface;
 
+//import java.awt.Color;
+//import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -21,7 +24,7 @@ import model.Phase;
 import model.board.MorrisBoard;
 import view.ApplicationView;
 import view.PlayingView;
-import view.SetupView2;
+import view.SetupView;
 
 public class GameController {
 	
@@ -29,7 +32,7 @@ public class GameController {
 	private ApplicationView primaryView;
 	private Thread thread;
 	private PlayingView gameView;
-	private SetupView2 setupView;
+	private SetupView setupView;
 	private PlayerInterface p1;
 	private PlayerInterface p2;
 	private char turn;
@@ -49,11 +52,12 @@ public class GameController {
 		mc = new MoveChecker();
 		phase = Phase.ONE;
 		millMade = false;
-		setupView = new SetupView2(new SetupActionListener(), players1, players2);
+		setupView = new SetupView(new SetupActionListener(), players1, players2);
 		primaryView.addPane(setupView);
 		
 		gameView = new PlayingView();
 		gameView.addMouseListener(new HumanMouseListener());
+		gameView.addMouseMotionListener(new HumanMouseListener());
 		((Observable) gs).addObserver(gameView);
 		
 		primaryView.setVisible(true);
@@ -162,6 +166,7 @@ public class GameController {
 			}else{
 				turn = 'R';
 			}
+			gs.setTurn();
 		}
 	}
 	
@@ -199,14 +204,16 @@ public class GameController {
 		}
 	}
 	
-	private class HumanMouseListener implements MouseListener {
+	private class HumanMouseListener implements MouseListener, MouseMotionListener {
 		
-		int x = 0;
-		int y = 0;
+		private int x = 0;
+		private int y = 0;
+		
 		
 		private int x0,x1,x2,x3,x4,x5,x6;
 		private int y0,y1,y2,y3,y4,y5,y6;
 		boolean mill = false;
+//		private Graphics g;
 		
 		public HumanMouseListener(){
 			initializeCordinates();
@@ -230,6 +237,7 @@ public class GameController {
 				}else{
 					turn = 'R';
 				}
+				gs.setTurn();
 			}
 			phase = mc.getPhase();
 		}
@@ -294,6 +302,7 @@ public class GameController {
 				}else{
 					turn = 'R';
 				}
+				gs.setTurn();
 			}
 			
 			phase = mc.getPhase();
@@ -392,6 +401,29 @@ public class GameController {
 				return 23;
 			}
 			return -1;
+		}
+
+		@Override
+		public void mouseDragged(MouseEvent e) {
+		}
+
+		@Override
+		public void mouseMoved(MouseEvent e) {
+//			System.out.println("mmmeeeehhh");
+//			int x = e.getX();
+//			int y = e.getY();
+//			int position = findNodeClicked(x, y);
+//			if(position != -1){
+//				if(phase.equals(Phase.ONE) && !mill){
+//					System.out.println("Paiting..");
+//					g = gameView.getGraphics();
+//					g.setColor(Color.red);
+//					g.fillOval(100, 100, 50, 50);
+//					gameView.repaint();
+//					
+//				}
+//			}
+//			
 		}
 	}
 

@@ -9,6 +9,7 @@ public class SimpleAI implements PlayerInterface{
 	
 	private final String name = "SimpleAI";
 	private char tokenColour;
+	@SuppressWarnings("unused")
 	private GameStateInterface gs;
 	
 

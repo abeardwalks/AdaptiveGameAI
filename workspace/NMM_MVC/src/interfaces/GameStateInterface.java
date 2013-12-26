@@ -15,6 +15,8 @@ public interface GameStateInterface {
 	
 	void lowerPlayerTwoCount();
 	
+	void setTurn();
+	
 	/**
 	 * Returns the string representation of the game state.
 	 * 

@@ -113,4 +113,17 @@ public class MorrisBoard extends Observable implements GameStateInterface {
 		playerTwoTokensToPlace--;
 	}
 
+
+	@Override
+	public void setTurn() {
+		if(turn == 'R'){
+			turn = 'B';
+		}else{
+			turn = 'R';
+		}
+		BoardDetails details = new BoardDetails(state, 2, playerOneTokensToPlace, playerTwoTokensToPlace, turn); //for MVC
+		setChanged();
+		notifyObservers(details);	//for MVC
+	}
+
 }
