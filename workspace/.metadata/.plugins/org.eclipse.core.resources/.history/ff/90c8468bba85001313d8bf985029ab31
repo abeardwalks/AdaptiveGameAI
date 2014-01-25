@@ -1,0 +1,110 @@
+package transposer;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Set;
+
+import controller.MoveChecker;
+
+public class TranspositionGenerator {
+
+	private MoveChecker mc;
+	private char turn;
+	
+	private ArrayList<String> states;
+	private HashMap<String, Integer> nextStates;
+	private HashMap<String, Integer> workingStateSet;
+	
+	private int depth;
+	private boolean checkForTerminals;
+	private boolean onlyTerminalsLeft;
+	
+	
+	public TranspositionGenerator(){
+		mc = new MoveChecker();
+		turn = 'R';
+		
+		states = new ArrayList<String>();
+		states.add("NNNNNNNNNNNNNNNNNNNNNNNN");
+		
+		nextStates = new HashMap<String, Integer>();
+		
+		workingStateSet = new HashMap<String, Integer>();
+		workingStateSet.put("NNNNNNNNNNNNNNNNNNNNNNNN", -1);
+		
+		depth = 0;
+		checkForTerminals = false;
+		onlyTerminalsLeft = false;
+		
+	}
+	
+	public void generateTable(){
+		
+		
+		while(!onlyTerminalsLeft){
+			Set<String> keys = workingStateSet.keySet();
+			for (String state : keys) {
+				Integer action = workingStateSet.get(state);
+				nextStates(state, action);
+			}
+			depth++;
+			if(depth == 18 && !checkForTerminals){
+				checkForTerminals = true;
+			}
+		}
+		
+	}
+	
+	public void nextStates(String state, int action){
+		
+	}
+	
+	public ArrayList<String> allPossiblePlacements(){
+		ArrayList<String> placements = new ArrayList<String>();
+		
+		
+		
+		return placements;
+		
+	}
+	
+	public ArrayList<String> allPossibleRemovals(){
+		ArrayList<String> removals = new ArrayList<String>();
+		
+		
+		
+		return removals;
+		
+	}
+	
+	public ArrayList<String> allPossibleMoves(){
+		ArrayList<String> moves = new ArrayList<String>();
+		
+		
+		
+		return moves;
+		
+	}
+	
+	public void copyNextStatesOver(){
+		workingStateSet.clear();
+		for (String state : nextStates) {
+			boolean found = false;
+			for (String concreteState : nextStates) {
+				if(state.equals(concreteState)){
+					found = true;
+				}
+			}
+			if(!found){
+				states.add(state);
+				workingStateSet.add(state);
+			}
+		}
+		nextStates.clear();
+	}
+	
+	public void checkTerminals(){
+		
+	}
+	
+}
