@@ -1,12 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="view.GameView"/>
-<fullyQualifiedTypeName name="controller.GameController"/>
-<fullyQualifiedTypeName name="board.MorrisBoard"/>
-<fullyQualifiedTypeName name="java.awt.event.MouseAdapter"/>
-<fullyQualifiedTypeName name="java.awt.event.MouseEvent"/>
-<fullyQualifiedTypeName name="controller.GameController.SetupMouseListener"/>
-<fullyQualifiedTypeName name="java.awt.event.ActionEvent"/>
 <fullyQualifiedTypeName name="javax.swing.plaf.basic.BasicOptionPaneUI.ButtonActionListener"/>
 <fullyQualifiedTypeName name="javax.swing.JComboBox"/>
 <fullyQualifiedTypeName name="java.awt.event.ActionListener"/>
@@ -60,4 +53,11 @@
 <fullyQualifiedTypeName name="java.util.ArrayList"/>
 <fullyQualifiedTypeName name="interfaces.IntPairInterface"/>
 <fullyQualifiedTypeName name="java.util.HashMap"/>
+<fullyQualifiedTypeName name="java.io.BufferedWriter"/>
+<fullyQualifiedTypeName name="java.io.FileWriter"/>
+<fullyQualifiedTypeName name="java.io.IOException"/>
+<fullyQualifiedTypeName name="java.io.PrintWriter"/>
+<fullyQualifiedTypeName name="java.security.acl.LastOwnerException"/>
+<fullyQualifiedTypeName name="transposer.TranspositionGenerator"/>
+<fullyQualifiedTypeName name="transposer.TranposeWriter"/>
 </qualifiedTypeNameHistroy>

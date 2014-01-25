@@ -15,9 +15,14 @@ public class TranspositionGenerator {
 	private HashMap<String, Integer> nextStates;
 	private HashMap<String, Integer> workingStateSet;
 	
+	
 	private int depth;
 	private boolean checkForTerminals;
 	private boolean onlyTerminalsLeft;
+	
+	private TranposeWriter tw;
+	private int sizeLastWrite;
+	
 	
 	
 	public TranspositionGenerator(){
@@ -36,6 +41,9 @@ public class TranspositionGenerator {
 		checkForTerminals = false;
 		onlyTerminalsLeft = false;
 		
+		tw = new TranposeWriter();
+		sizeLastWrite = 0;
+		
 	}
 	
 	public void generateTable(){
@@ -51,10 +59,34 @@ public class TranspositionGenerator {
 			if(depth == 18 && !checkForTerminals){
 				checkForTerminals = true;
 			}
+			copyNextStatesOver();
+			if((states.size()%100000) == 0){
+				writeDate();
+			}
 		}
 		
 	}
 	
+	private void writeDate() {
+//		int batchStart = states.size()/100000;
+		
+		int rangeStart = states.size() - sizeLastWrite;
+		sizeLastWrite = states.size();
+		
+		Set<String> stateKeys = states.keySet();
+		String[] keys = (String[]) stateKeys.toArray();
+	
+		ArrayList<String> stateStrings = new ArrayList<String>();
+		
+		while(rangeStart < states.size()){
+			String sString = keys[rangeStart] + ": " + states.get(keys[rangeStart]);
+			stateStrings.add(sString);
+			rangeStart++;
+		}
+		
+		tw.writeFile(stateStrings);
+	}
+
 	public void nextStates(String state, int action){
 		ArrayList<String> nStates = new ArrayList<String>();
 		
@@ -62,13 +94,37 @@ public class TranspositionGenerator {
 			nStates = allPossiblePlacements(state);
 		}else if(action == 1){
 			nStates = allPossibleRemovals(state);
+		}else if(action == 0 && depth >= 18){
+			nStates = allPossibleMoves(state);
+		}
+		
+		String nxtStates = "";
+		for (String string : nStates) {
+			nxtStates += string + ", ";
+			
+		}
+		
+		states.put(state, nxtStates);
+		if(turn == 'R'){
+			turn = 'B';
+		}else{
+			turn = 'R';
 		}
 		
 	}
 	
 	public ArrayList<String> allPossiblePlacements(String state){
 		ArrayList<String> placements = new ArrayList<String>();
+	
+		mc.setState(state);
 		
+		int position = 0;
+		while(position < 24){
+			int result = mc.addToken(turn, position);
+			if(result > -1){
+				
+			}
+		}
 		
 		
 		return placements;
@@ -98,13 +154,13 @@ public class TranspositionGenerator {
 		Set<String> nextStateKeys = nextStates.keySet();
 		for (String state : nextStateKeys) {
 			boolean found = false;
-			for (String concreteState : states) {
+			Set<String> concreteStateKeys = states.keySet();
+			for (String concreteState : concreteStateKeys) {
 				if(state.equals(concreteState)){
 					found = true;
 				}
 			}
 			if(!found){
-				states.add(state);
 				int action = nextStates.get(state);
 				workingStateSet.put(state, action);
 			}
