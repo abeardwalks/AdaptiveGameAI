@@ -12,6 +12,7 @@ public class MoveChecker {
 	private static final int STRING_LENGTH = 23;
 	private Phase gamePhase;
 	private int playerOneTokensToPlace, playerTwoTokensToPlace, playerOneTokensRemaining, playerTwoTokensRemaining;
+	private boolean moveAnywhere;
 
 	
 	public MoveChecker(){
@@ -26,6 +27,8 @@ public class MoveChecker {
 		playerTwoTokensToPlace = 9;
 		playerOneTokensRemaining = 9;
 		playerTwoTokensRemaining = 9;
+		
+		moveAnywhere = false;
 
 	}
 
@@ -107,7 +110,13 @@ public class MoveChecker {
 	public int moveToken(char token, int x, int y) {
 		Integer result = 0;			//for MVC
 		char[] stateArray = state.toCharArray();
-			
+		
+		if(token == 'R' && playerOneTokensRemaining == 3){
+			moveAnywhere = true;
+		}else if(token == 'B' && playerTwoTokensRemaining == 3){
+			moveAnywhere = true;
+		}
+		
 		if((stateArray[x] == token) && validMove(x, y)){
 			stateArray[x] = 'N';
 			stateArray[y] = token;
@@ -124,7 +133,7 @@ public class MoveChecker {
 		if(gameWon()){
 			result = 2;				
 		}
-			
+		moveAnywhere = false;
 		return result;
 	}
 	
@@ -330,7 +339,7 @@ public class MoveChecker {
 			return false;
 		}
 		
-		if(gamePhase == Phase.THREE){
+		if(gamePhase == Phase.THREE && moveAnywhere){
 			return true;
 		}
 
@@ -465,6 +474,26 @@ public class MoveChecker {
 	
 	public Phase getPhase(){
 		return gamePhase;
+	}
+	
+	public String getState(){
+		return state;
+	}
+
+
+	public void reset() {
+		state = "NNNNNNNNNNNNNNNNNNNNNNNN";
+		history = new Stack<String>();
+		history.add(state);
+		
+		gamePhase = Phase.ONE;
+		
+		playerOneTokensToPlace = 9;
+		playerTwoTokensToPlace = 9;
+		playerOneTokensRemaining = 9;
+		playerTwoTokensRemaining = 9;
+		
+		moveAnywhere = false;
 	}
 
 }

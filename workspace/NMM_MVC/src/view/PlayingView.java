@@ -372,6 +372,7 @@ public class PlayingView extends JPanel implements Observer {
 			g2.setColor(Color.gray);
 			g2.fillOval(715, 545, tokenWidth - 10, tokenWidth - 10);
 		}
+		System.out.println("painting");
 		super.paint(g2);
 		
 	}

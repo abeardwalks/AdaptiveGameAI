@@ -8,6 +8,8 @@ import interfaces.PlayerInterface;
 //import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -23,6 +25,7 @@ import players.Human;
 import model.Phase;
 import model.board.MorrisBoard;
 import view.ApplicationView;
+import view.PauseView;
 import view.PlayingView;
 import view.SetupView;
 
@@ -33,6 +36,7 @@ public class GameController {
 	private Thread thread;
 	private PlayingView gameView;
 	private SetupView setupView;
+	private PauseView pauseView;
 	private PlayerInterface p1;
 	private PlayerInterface p2;
 	private char turn;
@@ -40,10 +44,13 @@ public class GameController {
 	private Phase phase;
 	private int result;
 	private boolean millMade;
+	private boolean showPauseMenu;
 	
 	public GameController(){
 		
 		primaryView = new ApplicationView();
+		primaryView.setFocusable(true);
+		primaryView.addKeyListener(new HumanKeyListened());
 		List<PlayerInterface> players1 = getPlayers();
 		List<PlayerInterface> players2 = getPlayers();
 		gs = new MorrisBoard();
@@ -53,11 +60,17 @@ public class GameController {
 		phase = Phase.ONE;
 		millMade = false;
 		setupView = new SetupView(new SetupActionListener(), players1, players2);
-		primaryView.addPane(setupView);
+		primaryView.add(setupView);
 		
 		gameView = new PlayingView();
 		gameView.addMouseListener(new HumanMouseListener());
 		gameView.addMouseMotionListener(new HumanMouseListener());
+		gameView.addKeyListener(new HumanKeyListened());
+		gameView.setFocusable(true);
+		
+		pauseView = new PauseView(new PauseMenuListener());
+		showPauseMenu = false;
+		
 		((Observable) gs).addObserver(gameView);
 		
 		primaryView.setVisible(true);
@@ -80,7 +93,7 @@ public class GameController {
 			}
 		});
 
-		primaryView.addPane(gameView);
+		primaryView.add(gameView);
 		primaryView.repaint();
 		thread.start();
 	}
@@ -112,8 +125,8 @@ public class GameController {
 	}
 	
 	private void executeMove(char tokenColour, PlayerInterface player){
-		boolean played = false;
-		while(!played){
+		boolean notPlayed = true;
+		while(notPlayed){
 			if(phase.equals(Phase.ONE) && (result == -2 || result == 0 || result == -1)){
 				int position = player.placeToken(gs.getState());
 				result = mc.addToken(tokenColour, position);
@@ -124,6 +137,7 @@ public class GameController {
 						gs.lowerPlayerTwoCount();
 					}
 					gs.addToken(tokenColour, position);
+					System.out.println("Result: " + result + ", " + phase);
 				}
 				if(result == 1){
 					millMade = true;
@@ -134,6 +148,7 @@ public class GameController {
 				result = mc.moveToken(tokenColour, ip.getFirstInt(), ip.getSecondInt());
 				if(result == 0 || result == 1){
 					gs.moveToken(ip.getFirstInt(), ip.getSecondInt());
+					System.out.println("Result: " + result + ", " + phase);
 				}
 				if(result == 1){
 					millMade = true;
@@ -151,22 +166,24 @@ public class GameController {
 					}
 					millMade = false;
 					gs.removeToken(position);
+					System.out.println("Result: " + result + ", " + phase);
 				}
 			}
 			
-			if(result == 0 ){
-				played = true;
+			if(result == 0){
+				notPlayed = false;
 				phase = mc.getPhase();
 				System.out.println(phase);
+				if(turn == 'R'){
+					turn = 'B';
+				}else{
+					turn = 'R';
+				}
+				gs.setTurn();
 			}
 		}
 		if(!millMade){
-			if(turn == 'R'){
-				turn = 'B';
-			}else{
-				turn = 'R';
-			}
-			gs.setTurn();
+			
 		}
 	}
 	
@@ -204,7 +221,87 @@ public class GameController {
 		}
 	}
 	
-	private class HumanMouseListener implements MouseListener, MouseMotionListener {
+	private class PauseMenuListener implements ActionListener {
+		public void actionPerformed(ActionEvent e){
+			String action = e.getActionCommand();
+			if(action.equals("resume")){
+				showPauseMenu = false;
+				showPauseMenu();
+			}else if(action.equals("reset")){
+				reset();
+				thread.suspend();
+				start();
+			}else if(action.equals("setup")){
+				showPauseMenu = false;
+				reset();
+				thread.suspend();
+				primaryView.remove(gameView);
+				primaryView.add(setupView);
+			}else if(action.equals("quit")){
+				System.exit(0);
+			}
+		}
+	}
+	
+	private void reset(){
+		mc.reset();
+		turn = 'R';
+		result = -2;
+		phase = Phase.ONE;
+		millMade = false;
+		showPauseMenu = false;
+		showPauseMenu();
+		gs.reset();
+	}
+	
+	private class HumanKeyListened implements KeyListener{
+
+		@Override
+		public void keyPressed(KeyEvent e) {
+		}
+
+		@Override
+		public void keyReleased(KeyEvent e) {
+			System.out.println("Key Released " + e.getKeyCode());
+			
+			if(e.getKeyCode() == 27){
+				if(showPauseMenu){
+					showPauseMenu = false;
+				}else{
+					showPauseMenu = true;
+				}
+				showPauseMenu();
+			}
+		}
+
+
+		@Override
+		public void keyTyped(KeyEvent e) {
+		}
+		
+	}
+	private void showPauseMenu() {
+		if(showPauseMenu){
+			thread.suspend();
+			gameView.setEnabled(false);
+			pauseView.setEnabled(true);
+			pauseView.setVisible(true);
+			primaryView.remove(gameView);
+			primaryView.add(pauseView);
+			primaryView.addPane(pauseView);
+			primaryView.add(gameView);
+			primaryView.repaint();
+//			pauseView.repaint();
+		}else{
+			thread.resume();
+			pauseView.setEnabled(false);
+			pauseView.setVisible(false);
+			primaryView.remove(pauseView);
+			primaryView.repaint();
+		}
+	}
+	
+	private class HumanMouseListener implements MouseListener, MouseMotionListener{
 		
 		private int x = 0;
 		private int y = 0;
@@ -231,14 +328,7 @@ public class GameController {
 					humanClick(position, p2);
 				}
 			}
-			if(!mill && result != -1){
-				if(turn == 'R'){
-					turn = 'B';
-				}else{
-					turn = 'R';
-				}
-				gs.setTurn();
-			}
+			
 			phase = mc.getPhase();
 		}
 
@@ -281,6 +371,7 @@ public class GameController {
 						if(result == 1){
 							mill = true;
 						}
+						System.out.println("Result: " + result + ", " + phase);
 					}
 				} else if((p2 instanceof Human && p2.getTokenColour() == turn) && (firstNode != -1 && secondNode != -1)){	
 					System.out.println("Above to move");
@@ -290,6 +381,7 @@ public class GameController {
 							System.out.println("Made move...");
 							gs.moveToken(firstNode, secondNode);
 						}
+						System.out.println("Result: " + result + ", " + phase);
 						if(result == 1){
 							mill = true;
 						}
@@ -306,7 +398,7 @@ public class GameController {
 			}
 			
 			phase = mc.getPhase();
-			System.out.println("Result: " + result + ", " + phase);
+			
 		}
 
 		private void humanClick(int position, PlayerInterface player){
@@ -320,6 +412,7 @@ public class GameController {
 					}
 					gs.addToken(player.getTokenColour(), position);
 				}
+				System.out.println("Result: " + result + ", " + phase);
 				if(result == 1){
 					mill = true;
 				}
@@ -327,8 +420,19 @@ public class GameController {
 				result = mc.removeToken(player.getTokenColour(), position);
 				if(result != -1){
 					gs.removeToken(position);
+					
 					mill = false;
 				}
+				System.out.println("Result: " + result + ", " + phase);
+			}
+			if(!mill && result != -1 && result != -2){
+				System.out.println("Setting Turn");
+				if(turn == 'R'){
+					turn = 'B';
+				}else{
+					turn = 'R';
+				}
+				gs.setTurn();
 			}
 		}
 		
@@ -425,6 +529,7 @@ public class GameController {
 //			}
 //			
 		}
+
 	}
 
 

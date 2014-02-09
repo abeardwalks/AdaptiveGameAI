@@ -1,6 +1,8 @@
 package view;
 
 import java.awt.Color;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -18,11 +20,13 @@ public class ApplicationView extends JFrame {
 		setResizable(false);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		addMouseListener(new ml());
+		System.out.println();
 	}
 
 	public void addPane(JPanel panel){
 		this.getContentPane().add(panel);
 	}
+	
 	
 	private class ml implements MouseListener{
 

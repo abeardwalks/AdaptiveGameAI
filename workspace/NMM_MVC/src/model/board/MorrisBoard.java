@@ -77,6 +77,21 @@ public class MorrisBoard extends Observable implements GameStateInterface {
 
 	@Override
 	public void reset() {
+		state = "NNNNNNNNNNNNNNNNNNNNNNNN";
+		history = new Stack<String>();
+		history.add(state);
+		
+		gamePhase = Phase.ONE;
+		
+		playerOneTokensToPlace = 9;
+		playerTwoTokensToPlace = 9;
+		playerOneTokensRemaining = 9;
+		playerTwoTokensRemaining = 9;
+		won = false;
+		turn = 'R';
+		BoardDetails details = new BoardDetails(state, 2, playerOneTokensToPlace, playerTwoTokensToPlace, turn); //for MVC
+		setChanged();
+		notifyObservers(details);	//for MVC
 	}
 
 	@Override
@@ -121,6 +136,7 @@ public class MorrisBoard extends Observable implements GameStateInterface {
 		}else{
 			turn = 'R';
 		}
+		System.out.println("Turn: " + turn);
 		BoardDetails details = new BoardDetails(state, 2, playerOneTokensToPlace, playerTwoTokensToPlace, turn); //for MVC
 		setChanged();
 		notifyObservers(details);	//for MVC
