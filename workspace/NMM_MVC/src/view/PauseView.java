@@ -9,7 +9,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.filechooser.FileView;
 
 public class PauseView extends JPanel{
 
@@ -44,7 +43,6 @@ public class PauseView extends JPanel{
 	}
 
 	public void paint(Graphics g){
-		System.out.println("Painting pause");
 		Graphics2D g2 = (Graphics2D)g;
 		g2.setColor(new Color(255, 255, 255, 200));
 		g2.fillRect(310, 225, 170, 200);

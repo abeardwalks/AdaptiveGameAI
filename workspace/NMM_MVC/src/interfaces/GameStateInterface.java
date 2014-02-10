@@ -52,4 +52,6 @@ public interface GameStateInterface {
 	 */
 	void redo();
 
+	void setResult(int result);
+
 }

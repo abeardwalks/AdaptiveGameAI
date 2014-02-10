@@ -16,6 +16,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -30,6 +31,7 @@ public class SetupView extends JPanel implements ActionListener{
 	private JLabel playerOneLabel, playerTwoLabel;
 	private JComboBox<String> playerOneSelect, playerTwoSelect;
 	private JButton start;
+	private JCheckBox toolTip;
 	private PlayerInterface playerOne, playerTwo;
 	private Image background;
 
@@ -61,6 +63,10 @@ public class SetupView extends JPanel implements ActionListener{
 		
 		start = new JButton("Start");
 		start.addActionListener(a);
+		
+		toolTip = new JCheckBox("Tooltips");
+		toolTip.setBackground(Color.white);
+		
 		
 		fillView();
 		this.players1 = players12;
@@ -106,6 +112,9 @@ public class SetupView extends JPanel implements ActionListener{
 		
 		this.add(start);
 		
+		size = toolTip.getPreferredSize();
+		toolTip.setBounds(360 + insets.left, 340 + insets.top, size.width, size.height);
+		this.add(toolTip);
 		
 	}
 
@@ -128,6 +137,10 @@ public class SetupView extends JPanel implements ActionListener{
 	
 	public PlayerInterface getPlayerTwo(){
 		return playerTwo;
+	}
+	
+	public boolean getShowToolTip(){
+		return toolTip.isSelected();
 	}
 
 }

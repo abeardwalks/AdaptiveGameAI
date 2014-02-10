@@ -31,7 +31,6 @@ public class PlayingView extends JPanel implements Observer {
 	private final int p2StartY = 15;
 	
 	private String gs;
-	@SuppressWarnings("unused")
 	private int result;
 	private int playerOneTokens;
 	private int playerTwoTokens;
@@ -39,6 +38,9 @@ public class PlayingView extends JPanel implements Observer {
 	
 	private int x0,x1,x2,x3,x4,x5,x6;
 	private int y0,y1,y2,y3,y4,y5,y6;
+	
+	private boolean showToolTip;
+	private String toolTip;
 	
 	public PlayingView(){
 		super();
@@ -54,6 +56,8 @@ public class PlayingView extends JPanel implements Observer {
 		
 		intializeCordinates();
 		
+		toolTip = "Player One (Orange) to place, click an empty node to play...";
+		
 		try {
 			board = ImageIO.read(new File("src/NineMensMorris.jpg"));
 		} catch (IOException e) {
@@ -62,6 +66,9 @@ public class PlayingView extends JPanel implements Observer {
 		}
 	}
 	
+	public void setToolTip(boolean showToolTip){
+		this.showToolTip = showToolTip;
+	}
 
 
 	public void paint(Graphics g){
@@ -372,7 +379,11 @@ public class PlayingView extends JPanel implements Observer {
 			g2.setColor(Color.gray);
 			g2.fillOval(715, 545, tokenWidth - 10, tokenWidth - 10);
 		}
-		System.out.println("painting");
+		
+		if(showToolTip){				//change to Show Tool Tip
+			g2.drawString(toolTip, 25, 635);
+		}
+		
 		super.paint(g2);
 		
 	}
@@ -385,6 +396,27 @@ public class PlayingView extends JPanel implements Observer {
 		playerOneTokens = bd.getPlayerOneRemaining();
 		playerTwoTokens = bd.getPlayerTwoRemaining();
 		turn = bd.getTurn();
+		
+		if(result == 0 && turn == 'R'){
+			if(playerTwoTokens == 0){
+				toolTip = "Player Two (Blue) to move, please click and drag a blue token to an empty node...";
+			}else{
+				toolTip = "Player Two (Blue) to place, click an empty node to play...";
+			}
+		}else if(result == 0){
+			if(playerOneTokens == 0){
+				toolTip = "Player One (Orange) to move, please click and drag a orange token to an empty node...";
+			}else{
+				toolTip = "Player One (Orange) to place, click an empty node to play...";
+			}
+		}else if(result == 1 && turn == 'R'){
+			toolTip = "Player One (Orange) to remove, please click on a Blue piece to remove it from the game...";
+		}else if(result == 1){
+			toolTip = "Player Two (Blue) to remove, please click on a Orange piece to remove it from the game...";
+		}else if(result == 2){
+			toolTip = "The Game has been Won, hazzah!";
+		}
+		
 		repaint();
 	}
 	

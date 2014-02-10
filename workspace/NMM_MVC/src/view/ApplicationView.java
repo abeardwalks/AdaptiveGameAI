@@ -1,8 +1,6 @@
 package view;
 
 import java.awt.Color;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -15,7 +13,7 @@ public class ApplicationView extends JFrame {
 
 	public ApplicationView(){
 		setTitle("Nine Mens Morris");
-		setSize(800, 650);
+		setSize(800, 670);
 		setBackground(Color.WHITE);
 		setResizable(false);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);

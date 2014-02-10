@@ -217,11 +217,13 @@ public class GameController {
 	
 	private class SetupActionListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
+			gameView.setToolTip(setupView.getShowToolTip());
 			start();
 		}
 	}
 	
 	private class PauseMenuListener implements ActionListener {
+		@SuppressWarnings("deprecation")
 		public void actionPerformed(ActionEvent e){
 			String action = e.getActionCommand();
 			if(action.equals("resume")){
@@ -280,24 +282,29 @@ public class GameController {
 		}
 		
 	}
+	@SuppressWarnings("deprecation")
 	private void showPauseMenu() {
 		if(showPauseMenu){
-			thread.suspend();
-			gameView.setEnabled(false);
-			pauseView.setEnabled(true);
-			pauseView.setVisible(true);
-			primaryView.remove(gameView);
-			primaryView.add(pauseView);
-			primaryView.addPane(pauseView);
-			primaryView.add(gameView);
-			primaryView.repaint();
+			if(thread.isAlive()){
+				thread.suspend();
+				gameView.setEnabled(false);
+				pauseView.setEnabled(true);
+				pauseView.setVisible(true);
+				primaryView.remove(gameView);
+				primaryView.add(pauseView);
+				primaryView.addPane(pauseView);
+				primaryView.add(gameView);
+				primaryView.repaint();
+			}
 //			pauseView.repaint();
 		}else{
-			thread.resume();
-			pauseView.setEnabled(false);
-			pauseView.setVisible(false);
-			primaryView.remove(pauseView);
-			primaryView.repaint();
+			if(thread.isAlive()){
+				thread.resume();
+				pauseView.setEnabled(false);
+				pauseView.setVisible(false);
+				primaryView.remove(pauseView);
+				primaryView.repaint();
+			}
 		}
 	}
 	
@@ -352,20 +359,16 @@ public class GameController {
 		public void mouseReleased(MouseEvent e) {
 			
 			if((phase.equals(Phase.TWO) || phase.equals(Phase.THREE)) && (result == 0 || result == -1)){
-				System.out.println("Moving phase");
 				int x2 = e.getX();
 				int y2 = e.getY();
 				int firstNode = findNodeClicked(x, y);
 				int secondNode = findNodeClicked(x2, y2);
-				System.out.println("Node One: " + firstNode + ", Second Node: " + secondNode); 
 				System.err.println(turn);
 				if((p1 instanceof Human && p1.getTokenColour() == turn) && (firstNode != -1 && secondNode != -1)){
-					System.out.println("Above to move");
 					if(result == -1 || result == 0){
 						result = mc.moveToken(p1.getTokenColour(), firstNode, secondNode);
-						System.err.println("Result of move: " + result);
 						if(result != -1){
-							System.out.println("Made move...");
+							gs.setResult(result);
 							gs.moveToken(firstNode, secondNode);
 						}
 						if(result == 1){
@@ -374,11 +377,10 @@ public class GameController {
 						System.out.println("Result: " + result + ", " + phase);
 					}
 				} else if((p2 instanceof Human && p2.getTokenColour() == turn) && (firstNode != -1 && secondNode != -1)){	
-					System.out.println("Above to move");
 					if(result == -1 || result == 0){
 						result = mc.moveToken(p2.getTokenColour(), firstNode, secondNode);
 						if(result != -1){
-							System.out.println("Made move...");
+							gs.setResult(result);
 							gs.moveToken(firstNode, secondNode);
 						}
 						System.out.println("Result: " + result + ", " + phase);
@@ -386,6 +388,8 @@ public class GameController {
 							mill = true;
 						}
 					}
+				} else if(firstNode == -1 && secondNode == -1){
+					result = -1;
 				}
 			}
 			if((phase.equals(Phase.TWO) || phase.equals(Phase.THREE)) && !mill && result != -1){
@@ -410,6 +414,7 @@ public class GameController {
 					}else{
 						gs.lowerPlayerTwoCount();
 					}
+					gs.setResult(result);
 					gs.addToken(player.getTokenColour(), position);
 				}
 				System.out.println("Result: " + result + ", " + phase);
@@ -419,6 +424,7 @@ public class GameController {
 			}else if(mill && (result == -1 || result == 1)){
 				result = mc.removeToken(player.getTokenColour(), position);
 				if(result != -1){
+					gs.setResult(result);
 					gs.removeToken(position);
 					
 					mill = false;
@@ -426,7 +432,6 @@ public class GameController {
 				System.out.println("Result: " + result + ", " + phase);
 			}
 			if(!mill && result != -1 && result != -2){
-				System.out.println("Setting Turn");
 				if(turn == 'R'){
 					turn = 'B';
 				}else{
