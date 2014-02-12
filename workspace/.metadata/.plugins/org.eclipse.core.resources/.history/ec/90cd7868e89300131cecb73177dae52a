@@ -84,7 +84,7 @@ public class MorrisBoard extends Observable implements GameStateInterface {
 		history.add(state);
 		
 		gamePhase = Phase.ONE;
-		result = -2;
+		
 		playerOneTokensToPlace = 9;
 		playerTwoTokensToPlace = 9;
 		playerOneTokensRemaining = 9;
@@ -142,7 +142,7 @@ public class MorrisBoard extends Observable implements GameStateInterface {
 			turn = 'R';
 		}
 		System.out.println("Turn: " + turn);
-		BoardDetails details = new BoardDetails(state, result, playerOneTokensToPlace, playerTwoTokensToPlace, turn); //for MVC
+		BoardDetails details = new BoardDetails(state, 2, playerOneTokensToPlace, playerTwoTokensToPlace, turn); //for MVC
 		setChanged();
 		notifyObservers(details);	//for MVC
 	}

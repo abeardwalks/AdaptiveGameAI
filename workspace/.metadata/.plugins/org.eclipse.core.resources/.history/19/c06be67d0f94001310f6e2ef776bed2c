@@ -403,7 +403,7 @@ public class PlayingView extends JPanel implements Observer {
 			}else{
 				toolTip = "Player Two (Blue) to place, click an empty node to play...";
 			}
-		}else if(result == 0 || result == -2){
+		}else if(result == 0){
 			if(playerOneTokens == 0){
 				toolTip = "Player One (Orange) to move, please click and drag a orange token to an empty node...";
 			}else{

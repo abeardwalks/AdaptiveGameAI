@@ -136,10 +136,12 @@ public class GameController {
 					}else{
 						gs.lowerPlayerTwoCount();
 					}
+					gs.setResult(result);
 					gs.addToken(tokenColour, position);
 					System.out.println("Result: " + result + ", " + phase);
 				}
 				if(result == 1){
+					gs.setResult(result);
 					millMade = true;
 				}
 			}
@@ -151,6 +153,7 @@ public class GameController {
 					System.out.println("Result: " + result + ", " + phase);
 				}
 				if(result == 1){
+					gs.setResult(result);
 					millMade = true;
 				}
 			}
@@ -165,6 +168,7 @@ public class GameController {
 						e.printStackTrace();
 					}
 					millMade = false;
+					gs.setResult(result);
 					gs.removeToken(position);
 					System.out.println("Result: " + result + ", " + phase);
 				}
@@ -179,6 +183,7 @@ public class GameController {
 				}else{
 					turn = 'R';
 				}
+				gs.setResult(result);
 				gs.setTurn();
 			}
 		}
@@ -357,39 +362,42 @@ public class GameController {
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			
-			if((phase.equals(Phase.TWO) || phase.equals(Phase.THREE)) && (result == 0 || result == -1)){
-				int x2 = e.getX();
-				int y2 = e.getY();
-				int firstNode = findNodeClicked(x, y);
-				int secondNode = findNodeClicked(x2, y2);
-				System.err.println(turn);
-				if((p1 instanceof Human && p1.getTokenColour() == turn) && (firstNode != -1 && secondNode != -1)){
-					if(result == -1 || result == 0){
-						result = mc.moveToken(p1.getTokenColour(), firstNode, secondNode);
-						if(result != -1){
-							gs.setResult(result);
-							gs.moveToken(firstNode, secondNode);
+			if(!mill){
+				if((phase.equals(Phase.TWO) || phase.equals(Phase.THREE)) && (result == 0 || result == -1)){
+					int x2 = e.getX();
+					int y2 = e.getY();
+					int firstNode = findNodeClicked(x, y);
+					int secondNode = findNodeClicked(x2, y2);
+					System.out.println("First Node: " + firstNode + ", Second Node: " + secondNode);
+					System.err.println(turn);
+					if((p1 instanceof Human && p1.getTokenColour() == turn) && (firstNode != -1 && secondNode != -1)){
+						if(result == -1 || result == 0){
+							System.err.println("In movement code...");
+							result = mc.moveToken(p1.getTokenColour(), firstNode, secondNode);
+							if(result != -1){
+								gs.setResult(result);
+								gs.moveToken(firstNode, secondNode);
+							}
+							if(result == 1){
+								mill = true;
+							}
+							System.out.println("Result: " + result + ", " + phase);
 						}
-						if(result == 1){
-							mill = true;
+					} else if((p2 instanceof Human && p2.getTokenColour() == turn) && (firstNode != -1 && secondNode != -1)){	
+						if(result == -1 || result == 0){
+							result = mc.moveToken(p2.getTokenColour(), firstNode, secondNode);
+							if(result != -1){
+								gs.setResult(result);
+								gs.moveToken(firstNode, secondNode);
+							}
+							System.out.println("Result: " + result + ", " + phase);
+							if(result == 1){
+								mill = true;
+							}
 						}
-						System.out.println("Result: " + result + ", " + phase);
+					} else if(firstNode == -1 || secondNode == -1){
+						result = -1;
 					}
-				} else if((p2 instanceof Human && p2.getTokenColour() == turn) && (firstNode != -1 && secondNode != -1)){	
-					if(result == -1 || result == 0){
-						result = mc.moveToken(p2.getTokenColour(), firstNode, secondNode);
-						if(result != -1){
-							gs.setResult(result);
-							gs.moveToken(firstNode, secondNode);
-						}
-						System.out.println("Result: " + result + ", " + phase);
-						if(result == 1){
-							mill = true;
-						}
-					}
-				} else if(firstNode == -1 && secondNode == -1){
-					result = -1;
 				}
 			}
 			if((phase.equals(Phase.TWO) || phase.equals(Phase.THREE)) && !mill && result != -1){
@@ -398,6 +406,7 @@ public class GameController {
 				}else{
 					turn = 'R';
 				}
+				gs.setResult(result);
 				gs.setTurn();
 			}
 			

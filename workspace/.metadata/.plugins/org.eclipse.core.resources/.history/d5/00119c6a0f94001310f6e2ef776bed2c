@@ -84,7 +84,7 @@ public class MorrisBoard extends Observable implements GameStateInterface {
 		history.add(state);
 		
 		gamePhase = Phase.ONE;
-		result = -2;
+		
 		playerOneTokensToPlace = 9;
 		playerTwoTokensToPlace = 9;
 		playerOneTokensRemaining = 9;
