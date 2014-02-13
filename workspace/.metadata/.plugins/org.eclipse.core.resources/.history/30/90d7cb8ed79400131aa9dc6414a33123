@@ -211,11 +211,6 @@ public class SimpleGameState implements GameStateInterface {
 		return gamePhase;
 	}
 
-	public double[] rewards() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 
 	
 }

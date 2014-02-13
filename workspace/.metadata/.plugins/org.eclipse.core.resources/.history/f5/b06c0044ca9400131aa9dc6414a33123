@@ -10,6 +10,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+import players.MCTS.MCTSMoveEngine;
+import players.MCTS.SimpleGameState;
+
 import model.board.MorrisBoard;
 import model.board.Move;
 
@@ -19,22 +22,22 @@ public class MCTSPlayer implements PlayerInterface {
 	TreeNode root;
 	private int id;
 	private char c;
-	private MoveChecker mc;
-	private MorrisBoard mb;
+	private MCTSMoveEngine moveEngine;
+	private MorrisBoard gameState;
+	
 	private char action;
 	private String state;
 //	private Random rng;
 	
-	public MCTSPlayer(MoveChecker mc) {
+	public MCTSPlayer(MorrisBoard mb) {
 		this.nPlayers = 2;
-		this.mc = mc;
-		mb = new MorrisBoard();
-		state = "NNNNNNNNNNNNNNNNNNNNNNNN";
+		moveEngine = new MCTSMoveEngine();
+		gameState = mb;
 //		rng = new Random();
 	}
 	
 	private Move getMove() {
-		List<Move> moves = mc.getAvailableMoves(action, state);
+		List<Move> moves = moveEngine.getAvailableMoves(action, state, c);
 		if(moves.size() == 1) {
 			try {
 				Thread.sleep(500);
@@ -44,7 +47,13 @@ public class MCTSPlayer implements PlayerInterface {
 			}
 			return moves.get(0);
 		}
-		root = new TreeNode(null, mc);
+		SimpleGameState simpleGame = new SimpleGameState();
+		simpleGame.setState(state);
+		simpleGame.setPlayerOneTokensRemaining(gameState.getPlayerOneTokensRemaining());
+		simpleGame.setPlayerTwoTokensRemaining(gameState.getPlayerTwoTokensRemaining());
+		simpleGame.setPlayerOneTokensToPlace(gameState.getPlayerOneTokensToPlace());
+		simpleGame.setPlayerTwoTokensToPlace(gameState.getPlayerTwoTokensToPlace());
+		root = new TreeNode(null, simpleGame);
 		long stop = System.currentTimeMillis() + 1000;
 		
 		while(System.currentTimeMillis() < stop) {
@@ -72,7 +81,7 @@ public class MCTSPlayer implements PlayerInterface {
 	}
 
 	private class TreeNode {
-		private MoveChecker game;
+		private SimpleGameState simpleGame;
 		private Random r = new Random();
 		private Move move;
 		private double epsilon = 1e-6;
@@ -81,9 +90,9 @@ public class MCTSPlayer implements PlayerInterface {
 		double nVisits;
 		double[] rewards;
 
-		private TreeNode(Move move, MoveChecker game) {
+		private TreeNode(Move move, SimpleGameState simpleGame) {
 			this.move = move;
-			this.game = game;
+			this.simpleGame = simpleGame;
 			rewards = new double[nPlayers];
 		}
 
@@ -120,7 +129,7 @@ public class MCTSPlayer implements PlayerInterface {
 		}
 
 		public void expand() {
-			List<Move> moves = game.getAvailableMoves();
+			List<Move> moves = game.getAvailableMoves(action, state, action);
 			children = new TreeNode[moves.size()];
 			if (moves.size() == 0) {
 				System.out.println("Error expanding " + moves.size() + " children.");
@@ -162,12 +171,12 @@ public class MCTSPlayer implements PlayerInterface {
 			
 			//Do the rollout in the game state
 			int count = 0;
-			List<Move> moves = game.getAvailableMoves();
+			List<Move> moves = game.getAvailableMoves(action, state, action);
 			
-			while(!game.isWon()) {
+			while(!game.gameWon()) {
 				game.makeMove(moves.get(r.nextInt(moves.size())));
 				count++;
-				moves = game.getAvailableMoves();
+				moves = game.getAvailableMoves(action, state, action);
 			}
 			
 			double[] rewards = game.rewards();
@@ -200,6 +209,8 @@ public class MCTSPlayer implements PlayerInterface {
 	public int placeToken(String state) {
 		action = 'P';
 		this.state = state;
+		Move m = getMove();
+		
 		return 0;
 	}
 

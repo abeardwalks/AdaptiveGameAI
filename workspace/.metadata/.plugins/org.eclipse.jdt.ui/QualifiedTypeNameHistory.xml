@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="java.util.Observable"/>
 <fullyQualifiedTypeName name="players.AbstractPlayer"/>
 <fullyQualifiedTypeName name="players.SimpleAI"/>
 <fullyQualifiedTypeName name="java.lang.AbstractMethodError"/>
@@ -60,4 +59,5 @@
 <fullyQualifiedTypeName name="interfaces.IntPairInterface"/>
 <fullyQualifiedTypeName name="players.IntPair"/>
 <fullyQualifiedTypeName name="players.MCTS.SimpleGameState"/>
+<fullyQualifiedTypeName name="model.board.Move"/>
 </qualifiedTypeNameHistroy>

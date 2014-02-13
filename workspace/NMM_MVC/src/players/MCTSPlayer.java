@@ -49,6 +49,12 @@ public class MCTSPlayer implements PlayerInterface {
 		}
 		SimpleGameState simpleGame = new SimpleGameState();
 		simpleGame.setState(state);
+		simpleGame.setPlayerOneTokensRemaining(gameState.getPlayerOneTokensRemaining());
+		simpleGame.setPlayerTwoTokensRemaining(gameState.getPlayerTwoTokensRemaining());
+		simpleGame.setPlayerOneTokensToPlace(gameState.getPlayerOneTokensToPlace());
+		simpleGame.setPlayerTwoTokensToPlace(gameState.getPlayerTwoTokensToPlace());
+		simpleGame.setPhase(gameState.getPhase());
+		
 		
 		root = new TreeNode(null, simpleGame);
 		long stop = System.currentTimeMillis() + 1000;
@@ -64,9 +70,9 @@ public class MCTSPlayer implements PlayerInterface {
 		
 		double bestValue = Double.NEGATIVE_INFINITY;
 		Move bestMove = null;
-		System.out.println("Player " + mb.getPlayerID());
+		System.out.println("Player " + gameState.getPlayerID());
 		for (TreeNode child : root.children) {
-					double value = child.rewards[mb.getPlayerID()-1] / child.nVisits;
+					double value = child.rewards[gameState.getPlayerID()-1] / child.nVisits;
 					System.out.println(child.move + " : " + value + " (" + child.nVisits + ")");
 					if (value > bestValue) {
 						bestValue = value;
@@ -97,43 +103,62 @@ public class MCTSPlayer implements PlayerInterface {
 			List<TreeNode> visited = new LinkedList<TreeNode>();
 			TreeNode cur = this;
 			// visited.add(this);
-			while (!cur.isLeaf() && !game.gameWon()) {
+			moveEngine.setPlayerOneTokensRemaining(simpleGame.getPlayerOneTokensRemaining());
+			moveEngine.setPlayerTwoTokensRemaining(simpleGame.getPlayerOneTokensRemaining());
+			moveEngine.setPlayerOneTokensToPlace(simpleGame.getPlayerOneTokensToPlace());
+			moveEngine.setPlayerTwoTokensToPlace(simpleGame.getPlayerTwoTokensToPlace());
+			moveEngine.setState(simpleGame.getState());
+			moveEngine.setPhase(simpleGame.getPhase());
+			while (!cur.isLeaf() && !moveEngine.gameWon()) {
 				cur = cur.select();
 				try {
-					game.makeMove(cur.move);
+					simpleGame.makeMove(cur.move);
 				} catch (Exception e) {
-					System.out.println(">>" + game);
+					System.out.println(">>" + simpleGame.getState());
 				}
 				visited.add(cur);
 			}
 			double[] rewards;
-			if (game.gameWon()) {
-				rewards = game.rewards();
+			moveEngine.setPlayerOneTokensRemaining(simpleGame.getPlayerOneTokensRemaining());
+			moveEngine.setPlayerTwoTokensRemaining(simpleGame.getPlayerOneTokensRemaining());
+			moveEngine.setPlayerOneTokensToPlace(simpleGame.getPlayerOneTokensToPlace());
+			moveEngine.setPlayerTwoTokensToPlace(simpleGame.getPlayerTwoTokensToPlace());
+			moveEngine.setState(simpleGame.getState());
+			moveEngine.setPhase(simpleGame.getPhase());
+			if (moveEngine.gameWon()) {
+				rewards = simpleGame.rewards();
 			} else {
 				cur.expand();
 				TreeNode newNode = cur.select();
-				game.makeMove(newNode.move);
+				simpleGame.makeMove(newNode.move);
 				visited.add(newNode);
 				rewards = rollOut(newNode);
 			}
 			// System.out.println(visited.size());
 
 			for (TreeNode node : visited) {
-				game.undo();
+				simpleGame.undo();
 				node.updateStats(rewards);
 			}
 			this.updateStats(rewards);
 		}
 
 		public void expand() {
-			List<Move> moves = game.getAvailableMoves(action, state, action);
+			moveEngine.setPlayerOneTokensRemaining(simpleGame.getPlayerOneTokensRemaining());
+			moveEngine.setPlayerTwoTokensRemaining(simpleGame.getPlayerOneTokensRemaining());
+			moveEngine.setPlayerOneTokensToPlace(simpleGame.getPlayerOneTokensToPlace());
+			moveEngine.setPlayerTwoTokensToPlace(simpleGame.getPlayerTwoTokensToPlace());
+			moveEngine.setState(simpleGame.getState());
+			moveEngine.setPhase(simpleGame.getPhase());
+			//TODO This needs to take the new action/state from simpleGame!
+			List<Move> moves = moveEngine.getAvailableMoves(action, state, c);
 			children = new TreeNode[moves.size()];
 			if (moves.size() == 0) {
 				System.out.println("Error expanding " + moves.size() + " children.");
 			}
 			int i = 0;
 			for (Move m : moves) {
-				children[i] = new TreeNode(m, game);
+				children[i] = new TreeNode(m, simpleGame);
 				i++;
 			}
 		}

@@ -85,7 +85,6 @@ public class SimpleGameState implements GameStateInterface {
 			break;
 		case 'R':
 			removeToken(move.getRemoval());
-			break;
 		default:
 			break;
 		}
@@ -209,11 +208,6 @@ public class SimpleGameState implements GameStateInterface {
 
 	public Phase getPhase() {
 		return gamePhase;
-	}
-
-	public double[] rewards() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 

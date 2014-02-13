@@ -580,42 +580,5 @@ public class MCTSMoveEngine {
 		
 		return moves;
 	}
-	
-	public void setPhase(Phase gamePhase){
-		this.gamePhase = gamePhase;
-	}
-	
-	public int getPlayerOneTokensToPlace() {
-		return playerOneTokensToPlace;
-	}
-
-	public int getPlayerTwoTokensToPlace() {
-		return playerTwoTokensToPlace;
-	}
-
-	public int getPlayerOneTokensRemaining() {
-		return playerOneTokensRemaining;
-	}
-
-	public int getPlayerTwoTokensRemaining() {
-		return playerTwoTokensRemaining;
-	}
-	
-	public void setPlayerOneTokensRemaining(int n){
-		playerOneTokensRemaining = n;
-	}
-	
-	public void setPlayerTwoTokensRemaining(int n){
-		playerTwoTokensRemaining = n;
-	}
-	
-	public void setPlayerOneTokensToPlace(int n){
-		playerOneTokensToPlace = n;
-	}
-	
-	public void setPlayerTwoTokensToPlace(int n){
-		playerTwoTokensToPlace = n;
-	}
-
 
 }

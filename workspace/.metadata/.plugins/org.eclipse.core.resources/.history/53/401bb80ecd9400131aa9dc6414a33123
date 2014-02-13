@@ -581,10 +581,6 @@ public class MCTSMoveEngine {
 		return moves;
 	}
 	
-	public void setPhase(Phase gamePhase){
-		this.gamePhase = gamePhase;
-	}
-	
 	public int getPlayerOneTokensToPlace() {
 		return playerOneTokensToPlace;
 	}
