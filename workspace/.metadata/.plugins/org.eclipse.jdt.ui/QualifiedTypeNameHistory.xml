@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="java.awt.Graphics2D"/>
-<fullyQualifiedTypeName name="controller.GameController.HumanPlayerListener"/>
-<fullyQualifiedTypeName name="java.awt.RenderingHints"/>
-<fullyQualifiedTypeName name="board.MorrisBoard.boardDetails"/>
-<fullyQualifiedTypeName name="players.Human"/>
 <fullyQualifiedTypeName name="java.util.Observable"/>
 <fullyQualifiedTypeName name="players.AbstractPlayer"/>
 <fullyQualifiedTypeName name="players.SimpleAI"/>
@@ -13,9 +8,7 @@
 <fullyQualifiedTypeName name="java.lang.Runnable"/>
 <fullyQualifiedTypeName name="board.BoardDetails"/>
 <fullyQualifiedTypeName name="java.lang.Thread"/>
-<fullyQualifiedTypeName name="interfaces.GameStateInterface"/>
 <fullyQualifiedTypeName name="view.ApplicationView"/>
-<fullyQualifiedTypeName name="interfaces.PlayerInterface"/>
 <fullyQualifiedTypeName name="board.MorrisBoard2"/>
 <fullyQualifiedTypeName name="interfaces.GameStateInterface2"/>
 <fullyQualifiedTypeName name="board.Phase"/>
@@ -36,9 +29,6 @@
 <fullyQualifiedTypeName name="java.awt.event.MouseMotionListener"/>
 <fullyQualifiedTypeName name="controller.GameController.HumanMouseListener"/>
 <fullyQualifiedTypeName name="java.awt.Graphics"/>
-<fullyQualifiedTypeName name="controller.MoveChecker"/>
-<fullyQualifiedTypeName name="java.util.ArrayList"/>
-<fullyQualifiedTypeName name="interfaces.IntPairInterface"/>
 <fullyQualifiedTypeName name="java.util.HashMap"/>
 <fullyQualifiedTypeName name="java.io.BufferedWriter"/>
 <fullyQualifiedTypeName name="java.io.FileWriter"/>
@@ -60,4 +50,14 @@
 <fullyQualifiedTypeName name="javax.swing.JPanel"/>
 <fullyQualifiedTypeName name="javax.swing.JLabel"/>
 <fullyQualifiedTypeName name="javax.swing.JCheckBox"/>
+<fullyQualifiedTypeName name="interfaces.PlayerInterface"/>
+<fullyQualifiedTypeName name="controller.MoveChecker"/>
+<fullyQualifiedTypeName name="model.board.MorrisBoard"/>
+<fullyQualifiedTypeName name="players.MCTS.MCTSMoveEnginer"/>
+<fullyQualifiedTypeName name="java.util.ArrayList"/>
+<fullyQualifiedTypeName name="players.MCTS.MCTSMoveEngine"/>
+<fullyQualifiedTypeName name="interfaces.GameStateInterface"/>
+<fullyQualifiedTypeName name="interfaces.IntPairInterface"/>
+<fullyQualifiedTypeName name="players.IntPair"/>
+<fullyQualifiedTypeName name="players.MCTS.SimpleGameState"/>
 </qualifiedTypeNameHistroy>

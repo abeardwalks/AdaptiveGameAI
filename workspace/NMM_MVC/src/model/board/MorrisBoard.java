@@ -53,6 +53,11 @@ public class MorrisBoard extends Observable implements GameStateInterface {
 	
 	public void removeToken(int position) {
 		char[] stateArray = state.toCharArray();
+		if(stateArray[position] == 'R'){
+			playerOneTokensRemaining--;
+		}else{
+			playerTwoTokensRemaining--;
+		}
 		stateArray[position] = 'N';
 		state = new String(stateArray);
 		BoardDetails details = new BoardDetails(state, result, playerOneTokensToPlace, playerTwoTokensToPlace, turn); //for MVC
@@ -145,6 +150,46 @@ public class MorrisBoard extends Observable implements GameStateInterface {
 		BoardDetails details = new BoardDetails(state, result, playerOneTokensToPlace, playerTwoTokensToPlace, turn); //for MVC
 		setChanged();
 		notifyObservers(details);	//for MVC
+	}
+
+
+	@Override
+	public char getTurn() {
+		return turn;
+	}
+
+
+	@Override
+	public int getPlayerID() {
+		if(turn == 'R'){
+			return 1;
+		}else{
+			return 2;
+		}
+	}
+
+
+	@Override
+	public int getPlayerOneTokensToPlace() {
+		return playerOneTokensToPlace;
+	}
+
+
+	@Override
+	public int getPlayerTwoTokensToPlace() {
+		return playerTwoTokensToPlace;
+	}
+
+
+	@Override
+	public int getPlayerOneTokensRemaining() {
+		return playerOneTokensRemaining;
+	}
+
+
+	@Override
+	public int getPlayerTwoTokensRemaining() {
+		return playerTwoTokensRemaining;
 	}
 
 }

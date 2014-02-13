@@ -9,6 +9,7 @@ public class RandomAI implements PlayerInterface {
 
 	private Random rdm;
 	private char colour;
+	private int id;
 
 	@Override
 	public int placeToken(String state) {
@@ -70,6 +71,16 @@ public class RandomAI implements PlayerInterface {
 	@Override
 	public char getTokenColour() {
 		return colour;
+	}
+
+	@Override
+	public int getPlayerID() {
+		return id;
+	}
+
+	@Override
+	public void setPlayerID(int id) {
+		this.id = id;
 	}
 
 }

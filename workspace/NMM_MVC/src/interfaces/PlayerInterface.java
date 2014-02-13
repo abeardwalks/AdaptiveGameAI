@@ -8,5 +8,7 @@ public interface PlayerInterface {
 	String getName();
 	void setTokenColour(char c);
 	char getTokenColour();
+	int getPlayerID();
+	void setPlayerID(int id);
 
 }
