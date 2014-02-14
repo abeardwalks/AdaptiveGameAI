@@ -132,9 +132,9 @@ public class GameController {
 				result = mc.addToken(tokenColour, position);
 				if(result == 0 || result == 1){
 					if(tokenColour == 'R'){
-						gs.lowerPlayerOneCount();
+						gs.decrementPlayerOneTokensToPlace();
 					}else{
-						gs.lowerPlayerTwoCount();
+						gs.decrementPlayerTwoTokensToPlace();
 					}
 					gs.setResult(result);
 					gs.addToken(tokenColour, position);
@@ -419,9 +419,9 @@ public class GameController {
 				result = mc.addToken(player.getTokenColour(), position);
 				if(result != -1){
 					if(turn == 'R'){
-						gs.lowerPlayerOneCount();
+						gs.decrementPlayerOneTokensToPlace();
 					}else{
-						gs.lowerPlayerTwoCount();
+						gs.decrementPlayerTwoTokensToPlace();
 					}
 					gs.setResult(result);
 					gs.addToken(player.getTokenColour(), position);

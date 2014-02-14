@@ -1,0 +1,12 @@
+package players.MCTS;
+
+public class Move {
+	
+	private String gameStateBeforeMove;
+	private String gameStateAfterMove;
+	private char action;
+	private int placementIndex;
+	private int removalIndex;
+	private IntPairInterface movementIndexs;
+
+}

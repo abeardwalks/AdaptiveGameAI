@@ -1,0 +1,17 @@
+package players.MCTS;
+
+import interfaces.IntPairInterface;
+
+public class Move {
+	
+	private String gameStateBeforeMove;
+	private String gameStateAfterMove;
+	private char action;
+	private int placementIndex;
+	private int removalIndex;
+	private IntPairInterface movementIndexs;
+
+	public Move(String stateBefore, char action){
+		
+	}
+}
