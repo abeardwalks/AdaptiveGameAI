@@ -10,9 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-import players.MCTS.MCTSMoveEngine;
-import players.MCTS.SimpleGameState;
-
 import model.board.MorrisBoard;
 import model.board.Move;
 
@@ -22,22 +19,19 @@ public class MCTSPlayer implements PlayerInterface {
 	TreeNode root;
 	private int id;
 	private char c;
-	private MCTSMoveEngine moveEngine;
-	private MorrisBoard gameState;
-	
-	private char action;
-	private String state;
+	private MoveChecker mc;
+	private MorrisBoard mb;
 //	private Random rng;
 	
-	public MCTSPlayer(MorrisBoard mb) {
+	public MCTSPlayer(MoveChecker mc) {
 		this.nPlayers = 2;
-		moveEngine = new MCTSMoveEngine();
-		gameState = mb;
+		this.mc = mc;
+		mb = new MorrisBoard();
 //		rng = new Random();
 	}
 	
 	private Move getMove() {
-		List<Move> moves = moveEngine.getAvailableMoves(action, state, c);
+		List<Move> moves = mc.getAvailableMoves();
 		if(moves.size() == 1) {
 			try {
 				Thread.sleep(500);
@@ -47,12 +41,7 @@ public class MCTSPlayer implements PlayerInterface {
 			}
 			return moves.get(0);
 		}
-		SimpleGameState simpleGame = new SimpleGameState();
-		simpleGame.setState(state);
-		simpleGame.setPlayerOneTokensRemaining(gameState.getPlayerOneTokensRemaining());
-		simpleGame.setPlayerTwoTokensRemaining(gameState.getPlayerTwoTokensRemaining());
-		simpleGame.setPlayerTwoTokensToPlace(n)
-		root = new TreeNode(null, simpleGame);
+		root = new TreeNode(null, mc);
 		long stop = System.currentTimeMillis() + 1000;
 		
 		while(System.currentTimeMillis() < stop) {
@@ -66,9 +55,9 @@ public class MCTSPlayer implements PlayerInterface {
 		
 		double bestValue = Double.NEGATIVE_INFINITY;
 		Move bestMove = null;
-		System.out.println("Player " + mb.getPlayerID());
+		System.out.println("Player " + mb.playerID());
 		for (TreeNode child : root.children) {
-					double value = child.rewards[mb.getPlayerID()-1] / child.nVisits;
+					double value = child.rewards[game.playerID()-1] / child.nVisits;
 					System.out.println(child.move + " : " + value + " (" + child.nVisits + ")");
 					if (value > bestValue) {
 						bestValue = value;
@@ -80,7 +69,7 @@ public class MCTSPlayer implements PlayerInterface {
 	}
 
 	private class TreeNode {
-		private SimpleGameState simpleGame;
+		private MoveChecker game;
 		private Random r = new Random();
 		private Move move;
 		private double epsilon = 1e-6;
@@ -89,9 +78,9 @@ public class MCTSPlayer implements PlayerInterface {
 		double nVisits;
 		double[] rewards;
 
-		private TreeNode(Move move, SimpleGameState simpleGame) {
+		private TreeNode(Move move, MoveChecker game) {
 			this.move = move;
-			this.simpleGame = simpleGame;
+			this.game = game;
 			rewards = new double[nPlayers];
 		}
 
@@ -128,7 +117,7 @@ public class MCTSPlayer implements PlayerInterface {
 		}
 
 		public void expand() {
-			List<Move> moves = game.getAvailableMoves(action, state, action);
+			List<Move> moves = game.getAvailableMoves();
 			children = new TreeNode[moves.size()];
 			if (moves.size() == 0) {
 				System.out.println("Error expanding " + moves.size() + " children.");
@@ -170,12 +159,12 @@ public class MCTSPlayer implements PlayerInterface {
 			
 			//Do the rollout in the game state
 			int count = 0;
-			List<Move> moves = game.getAvailableMoves(action, state, action);
+			List<Move> moves = game.getAvailableMoves();
 			
-			while(!game.gameWon()) {
+			while(!game.isWon()) {
 				game.makeMove(moves.get(r.nextInt(moves.size())));
 				count++;
-				moves = game.getAvailableMoves(action, state, action);
+				moves = game.getAvailableMoves();
 			}
 			
 			double[] rewards = game.rewards();
@@ -206,24 +195,19 @@ public class MCTSPlayer implements PlayerInterface {
 	
 	@Override
 	public int placeToken(String state) {
-		action = 'P';
-		this.state = state;
-		Move m = getMove();
-		
+		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public int removeToken(String state) {
-		action = 'R';
-		this.state = state;
+		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public IntPairInterface moveToken(String state) {
-		action = 'M';
-		this.state = state;
+		// TODO Auto-generated method stub
 		return null;
 	}
 
