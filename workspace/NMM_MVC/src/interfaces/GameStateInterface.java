@@ -17,18 +17,6 @@ public interface GameStateInterface {
 	
 	void setTurn();
 	
-	char getTurn();
-	
-	int getPlayerID();
-	
-	int getPlayerOneTokensToPlace();
-	
-	int getPlayerTwoTokensToPlace();
-	
-	int getPlayerOneTokensRemaining();
-	
-	int getPlayerTwoTokensRemaining();
-	
 	/**
 	 * Returns the string representation of the game state.
 	 * 

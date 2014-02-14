@@ -1,12 +1,9 @@
 package controller;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Stack;
 
 import model.Phase;
-import model.board.Move;
 
 public class MoveChecker {
 	private String state;
@@ -140,7 +137,7 @@ public class MoveChecker {
 		return result;
 	}
 	
-	public boolean gameWon() {
+	private boolean gameWon() {
 		if((playerOneTokensRemaining >= 3 && playerTwoTokensRemaining >= 3) && playersCanMove()){
 			return false;
 		}
@@ -498,10 +495,5 @@ public class MoveChecker {
 		
 		moveAnywhere = false;
 	}
-
-
-
-	
-	
 
 }

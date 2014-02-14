@@ -6,7 +6,6 @@ import interfaces.PlayerInterface;
 public class Human implements PlayerInterface {
 
 	private char colour;
-	private int id;
 
 	@Override
 	public int placeToken(String state) {
@@ -36,16 +35,6 @@ public class Human implements PlayerInterface {
 	@Override
 	public char getTokenColour() {
 		return colour;
-	}
-
-	@Override
-	public int getPlayerID() {
-		return id;
-	}
-
-	@Override
-	public void setPlayerID(int id) {
-		this.id = id;
 	}
 
 }

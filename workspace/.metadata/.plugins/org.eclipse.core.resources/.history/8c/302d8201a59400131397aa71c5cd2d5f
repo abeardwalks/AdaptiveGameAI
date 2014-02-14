@@ -1,9 +1,0 @@
-package model.board;
-
-public class Move {
-
-	public Move(String state, char c, char token) {
-		// TODO Auto-generated constructor stub
-	}
-
-}

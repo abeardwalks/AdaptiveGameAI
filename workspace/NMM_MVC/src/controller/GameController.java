@@ -83,9 +83,7 @@ public class GameController {
 		p2 = setupView.getPlayerTwo();
 		
 		p1.setTokenColour('R');
-		p1.setPlayerID(1);
 		p2.setTokenColour('B');
-		p2.setPlayerID(2);
 
 		thread = new Thread(new Runnable() {
 			
