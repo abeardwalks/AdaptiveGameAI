@@ -13,7 +13,7 @@ import model.board.BoardDetails;
 public class MoveChecker {
 	
 	private String state;
-	private Collection<String> history;
+	private Stack<BoardDetails> history;
 	@SuppressWarnings("unused")
 	private static final int STRING_LENGTH = 23;
 	private Phase gamePhase;
@@ -25,8 +25,7 @@ public class MoveChecker {
 	public MoveChecker(){
 	
 		state = "NNNNNNNNNNNNNNNNNNNNNNNN";
-		history = new Stack<String>();
-		history.add(state);
+		history = new Stack<BoardDetails>();
 		
 		gamePhase = Phase.ONE;
 		
@@ -60,7 +59,7 @@ public class MoveChecker {
 			gamePhase = Phase.TWO;
 		}
 		
-		history.add(state);
+		
 		stateArray[position] = token;
 		state = new String(stateArray);
 		
@@ -513,8 +512,7 @@ public class MoveChecker {
 
 	public void reset() {
 		state = "NNNNNNNNNNNNNNNNNNNNNNNN";
-		history = new Stack<String>();
-		history.add(state);
+		history = new Stack<BoardDetails>();
 		
 		gamePhase = Phase.ONE;
 		
@@ -527,18 +525,19 @@ public class MoveChecker {
 	}
 	
 	public void preserveCurrentState(){
-		preservedGame = new BoardDetails(state, -2, playerOneTokensRemaining, playerTwoTokensRemaining, playerOneTokensToPlace, playerTwoTokensToPlace, turn, gamePhase);
+		BoardDetails bd = new BoardDetails(state, -2, playerOneTokensRemaining, playerTwoTokensRemaining, playerOneTokensToPlace, playerTwoTokensToPlace, turn, gamePhase);
+		history.push(bd);
 	}
 	
 	public void returnToPreservedState(){
-		if(preservedGame != null){
-			state = preservedGame.getGS();
-			playerOneTokensRemaining = preservedGame.getPlayerOneRemaining();
-			playerTwoTokensRemaining = preservedGame.getPlayerTwoRemaining();
-			playerOneTokensToPlace = preservedGame.getPlayerOneToPlace();
-			playerTwoTokensToPlace = preservedGame.getPlayerTwoToPlace();
-			gamePhase = preservedGame.getPhase();
-			preservedGame = null;
+		BoardDetails bd = history.pop();
+		if(bd != null){
+			state = bd.getGS();
+			playerOneTokensRemaining = bd.getPlayerOneRemaining();
+			playerTwoTokensRemaining = bd.getPlayerTwoRemaining();
+			playerOneTokensToPlace = bd.getPlayerOneToPlace();
+			playerTwoTokensToPlace = bd.getPlayerTwoToPlace();
+			gamePhase = bd.getPhase();
 		}
 	}
 	
@@ -576,6 +575,13 @@ public class MoveChecker {
 		List<Move> moves = new ArrayList<Move>();
 		
 		char[] stateArray = state.toCharArray();
+		if(turn == 'R' && playerOneTokensToPlace <= 0){
+			return moves;
+		}
+		
+		if(turn == 'B' && playerTwoTokensToPlace <= 0){
+			return moves;
+		}
 		
 		for (int i = 0; i < stateArray.length; i++) {
 			if(stateArray[i] == 'N'){
@@ -671,6 +677,10 @@ public class MoveChecker {
 	
 	public int getPlayerTwoTokensToPlace(){
 		return playerTwoTokensRemaining;
+	}
+	
+	public void setTurn(char turn){
+		this.turn = turn;
 	}
 
 }
