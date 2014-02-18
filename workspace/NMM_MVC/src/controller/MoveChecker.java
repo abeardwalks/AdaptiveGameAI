@@ -1,11 +1,17 @@
 package controller;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Stack;
 
+import players.MCTS.Move;
+
 import model.Phase;
+import model.board.BoardDetails;
 
 public class MoveChecker {
+	
 	private String state;
 	private Collection<String> history;
 	@SuppressWarnings("unused")
@@ -13,7 +19,8 @@ public class MoveChecker {
 	private Phase gamePhase;
 	private int playerOneTokensToPlace, playerTwoTokensToPlace, playerOneTokensRemaining, playerTwoTokensRemaining;
 	private boolean moveAnywhere;
-
+	private BoardDetails preservedGame;
+	private char turn;
 	
 	public MoveChecker(){
 	
@@ -29,6 +36,8 @@ public class MoveChecker {
 		playerTwoTokensRemaining = 9;
 		
 		moveAnywhere = false;
+		
+		preservedGame = null;
 
 	}
 
@@ -60,6 +69,13 @@ public class MoveChecker {
 		}else if(gameWon()){
 			result = 2;			//for MVC
 		}	
+		if(result == 0){
+			if(turn == 'R'){
+				turn = 'B';
+			}else{
+				turn = 'R';
+			}
+		}
 		
 		return result;
 	}
@@ -88,6 +104,13 @@ public class MoveChecker {
 		
 		if(gameWon()){
 			result = 2;				//for MVC
+		}
+		if(result == 0){
+			if(turn == 'R'){
+				turn = 'B';
+			}else{
+				turn = 'R';
+			}
 		}
 
 		return result;
@@ -133,11 +156,18 @@ public class MoveChecker {
 		if(gameWon()){
 			result = 2;				
 		}
+		if(result == 0){
+			if(turn == 'R'){
+				turn = 'B';
+			}else{
+				turn = 'R';
+			}
+		}
 		moveAnywhere = false;
 		return result;
 	}
 	
-	private boolean gameWon() {
+	public boolean gameWon() {
 		if((playerOneTokensRemaining >= 3 && playerTwoTokensRemaining >= 3) && playersCanMove()){
 			return false;
 		}
@@ -494,6 +524,153 @@ public class MoveChecker {
 		playerTwoTokensRemaining = 9;
 		
 		moveAnywhere = false;
+	}
+	
+	public void preserveCurrentState(){
+		preservedGame = new BoardDetails(state, -2, playerOneTokensRemaining, playerTwoTokensRemaining, playerOneTokensToPlace, playerTwoTokensToPlace, turn, gamePhase);
+	}
+	
+	public void returnToPreservedState(){
+		if(preservedGame != null){
+			state = preservedGame.getGS();
+			playerOneTokensRemaining = preservedGame.getPlayerOneRemaining();
+			playerTwoTokensRemaining = preservedGame.getPlayerTwoRemaining();
+			playerOneTokensToPlace = preservedGame.getPlayerOneToPlace();
+			playerTwoTokensToPlace = preservedGame.getPlayerTwoToPlace();
+			gamePhase = preservedGame.getPhase();
+			preservedGame = null;
+		}
+	}
+	
+	public void setDetails(BoardDetails bd){
+		state = bd.getGS();
+		playerOneTokensRemaining = bd.getPlayerOneRemaining();
+		playerTwoTokensRemaining = bd.getPlayerTwoRemaining();
+		playerOneTokensToPlace = bd.getPlayerOneToPlace();
+		playerTwoTokensToPlace = bd.getPlayerTwoToPlace();
+		gamePhase = bd.getPhase();
+		turn = bd.getTurn();
+	}
+
+
+	public List<Move> getAvailableMoves(char action, char turn) {
+		List<Move> moves = new ArrayList<Move>();
+		switch (action) {
+		case 'P':
+			moves = getAllAvailablePlacements(turn);
+			break;
+		case 'M': 
+			moves = getAllAvailableMovements(turn);
+			break;
+		case 'R':
+			moves = getAllAvailableRemovals(turn);
+			break;
+		default:
+			break;
+		}
+		return moves;
+	}
+
+
+	private List<Move> getAllAvailablePlacements(char turn) {
+		List<Move> moves = new ArrayList<Move>();
+		
+		char[] stateArray = state.toCharArray();
+		
+		for (int i = 0; i < stateArray.length; i++) {
+			if(stateArray[i] == 'N'){
+				Move m = new Move(state, 'P', turn);
+				m.setPlacementIndex(i);
+				moves.add(m);
+			}
+		}
+		
+		return moves;
+	}
+	
+	
+	private List<Move> getAllAvailableMovements(char turn) {
+		List<Move> moves = new ArrayList<Move>();
+		
+		char[] stateArray = state.toCharArray();
+		
+		for (int i = 0; i < stateArray.length; i++) {
+			if(stateArray[i] == turn){
+				for (int j = 0; j < stateArray.length; j++) {
+					if(validMove(i, j)){
+						Move m = new Move(state, 'M', turn);
+						m.setMoveIndexs(i, j);
+						moves.add(m);
+					}
+				}
+			}
+		}
+		
+		return moves;
+	}
+	
+	
+	private List<Move> getAllAvailableRemovals(char turn) {
+		List<Move> moves = new ArrayList<Move>();
+		
+		char[] stateArray = state.toCharArray();
+		
+		for (int i = 0; i < stateArray.length; i++) {
+			if(stateArray[i] != turn && stateArray[i] != 'N' && !partOfMill(i)){
+				Move m = new Move(state, 'R', turn);
+				m.setRemovalIndex(i);
+				moves.add(m);
+			}else if(stateArray[i] != turn && stateArray[i] != 'N' && partOfMill(i) && onlyAvailable(stateArray[i], i)){
+				Move m = new Move(state, 'R', turn);
+				m.setRemovalIndex(i);
+				moves.add(m);
+			}
+		}
+		
+		return moves;
+	}
+
+
+	public double[] getRewards() {
+		double[] rewards = new double[2];
+		if(playerOneTokensRemaining == 2){
+			rewards[0] = 1.0;
+			rewards[1] = 0.0;
+		}else if(playerTwoTokensRemaining == 2){
+			rewards[0] = 0.0;
+			rewards[1] = 1.0;
+		}
+		return rewards;
+	}
+	
+	public char getTurn(){
+		return turn;
+	}
+	
+	public int getPlayerID(){
+		if(turn == 'R'){
+			return 1;
+		}else{
+			return 2;
+		}
+	}
+	
+	public void printDetails(){
+		System.out.println("----- Move Check Details ------");
+		System.out.println("Player One To Place: " + playerOneTokensToPlace);
+		System.out.println("Player Two To Place: " + playerTwoTokensToPlace);
+		System.out.println("Player One Remaining: " + playerOneTokensRemaining);
+		System.out.println("Player Two Remaining: " + playerTwoTokensRemaining);
+		System.out.println("Phase: " + gamePhase);
+		System.out.println("-------------------------------");
+	}
+	
+	public int getPlayerOneTokensToPlace(){
+		return playerOneTokensToPlace;
+	}
+	
+	public int getPlayerTwoTokensToPlace(){
+		return playerTwoTokensRemaining;
 	}
 
 }

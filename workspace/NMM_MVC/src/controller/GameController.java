@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Observable;
 
 import players.Human;
+import players.MCTSAI;
 
 
 import model.Phase;
@@ -84,6 +85,14 @@ public class GameController {
 		
 		p1.setTokenColour('R');
 		p2.setTokenColour('B');
+		
+		if(p1 instanceof MCTSAI){
+			((MCTSAI) p1).initialise(gs);
+		}
+		
+		if(p2 instanceof MCTSAI){
+			((MCTSAI) p2).initialise(gs);
+		}
 
 		thread = new Thread(new Runnable() {
 			

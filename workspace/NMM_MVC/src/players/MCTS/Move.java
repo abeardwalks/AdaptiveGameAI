@@ -12,6 +12,7 @@ public class Move {
 	private int placementIndex;
 	private int removalIndex;
 	private IntPairInterface movementIndexs;
+	private int result;
 
 	public Move(String stateBefore, char action, char player){
 		gameStateBeforeAction = stateBefore;
@@ -47,6 +48,10 @@ public class Move {
 		}
 	}
 	
+	public void setResult(int result){
+		this.result = result;
+	}
+	
 	public int getPlacementIndex(){
 		return placementIndex;
 	}
@@ -73,5 +78,9 @@ public class Move {
 	
 	public char getPlayer(){
 		return player;
+	}
+	
+	public int getResult(){
+		return result;
 	}
 }

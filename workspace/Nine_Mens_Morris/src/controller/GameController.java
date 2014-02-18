@@ -87,7 +87,9 @@ public class GameController implements Observer{
 	}
 	
 	private void play() {
-		interrupted = false; 
+		interrupted = false;
+		p1.intialize(gs);
+		p2.intialize(gs);
 		while(result != 2 || interrupted){
 			p1.makeMove();
 			p2.makeMove();
