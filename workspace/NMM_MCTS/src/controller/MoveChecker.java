@@ -1,9 +1,14 @@
 package controller;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Stack;
 
+import players.MCTS.Move;
+
 import model.Phase;
+import model.board.BoardDetails;
 
 public class MoveChecker {
 	private String state;
@@ -496,7 +501,113 @@ public class MoveChecker {
 		moveAnywhere = false;
 	}
 	
-	public List<Move> getAllPossibleMoves(char action, ){
+	public void setDetails(BoardDetails bd){
+		state = bd.getGS();
+		gamePhase = bd.getPhase();
+		
+		playerOneTokensToPlace = bd.getPlayerOneToPlace();
+		playerTwoTokensToPlace = bd.getPlayerTwoToPlace();
+		playerOneTokensRemaining = bd.getPlayerOneRemaining();
+		playerTwoTokensRemaining = bd.getPlayerTwoRemaining();
+		
+		moveAnywhere = false;
+		
+	}
+	
+	public List<Move> getAllPossibleMoves(char action, char turn, BoardDetails bd){
+		setDetails(bd);
+		List<Move> moves = new ArrayList<Move>();
+		
+		switch (action) {
+		case 'P':
+			moves = getAllPossiblePlacements(turn);
+			break;
+		case 'R':
+			moves = getAllPossibleRemovals(turn);
+			break;
+		case 'M':
+			moves = getAllPossibleMovements(turn);
+			break;
+		default:
+			break;
+		}
+		
+		return moves;
+	}
+
+
+	private List<Move> getAllPossiblePlacements(char turn) {
+		
+		
+		List<Move> moves = new ArrayList<Move>();
+		
+		if(turn == 'R' && playerOneTokensToPlace <= 0){
+			return moves;
+		}else if(turn == 'B' && playerTwoTokensToPlace <= 0){
+			return moves;
+		}
+		
+		char[] stateArray = state.toCharArray();
+		
+		for (int i = 0; i < stateArray.length; i++) {
+			if(stateArray[i] == 'N'){
+				Move m = new Move('P', turn, state);
+				m.setPlacementIndex(i);
+				moves.add(m);
+			}
+		}
+		
+		return moves;
+		
+	}
+	
+	
+	private List<Move> getAllPossibleRemovals(char turn) {
+		List<Move> moves = new ArrayList<Move>();
+		
+		char toRemove = 'R';
+		if(turn == 'R'){
+			toRemove = 'B';
+		}
+		
+		char[] stateArray = state.toCharArray();
+		
+		for (int i = 0; i < stateArray.length; i++) {
+			if(stateArray[i] == toRemove){
+				Move m = new Move('R', turn, state);
+				m.setPlacementIndex(i);
+				moves.add(m);
+			}
+		}
+		
+		return moves;
+	}
+	
+
+	private List<Move> getAllPossibleMovements(char turn) {
+		List<Move> moves = new ArrayList<Move>();
+		
+		if(turn == 'R' && playerOneTokensRemaining < 4){
+			moveAnywhere = true;
+		}else if(turn == 'B' && playerTwoTokensRemaining < 4){
+			moveAnywhere = true;
+		}
+		
+		char[] stateArray = state.toCharArray();
+		
+		for(int i = 0; i < stateArray.length; i++){
+			if(stateArray[i] == turn){
+				for(int j = 0; j < stateArray.length; j++){
+					if(validMove(i, j)){
+						Move m = new Move('M', turn, state);
+						m.setMovementIndexs(i, j);
+						moves.add(m);
+					}
+				}
+			}
+		}
+		
+		return moves;
 		
 	}
 

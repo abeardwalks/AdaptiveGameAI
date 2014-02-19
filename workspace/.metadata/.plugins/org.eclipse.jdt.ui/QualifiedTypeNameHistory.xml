@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="board.MorrisBoard.boardDetails"/>
-<fullyQualifiedTypeName name="players.Human"/>
-<fullyQualifiedTypeName name="java.util.Observable"/>
-<fullyQualifiedTypeName name="players.AbstractPlayer"/>
-<fullyQualifiedTypeName name="players.SimpleAI"/>
-<fullyQualifiedTypeName name="java.lang.AbstractMethodError"/>
 <fullyQualifiedTypeName name="interfaces.AbstractPlayer"/>
 <fullyQualifiedTypeName name="java.lang.Runnable"/>
 <fullyQualifiedTypeName name="board.BoardDetails"/>
@@ -30,8 +24,6 @@
 <fullyQualifiedTypeName name="java.awt.event.MouseMotionListener"/>
 <fullyQualifiedTypeName name="controller.GameController.HumanMouseListener"/>
 <fullyQualifiedTypeName name="java.awt.Graphics"/>
-<fullyQualifiedTypeName name="controller.MoveChecker"/>
-<fullyQualifiedTypeName name="java.util.ArrayList"/>
 <fullyQualifiedTypeName name="java.util.HashMap"/>
 <fullyQualifiedTypeName name="java.io.BufferedWriter"/>
 <fullyQualifiedTypeName name="java.io.FileWriter"/>
@@ -60,4 +52,12 @@
 <fullyQualifiedTypeName name="interfaces.IntPairInterface"/>
 <fullyQualifiedTypeName name="java.lang.String"/>
 <fullyQualifiedTypeName name="model.Phase"/>
+<fullyQualifiedTypeName name="model.board.BoardDetails"/>
+<fullyQualifiedTypeName name="java.util.ArrayList"/>
+<fullyQualifiedTypeName name="players.MCTS.Move"/>
+<fullyQualifiedTypeName name="java.util.List"/>
+<fullyQualifiedTypeName name="players.MCTSAI.MCTSGame"/>
+<fullyQualifiedTypeName name="java.util.LinkedList"/>
+<fullyQualifiedTypeName name="java.lang.Exception"/>
+<fullyQualifiedTypeName name="controller.MoveChecker"/>
 </qualifiedTypeNameHistroy>

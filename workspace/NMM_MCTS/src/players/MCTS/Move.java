@@ -20,6 +20,14 @@ public class Move {
 		this.state = state;
 	}
 	
+	public char getAction(){
+		return action;
+	}
+	
+	public char getTurn(){
+		return turn;
+	}
+	
 	public void setPlacementIndex(int placementIndex){
 		this.placementIndex = placementIndex;
 		executeMove();
@@ -54,6 +62,7 @@ public class Move {
 	public String getStateAfterMove(){
 		return stateAfterMove;
 	}
+	
 	
 	private void executeMove(){
 		
