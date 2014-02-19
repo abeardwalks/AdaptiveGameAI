@@ -60,7 +60,7 @@ public class GameController {
 		phase = Phase.ONE;
 		millMade = false;
 		setupView = new SetupView(new SetupActionListener(), players1, players2);
-		primaryView.add(setupView);
+		primaryView.addPane(setupView);
 		
 		gameView = new PlayingView();
 		gameView.addMouseListener(new HumanMouseListener());
@@ -68,7 +68,7 @@ public class GameController {
 		gameView.addKeyListener(new HumanKeyListened());
 		gameView.setFocusable(true);
 		
-		pauseView = new PauseView(new PauseMenuListener());
+		pauseView = new PauseView();
 		showPauseMenu = false;
 		
 		((Observable) gs).addObserver(gameView);
@@ -93,7 +93,7 @@ public class GameController {
 			}
 		});
 
-		primaryView.add(gameView);
+		primaryView.addPane(gameView);
 		primaryView.repaint();
 		thread.start();
 	}
@@ -132,16 +132,14 @@ public class GameController {
 				result = mc.addToken(tokenColour, position);
 				if(result == 0 || result == 1){
 					if(tokenColour == 'R'){
-						gs.decrementPlayerOneT();
+						gs.lowerPlayerOneCount();
 					}else{
 						gs.lowerPlayerTwoCount();
 					}
-					gs.setResult(result);
 					gs.addToken(tokenColour, position);
 					System.out.println("Result: " + result + ", " + phase);
 				}
 				if(result == 1){
-					gs.setResult(result);
 					millMade = true;
 				}
 			}
@@ -153,7 +151,6 @@ public class GameController {
 					System.out.println("Result: " + result + ", " + phase);
 				}
 				if(result == 1){
-					gs.setResult(result);
 					millMade = true;
 				}
 			}
@@ -168,7 +165,6 @@ public class GameController {
 						e.printStackTrace();
 					}
 					millMade = false;
-					gs.setResult(result);
 					gs.removeToken(position);
 					System.out.println("Result: " + result + ", " + phase);
 				}
@@ -183,7 +179,6 @@ public class GameController {
 				}else{
 					turn = 'R';
 				}
-				gs.setResult(result);
 				gs.setTurn();
 			}
 		}
@@ -222,43 +217,8 @@ public class GameController {
 	
 	private class SetupActionListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			gameView.setToolTip(setupView.getShowToolTip());
 			start();
 		}
-	}
-	
-	private class PauseMenuListener implements ActionListener {
-		@SuppressWarnings("deprecation")
-		public void actionPerformed(ActionEvent e){
-			String action = e.getActionCommand();
-			if(action.equals("resume")){
-				showPauseMenu = false;
-				showPauseMenu();
-			}else if(action.equals("reset")){
-				reset();
-				thread.suspend();
-				start();
-			}else if(action.equals("setup")){
-				showPauseMenu = false;
-				reset();
-				thread.suspend();
-				primaryView.remove(gameView);
-				primaryView.add(setupView);
-			}else if(action.equals("quit")){
-				System.exit(0);
-			}
-		}
-	}
-	
-	private void reset(){
-		mc.reset();
-		turn = 'R';
-		result = -2;
-		phase = Phase.ONE;
-		millMade = false;
-		showPauseMenu = false;
-		showPauseMenu();
-		gs.reset();
 	}
 	
 	private class HumanKeyListened implements KeyListener{
@@ -287,30 +247,11 @@ public class GameController {
 		}
 		
 	}
-	@SuppressWarnings("deprecation")
 	private void showPauseMenu() {
-		if(showPauseMenu){
-			if(thread.isAlive()){
-				thread.suspend();
-				gameView.setEnabled(false);
-				pauseView.setEnabled(true);
-				pauseView.setVisible(true);
-				primaryView.remove(gameView);
-				primaryView.add(pauseView);
-				primaryView.addPane(pauseView);
-				primaryView.add(gameView);
-				primaryView.repaint();
-			}
-//			pauseView.repaint();
-		}else{
-			if(thread.isAlive()){
-				thread.resume();
-				pauseView.setEnabled(false);
-				pauseView.setVisible(false);
-				primaryView.remove(pauseView);
-				primaryView.repaint();
-			}
-		}
+		pauseView.setEnabled(true);
+		pauseView.setVisible(true);
+		primaryView.addPane(pauseView);
+		primaryView.repaint();
 	}
 	
 	private class HumanMouseListener implements MouseListener, MouseMotionListener{
@@ -362,41 +303,41 @@ public class GameController {
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			if(!mill){
-				if((phase.equals(Phase.TWO) || phase.equals(Phase.THREE)) && (result == 0 || result == -1)){
-					int x2 = e.getX();
-					int y2 = e.getY();
-					int firstNode = findNodeClicked(x, y);
-					int secondNode = findNodeClicked(x2, y2);
-					System.out.println("First Node: " + firstNode + ", Second Node: " + secondNode);
-					System.err.println(turn);
-					if((p1 instanceof Human && p1.getTokenColour() == turn) && (firstNode != -1 && secondNode != -1)){
-						if(result == -1 || result == 0){
-							System.err.println("In movement code...");
-							result = mc.moveToken(p1.getTokenColour(), firstNode, secondNode);
-							if(result != -1){
-								gs.setResult(result);
-								gs.moveToken(firstNode, secondNode);
-							}
-							if(result == 1){
-								mill = true;
-							}
-							System.out.println("Result: " + result + ", " + phase);
+			
+			if((phase.equals(Phase.TWO) || phase.equals(Phase.THREE)) && (result == 0 || result == -1)){
+				System.out.println("Moving phase");
+				int x2 = e.getX();
+				int y2 = e.getY();
+				int firstNode = findNodeClicked(x, y);
+				int secondNode = findNodeClicked(x2, y2);
+				System.out.println("Node One: " + firstNode + ", Second Node: " + secondNode); 
+				System.err.println(turn);
+				if((p1 instanceof Human && p1.getTokenColour() == turn) && (firstNode != -1 && secondNode != -1)){
+					System.out.println("Above to move");
+					if(result == -1 || result == 0){
+						result = mc.moveToken(p1.getTokenColour(), firstNode, secondNode);
+						System.err.println("Result of move: " + result);
+						if(result != -1){
+							System.out.println("Made move...");
+							gs.moveToken(firstNode, secondNode);
 						}
-					} else if((p2 instanceof Human && p2.getTokenColour() == turn) && (firstNode != -1 && secondNode != -1)){	
-						if(result == -1 || result == 0){
-							result = mc.moveToken(p2.getTokenColour(), firstNode, secondNode);
-							if(result != -1){
-								gs.setResult(result);
-								gs.moveToken(firstNode, secondNode);
-							}
-							System.out.println("Result: " + result + ", " + phase);
-							if(result == 1){
-								mill = true;
-							}
+						if(result == 1){
+							mill = true;
 						}
-					} else if(firstNode == -1 || secondNode == -1){
-						result = -1;
+						System.out.println("Result: " + result + ", " + phase);
+					}
+				} else if((p2 instanceof Human && p2.getTokenColour() == turn) && (firstNode != -1 && secondNode != -1)){	
+					System.out.println("Above to move");
+					if(result == -1 || result == 0){
+						result = mc.moveToken(p2.getTokenColour(), firstNode, secondNode);
+						if(result != -1){
+							System.out.println("Made move...");
+							gs.moveToken(firstNode, secondNode);
+						}
+						System.out.println("Result: " + result + ", " + phase);
+						if(result == 1){
+							mill = true;
+						}
 					}
 				}
 			}
@@ -406,7 +347,6 @@ public class GameController {
 				}else{
 					turn = 'R';
 				}
-				gs.setResult(result);
 				gs.setTurn();
 			}
 			
@@ -419,11 +359,10 @@ public class GameController {
 				result = mc.addToken(player.getTokenColour(), position);
 				if(result != -1){
 					if(turn == 'R'){
-						gs.decrementPlayerOneT();
+						gs.lowerPlayerOneCount();
 					}else{
 						gs.lowerPlayerTwoCount();
 					}
-					gs.setResult(result);
 					gs.addToken(player.getTokenColour(), position);
 				}
 				System.out.println("Result: " + result + ", " + phase);
@@ -433,7 +372,6 @@ public class GameController {
 			}else if(mill && (result == -1 || result == 1)){
 				result = mc.removeToken(player.getTokenColour(), position);
 				if(result != -1){
-					gs.setResult(result);
 					gs.removeToken(position);
 					
 					mill = false;
@@ -441,6 +379,7 @@ public class GameController {
 				System.out.println("Result: " + result + ", " + phase);
 			}
 			if(!mill && result != -1 && result != -2){
+				System.out.println("Setting Turn");
 				if(turn == 'R'){
 					turn = 'B';
 				}else{

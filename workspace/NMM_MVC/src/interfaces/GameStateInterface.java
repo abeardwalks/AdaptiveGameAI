@@ -3,6 +3,7 @@ package interfaces;
 import model.Phase;
 
 public interface GameStateInterface {
+	
 
 	void addToken(char token, int position);
 	
@@ -10,27 +11,11 @@ public interface GameStateInterface {
 	
 	void moveToken(int x, int y);
 	
-	void decrementPlayerOneTokensToPlace();
+	void lowerPlayerOneCount();
 	
-	void decrementPlayerTwoTokensToPlace();
-	
-	int getPlayerOneTokensToPlace();
-	
-	int getPlayerTwoTokensToPlace();
-	
-	int getPlayerOneTokensRemaining();
-	
-	int getPlayerTwoTokensRemaining();
-	
-	Phase getPhase();
-	
-	char getTurn();
+	void lowerPlayerTwoCount();
 	
 	void setTurn();
-	
-	int getResult();
-	
-	boolean gameWon();
 	
 	/**
 	 * Returns the string representation of the game state.

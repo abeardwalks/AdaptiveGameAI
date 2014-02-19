@@ -120,13 +120,13 @@ public class MorrisBoard extends Observable implements GameStateInterface {
 
 
 	@Override
-	public void decrementPlayerOneTokensToPlace() {
+	public void lowerPlayerOneCount() {
 		playerOneTokensToPlace--;
 	}
 
 
 	@Override
-	public void decrementPlayerTwoTokensToPlace() {
+	public void lowerPlayerTwoCount() {
 		playerTwoTokensToPlace--;
 	}
 
@@ -146,51 +146,5 @@ public class MorrisBoard extends Observable implements GameStateInterface {
 		setChanged();
 		notifyObservers(details);	//for MVC
 	}
-
-
-	@Override
-	public int getPlayerOneTokensToPlace() {
-		return playerOneTokensToPlace;
-	}
-
-
-	@Override
-	public int getPlayerTwoTokensToPlace() {
-		return playerTwoTokensToPlace;
-	}
-
-
-	@Override
-	public int getPlayerOneTokensRemaining() {
-		return playerOneTokensRemaining;
-	}
-
-
-	@Override
-	public int getPlayerTwoTokensRemaining() {
-		return playerTwoTokensRemaining;
-	}
-
-
-	@Override
-	public char getTurn() {
-		return turn;
-	}
-
-
-	@Override
-	public int getResult() {
-		return result;
-	}
-	
-	@Override
-	public boolean gameWon(){
-		if(result == 2){
-			return true;
-		}
-		return false;
-	}
-	
-	
 
 }
