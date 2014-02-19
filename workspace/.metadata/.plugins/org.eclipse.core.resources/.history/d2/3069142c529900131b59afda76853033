@@ -1,0 +1,23 @@
+package players.MCTS;
+
+import interfaces.IntPairInterface;
+
+public class Move {
+	
+	private char action;
+	private char turn;
+	private String state;
+	
+	private Integer placementIndex;
+	private Integer removalIndex;
+	private IntPairInterface movementIndexs;
+	
+	public Move(char action, char turn, String state){
+		this.action = action;
+		this.turn = turn;
+		this.state = state;
+	}
+	
+	public 
+
+}

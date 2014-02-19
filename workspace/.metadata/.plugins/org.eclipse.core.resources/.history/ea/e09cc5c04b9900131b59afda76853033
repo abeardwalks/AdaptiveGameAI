@@ -1,0 +1,55 @@
+package players;
+
+import java.util.Observable;
+import java.util.Observer;
+
+import interfaces.IntPairInterface;
+import interfaces.PlayerInterface;
+
+public class MCTSAI implements PlayerInterface, Observer {
+	
+	
+
+	@Override
+	public int placeToken(String state) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int removeToken(String state) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public IntPairInterface moveToken(String state) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setTokenColour(char c) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public char getTokenColour() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void update(Observable arg0, Object arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

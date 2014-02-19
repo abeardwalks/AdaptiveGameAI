@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="java.awt.Graphics2D"/>
-<fullyQualifiedTypeName name="controller.GameController.HumanPlayerListener"/>
-<fullyQualifiedTypeName name="java.awt.RenderingHints"/>
 <fullyQualifiedTypeName name="board.MorrisBoard.boardDetails"/>
 <fullyQualifiedTypeName name="players.Human"/>
 <fullyQualifiedTypeName name="java.util.Observable"/>
@@ -21,15 +18,12 @@
 <fullyQualifiedTypeName name="board.Phase"/>
 <fullyQualifiedTypeName name="view.SetupView"/>
 <fullyQualifiedTypeName name="controller.GameController2.SetupActionListener"/>
-<fullyQualifiedTypeName name="java.util.Observer"/>
 <fullyQualifiedTypeName name="interfaces.PlayerInterface2"/>
 <fullyQualifiedTypeName name="view.SetupView2"/>
-<fullyQualifiedTypeName name="java.util.Random"/>
 <fullyQualifiedTypeName name="controller.GameController2"/>
 <fullyQualifiedTypeName name="controller.GameController2.HumanMouseListener"/>
 <fullyQualifiedTypeName name="players.Human2"/>
 <fullyQualifiedTypeName name="controller.players.Human2"/>
-<fullyQualifiedTypeName name="model.Phase"/>
 <fullyQualifiedTypeName name="java.lang.SuppressWarnings"/>
 <fullyQualifiedTypeName name="java.awt.event.MouseListener"/>
 <fullyQualifiedTypeName name="view.PlayingView"/>
@@ -38,7 +32,6 @@
 <fullyQualifiedTypeName name="java.awt.Graphics"/>
 <fullyQualifiedTypeName name="controller.MoveChecker"/>
 <fullyQualifiedTypeName name="java.util.ArrayList"/>
-<fullyQualifiedTypeName name="interfaces.IntPairInterface"/>
 <fullyQualifiedTypeName name="java.util.HashMap"/>
 <fullyQualifiedTypeName name="java.io.BufferedWriter"/>
 <fullyQualifiedTypeName name="java.io.FileWriter"/>
@@ -60,4 +53,11 @@
 <fullyQualifiedTypeName name="javax.swing.JPanel"/>
 <fullyQualifiedTypeName name="javax.swing.JLabel"/>
 <fullyQualifiedTypeName name="javax.swing.JCheckBox"/>
+<fullyQualifiedTypeName name="java.util.Observer"/>
+<fullyQualifiedTypeName name="java.util.Random"/>
+<fullyQualifiedTypeName name="java.util.Stack"/>
+<fullyQualifiedTypeName name="players.IntPair"/>
+<fullyQualifiedTypeName name="interfaces.IntPairInterface"/>
+<fullyQualifiedTypeName name="java.lang.String"/>
+<fullyQualifiedTypeName name="model.Phase"/>
 </qualifiedTypeNameHistroy>
