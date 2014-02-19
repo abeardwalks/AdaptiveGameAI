@@ -20,6 +20,16 @@ public class Move {
 		this.state = state;
 	}
 	
+	public Move(char action, char turn, String state, String stateAfterMove, Integer placementIndex, Integer removalIndex, IntPairInterface movementIndexs){
+		this.action = action;
+		this.turn = turn;
+		this.state = state;
+		this.stateAfterMove = stateAfterMove;
+		this.placementIndex = placementIndex;
+		this.removalIndex = removalIndex;
+		this.movementIndexs = movementIndexs;
+	}
+	
 	public char getAction(){
 		return action;
 	}
@@ -84,6 +94,20 @@ public class Move {
 		}
 		
 		stateAfterMove = new String(stateArray);
+	}
+	
+	public Object clone(){
+		if(placementIndex == null && removalIndex == null && movementIndexs == null){
+			return new Move(action, turn, state, stateAfterMove, null, null, null);
+		}else if(placementIndex == null && removalIndex == null && movementIndexs != null){
+			return new Move(action, turn, state, stateAfterMove, null, null, new IntPair(movementIndexs.getFirstInt(), movementIndexs.getSecondInt()));
+		}else if(placementIndex == null && removalIndex != null && movementIndexs == null){
+			return new Move(action, turn, state, stateAfterMove, null, removalIndex.intValue(), null);
+		}else if(placementIndex != null && removalIndex == null && movementIndexs == null){
+			return new Move(action, turn, state, stateAfterMove, placementIndex.intValue(), null, null);
+		}
+		
+		return new Move(action, turn, state, stateAfterMove, placementIndex.intValue(), removalIndex.intValue(), new IntPair(movementIndexs.getFirstInt(), movementIndexs.getSecondInt()));
 	}
 
 }

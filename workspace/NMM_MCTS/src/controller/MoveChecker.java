@@ -142,7 +142,7 @@ public class MoveChecker {
 		return result;
 	}
 	
-	private boolean gameWon() {
+	public boolean gameWon() {
 		if((playerOneTokensRemaining >= 3 && playerTwoTokensRemaining >= 3) && playersCanMove()){
 			return false;
 		}
@@ -478,7 +478,23 @@ public class MoveChecker {
 	}
 	
 	public Phase getPhase(){
+		calculatePhase();
 		return gamePhase;
+	}
+	
+	private void calculatePhase(){
+		
+		gamePhase = Phase.ONE;
+		
+		if(playerOneTokensToPlace == 0 && playerTwoTokensToPlace == 0){
+			gamePhase = Phase.TWO;
+		}
+		
+		if(playerOneTokensRemaining <= 3 && playerTwoTokensRemaining <= 3){
+			gamePhase = Phase.THREE;
+		}
+		
+		
 	}
 	
 	public String getState(){
@@ -504,7 +520,7 @@ public class MoveChecker {
 	public void setDetails(BoardDetails bd){
 		state = bd.getGS();
 		gamePhase = bd.getPhase();
-		
+		gamePhase = getPhase();
 		playerOneTokensToPlace = bd.getPlayerOneToPlace();
 		playerTwoTokensToPlace = bd.getPlayerTwoToPlace();
 		playerOneTokensRemaining = bd.getPlayerOneRemaining();
@@ -540,7 +556,10 @@ public class MoveChecker {
 		
 		
 		List<Move> moves = new ArrayList<Move>();
-		
+		System.out.println("calculating placements...");
+		System.out.println("Turn is: " + turn);
+		System.out.println("P1 TP: " + playerOneTokensToPlace);
+		System.out.println("P2 TP: " + playerTwoTokensToPlace);
 		if(turn == 'R' && playerOneTokensToPlace <= 0){
 			return moves;
 		}else if(turn == 'B' && playerTwoTokensToPlace <= 0){
@@ -575,7 +594,7 @@ public class MoveChecker {
 		for (int i = 0; i < stateArray.length; i++) {
 			if(stateArray[i] == toRemove){
 				Move m = new Move('R', turn, state);
-				m.setPlacementIndex(i);
+				m.setRemovalIndex(i);
 				moves.add(m);
 			}
 		}
@@ -583,6 +602,10 @@ public class MoveChecker {
 		return moves;
 	}
 	
+	public void setTokensToPlace(int p1, int p2){
+		playerOneTokensToPlace = p1;
+		playerTwoTokensToPlace = p2;
+	}
 
 	private List<Move> getAllPossibleMovements(char turn) {
 		List<Move> moves = new ArrayList<Move>();
@@ -609,6 +632,17 @@ public class MoveChecker {
 		
 		return moves;
 		
+	}
+	
+	public void printDetails(){
+		System.out.println("-------------- Move Checker Details --------------");
+		System.out.println("State: " + state);
+		System.out.println("P1 TP: " + playerOneTokensToPlace);
+		System.out.println("P2 TP: " + playerTwoTokensToPlace);
+		System.out.println("P1 TR: " + playerOneTokensRemaining);
+		System.out.println("P2 TR: " + playerTwoTokensRemaining);
+		System.out.println("Phase: " + gamePhase);
+		System.out.println("--------------------------------------------------");
 	}
 
 }

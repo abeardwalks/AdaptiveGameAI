@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="interfaces.AbstractPlayer"/>
 <fullyQualifiedTypeName name="java.lang.Runnable"/>
 <fullyQualifiedTypeName name="board.BoardDetails"/>
-<fullyQualifiedTypeName name="java.lang.Thread"/>
 <fullyQualifiedTypeName name="interfaces.GameStateInterface"/>
 <fullyQualifiedTypeName name="view.ApplicationView"/>
 <fullyQualifiedTypeName name="interfaces.PlayerInterface"/>
@@ -46,18 +44,20 @@
 <fullyQualifiedTypeName name="javax.swing.JLabel"/>
 <fullyQualifiedTypeName name="javax.swing.JCheckBox"/>
 <fullyQualifiedTypeName name="java.util.Observer"/>
-<fullyQualifiedTypeName name="java.util.Random"/>
 <fullyQualifiedTypeName name="java.util.Stack"/>
-<fullyQualifiedTypeName name="players.IntPair"/>
-<fullyQualifiedTypeName name="interfaces.IntPairInterface"/>
-<fullyQualifiedTypeName name="java.lang.String"/>
 <fullyQualifiedTypeName name="model.Phase"/>
 <fullyQualifiedTypeName name="model.board.BoardDetails"/>
 <fullyQualifiedTypeName name="java.util.ArrayList"/>
-<fullyQualifiedTypeName name="players.MCTS.Move"/>
 <fullyQualifiedTypeName name="java.util.List"/>
 <fullyQualifiedTypeName name="players.MCTSAI.MCTSGame"/>
 <fullyQualifiedTypeName name="java.util.LinkedList"/>
 <fullyQualifiedTypeName name="java.lang.Exception"/>
 <fullyQualifiedTypeName name="controller.MoveChecker"/>
+<fullyQualifiedTypeName name="players.MCTSAI"/>
+<fullyQualifiedTypeName name="java.util.Random"/>
+<fullyQualifiedTypeName name="interfaces.IntPairInterface"/>
+<fullyQualifiedTypeName name="players.MCTS.Move"/>
+<fullyQualifiedTypeName name="players.IntPair"/>
+<fullyQualifiedTypeName name="java.lang.Thread"/>
+<fullyQualifiedTypeName name="java.lang.String"/>
 </qualifiedTypeNameHistroy>
