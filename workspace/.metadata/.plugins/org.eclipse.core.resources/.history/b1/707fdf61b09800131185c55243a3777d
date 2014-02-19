@@ -166,29 +166,29 @@ public class MCTSAI implements MCTSInterface {
 			}else{
 				current.expand();
 				TreeNode newNode = current.select();
-//				Move m = newNode.move;
-//				int result = -2;
-//				switch (m.getAction()) {
-//				case 'P':
-//					result = moveCheck.addToken(m.getPlayer(), m.getPlacementIndex());
-//					m.setResult(result);
-//					break;
-//				case 'M':
-//					IntPairInterface movement = m.getMovementIndexs();
-//					result = moveCheck.moveToken(m.getPlayer(), movement.getFirstInt(), movement.getSecondInt());
-//					m.setResult(result);
-//					break;
-//				case 'R':
-//					result = moveCheck.removeToken(m.getPlayer(), m.getRemovalIndex());
-//					m.setResult(result);
-//					break;
-//				default:
-//					break;
-//				}
+				Move m = newNode.move;
+				int result = -2;
+				switch (m.getAction()) {
+				case 'P':
+					result = moveCheck.addToken(m.getPlayer(), m.getPlacementIndex());
+					m.setResult(result);
+					break;
+				case 'M':
+					IntPairInterface movement = m.getMovementIndexs();
+					result = moveCheck.moveToken(m.getPlayer(), movement.getFirstInt(), movement.getSecondInt());
+					m.setResult(result);
+					break;
+				case 'R':
+					result = moveCheck.removeToken(m.getPlayer(), m.getRemovalIndex());
+					m.setResult(result);
+					break;
+				default:
+					break;
+				}
 				visited.add(newNode);
 				rewards = rollOut(newNode);
 			}
-//			moveCheck.returnToPreservedState();
+			moveCheck.returnToPreservedState();
 			for(TreeNode node : visited){
 				node.updateStats(rewards);
 			}
@@ -254,7 +254,7 @@ public class MCTSAI implements MCTSInterface {
 		}
 		
 		public double[] rollOut(TreeNode tn){
-			System.out.println("NEW ROLLOUT - " + moveCheck.getState());
+			
 			int count = 0;
 			Move m = tn.move;
 			
@@ -283,77 +283,56 @@ public class MCTSAI implements MCTSInterface {
 			
 			
 			List<Move> moves = moveCheck.getAvailableMoves(action, turn);
-			boolean gameWon = false;
-			while(!gameWon){
-//				System.out.println("Playing Game..." + moveCheck.getState());
-//				System.out.println(moveCheck.getPhase());
-//				System.out.println("Available moves..." + moves.size());
+			
+			while(!moveCheck.gameWon()){
+				System.out.println("Playing Game..." + moveCheck.getState());
 				Move move = moves.get(r.nextInt(moves.size()));
 				int resultOfMove = -2;
-				turn = moveCheck.getTurn();
-//				System.out.println("Players turn: " + turn);
-//				System.out.println("Players action: " + move.getAction());
 				switch (move.getAction()) {
 				case 'P':
-//					System.out.println("placing on... " + move.getPlacementIndex());
-					resultOfMove = moveCheck.addToken(turn, move.getPlacementIndex());
+					resultOfMove = moveCheck.addToken(m.getPlayer(), m.getPlacementIndex());
 					move.setResult(resultOfMove);
 					break;
 				case 'M':
-//					System.out.println("moving...");
-					IntPairInterface movement = move.getMovementIndexs();
-					resultOfMove = moveCheck.moveToken(turn, movement.getFirstInt(), movement.getSecondInt());
+					IntPairInterface movement = m.getMovementIndexs();
+					resultOfMove = moveCheck.moveToken(m.getPlayer(), movement.getFirstInt(), movement.getSecondInt());
 					move.setResult(resultOfMove);
 					break;
 				case 'R':
-//					System.out.println("removing...");
-					resultOfMove = moveCheck.removeToken(turn, move.getRemovalIndex());
+					resultOfMove = moveCheck.removeToken(m.getPlayer(), m.getRemovalIndex());
 					move.setResult(resultOfMove);
 					break;
 				default:
 					break;
 				}
-//				System.out.println("Game Won - " + moveCheck.gameWon());
-				if(moveCheck.gameWon()){
-					gameWon = true;
-				}
+				
 				
 				action = 'P';
 				
-				
-//				System.out.println("Result of turn: " + resultOfMove);
 				if(resultOfMove == 0){
-					action = 'P';
+					if(move.getPlayer() == 'R'){
+						turn = 'B';
+					}else{
+						turn = 'R';
+					}
 					if(moveCheck.getPhase() == Phase.TWO || moveCheck.getPhase() == Phase.THREE){
 						action = 'M';
 					}
 				}else if(resultOfMove == 1){
 					action = 'R';
 				}
-				turn = moveCheck.getTurn();
 				moves = moveCheck.getAvailableMoves(action, turn);
-//				System.out.println("Moves size: " + moves.size());
-//				System.out.println("Turn: " + turn);
-//				System.out.println("Action: " + action);
-				if(result == -1) {
-					System.exit(0);
-				}
+				System.out.println("Moves size: " + moves.size());
+				System.out.println("Turn: " + turn);
+				System.out.println("Action: " + action);
 				System.out.println("---------------------------------");
-				moveCheck.printDetails();
-//				try {
-//					Thread.sleep(5000);
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-				count++;
+				Thread.sleep(10000);
+				
 			}
 			
 			double[] rewards = moveCheck.getRewards();
 			
 			moveCheck.returnToPreservedState();
-//			moveCheck.printDetails();
-			
 			
 			return rewards;
 		}
