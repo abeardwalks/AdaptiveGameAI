@@ -1,0 +1,58 @@
+package view;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Insets;
+import java.awt.event.ActionListener;
+
+import javax.swing.JPanel;
+
+public class PauseView extends JPanel{
+
+	private static final long serialVersionUID = 4854484671060436688L;
+	
+	public PauseView(ActionListener actionListener){
+		super();
+		setSize(800,650);
+		setOpaque(true);
+		setBackground(new Color(255, 255, 255, 70));
+		
+	}
+
+	public void paint(Graphics g){
+		System.out.println("Painting pause");
+		Graphics2D g2 = (Graphics2D)g;
+		g2.setColor(Color.green);
+		g2.fillRect(250, 225, 300, 200);
+		
+		
+		super.paint(g2);
+	}
+	
+	private void fillView() {
+		this.setLayout(null);
+		
+		
+		
+		this.add(playerOneLabel);
+		this.add(playerOneSelect);
+		this.add(playerTwoLabel);
+		this.add(playerTwoSelect);
+		
+		Insets insets = this.getInsets();
+		Dimension size = playerOneLabel.getPreferredSize();
+		playerOneLabel.setBounds(235 + insets.left, 155 + insets.top, size.width, size.height);
+		playerOneSelect.setBounds(245 + size.width + insets.left, 155 + insets.top, size.width + 30, size.height + 5);
+		playerTwoLabel.setBounds(415 + insets.left, 155 + insets.top, size.width, size.height);
+		playerTwoSelect.setBounds(427 + size.width + insets.left, 155 + insets.top, size.width + 30, size.height + 5);
+		
+		size = start.getPreferredSize();
+		start.setBounds(365 + insets.left, 280 + insets.top, size.width, size.height);
+		
+		this.add(start);
+		
+		
+	}
+}

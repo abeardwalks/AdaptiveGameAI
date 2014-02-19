@@ -1,16 +1,11 @@
 package model.board;
 
-import model.Phase;
-
 public class BoardDetails{
 	private String gs;
 	private int result;
 	private int playerOneRemaining;
 	private int playerTwoRemaining;
-	private int playerOneToPlace;
-	private int playerTwoToPlace;
 	private char turn;
-	private Phase phase;
 	
 
 
@@ -20,17 +15,6 @@ public class BoardDetails{
 		this.playerOneRemaining = playerOneRemaining;
 		this.playerTwoRemaining = playerTwoRemaining;
 		this.turn = turn;
-	}
-	
-	public BoardDetails(String gs, int result, int playerOneRemaining, int playerTwoRemaining, int playerOneToPlace, int playerTwoToPlace, char turn, Phase phase){
-		this.gs = gs;
-		this.result = result;
-		this.playerOneRemaining = playerOneRemaining;
-		this.playerTwoRemaining = playerTwoRemaining;
-		this.playerOneToPlace = playerOneToPlace;
-		this.playerTwoToPlace = playerTwoToPlace;
-		this.turn = turn;
-		this.phase = phase;
 	}
 	
 	public String getGS(){
@@ -49,20 +33,8 @@ public class BoardDetails{
 		return playerTwoRemaining;
 	}
 	
-	public int getPlayerOneToPlace(){
-		return playerOneToPlace;
-	}
-	
-	public int getPlayerTwoToPlace(){
-		return playerTwoToPlace;
-	}
-	
 	public char getTurn(){
 		return turn;
-	}
-	
-	public Phase getPhase(){
-		return phase;
 	}
 	
 }

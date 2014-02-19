@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="board.MorrisBoard.boardDetails"/>
+<fullyQualifiedTypeName name="players.Human"/>
+<fullyQualifiedTypeName name="java.util.Observable"/>
+<fullyQualifiedTypeName name="players.AbstractPlayer"/>
+<fullyQualifiedTypeName name="players.SimpleAI"/>
+<fullyQualifiedTypeName name="java.lang.AbstractMethodError"/>
 <fullyQualifiedTypeName name="interfaces.AbstractPlayer"/>
 <fullyQualifiedTypeName name="java.lang.Runnable"/>
 <fullyQualifiedTypeName name="board.BoardDetails"/>
+<fullyQualifiedTypeName name="java.lang.Thread"/>
+<fullyQualifiedTypeName name="interfaces.GameStateInterface"/>
 <fullyQualifiedTypeName name="view.ApplicationView"/>
 <fullyQualifiedTypeName name="board.MorrisBoard2"/>
 <fullyQualifiedTypeName name="interfaces.GameStateInterface2"/>
@@ -12,16 +20,20 @@
 <fullyQualifiedTypeName name="java.util.Observer"/>
 <fullyQualifiedTypeName name="interfaces.PlayerInterface2"/>
 <fullyQualifiedTypeName name="view.SetupView2"/>
+<fullyQualifiedTypeName name="java.util.Random"/>
 <fullyQualifiedTypeName name="controller.GameController2"/>
 <fullyQualifiedTypeName name="controller.GameController2.HumanMouseListener"/>
 <fullyQualifiedTypeName name="players.Human2"/>
 <fullyQualifiedTypeName name="controller.players.Human2"/>
+<fullyQualifiedTypeName name="model.Phase"/>
 <fullyQualifiedTypeName name="java.lang.SuppressWarnings"/>
 <fullyQualifiedTypeName name="java.awt.event.MouseListener"/>
 <fullyQualifiedTypeName name="view.PlayingView"/>
 <fullyQualifiedTypeName name="java.awt.event.MouseMotionListener"/>
 <fullyQualifiedTypeName name="controller.GameController.HumanMouseListener"/>
 <fullyQualifiedTypeName name="java.awt.Graphics"/>
+<fullyQualifiedTypeName name="controller.MoveChecker"/>
+<fullyQualifiedTypeName name="java.util.ArrayList"/>
 <fullyQualifiedTypeName name="java.util.HashMap"/>
 <fullyQualifiedTypeName name="java.io.BufferedWriter"/>
 <fullyQualifiedTypeName name="java.io.FileWriter"/>
@@ -35,6 +47,7 @@
 <fullyQualifiedTypeName name="controller.GameController.KeyListens"/>
 <fullyQualifiedTypeName name="java.awt.Color"/>
 <fullyQualifiedTypeName name="view.PauseView"/>
+<fullyQualifiedTypeName name="java.lang.System"/>
 <fullyQualifiedTypeName name="java.awt.event.ActionListener"/>
 <fullyQualifiedTypeName name="java.awt.Dimension"/>
 <fullyQualifiedTypeName name="controller.GameController.PauseMenuListener"/>
@@ -44,20 +57,7 @@
 <fullyQualifiedTypeName name="javax.swing.JCheckBox"/>
 <fullyQualifiedTypeName name="interfaces.PlayerInterface"/>
 <fullyQualifiedTypeName name="interfaces.MCTSInterface"/>
-<fullyQualifiedTypeName name="players.IntPair"/>
-<fullyQualifiedTypeName name="java.util.List"/>
 <fullyQualifiedTypeName name="model.board.BoardDetails"/>
-<fullyQualifiedTypeName name="java.util.ArrayList"/>
-<fullyQualifiedTypeName name="players.MCTS.Move"/>
-<fullyQualifiedTypeName name="java.lang.InterruptedException"/>
-<fullyQualifiedTypeName name="interfaces.GameStateInterface"/>
-<fullyQualifiedTypeName name="java.util.Random"/>
-<fullyQualifiedTypeName name="java.util.LinkedList"/>
-<fullyQualifiedTypeName name="controller.MoveChecker"/>
+<fullyQualifiedTypeName name="players.IntPair"/>
 <fullyQualifiedTypeName name="interfaces.IntPairInterface"/>
-<fullyQualifiedTypeName name="java.lang.Exception"/>
-<fullyQualifiedTypeName name="model.Phase"/>
-<fullyQualifiedTypeName name="players.MCTSAI"/>
-<fullyQualifiedTypeName name="java.lang.Thread"/>
-<fullyQualifiedTypeName name="java.lang.System"/>
 </qualifiedTypeNameHistroy>
