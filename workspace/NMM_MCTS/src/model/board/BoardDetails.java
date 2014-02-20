@@ -55,4 +55,16 @@ public class BoardDetails{
 		return phase;
 	}
 	
+	public void printDetails(){
+		System.out.println("-----------Board Details----------");
+		System.out.println("State: " + gs);
+		System.out.println("P1 TP: " + playerOneToPlace);
+		System.out.println("P2 TP: " + playerTwoToPlace);
+		System.out.println("P1 TR: " + playerOneRemaining);
+		System.out.println("P2 TR: " + playerTwoRemaining);
+		System.out.println("Current Turn: " + turn);
+		System.out.println("Phase: " + phase);
+		System.out.println("--------------------------------------");
+	}
+	
 }

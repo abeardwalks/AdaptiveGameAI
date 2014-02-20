@@ -115,7 +115,7 @@ public class MoveChecker {
 	public int moveToken(char token, int x, int y) {
 		Integer result = 0;			//for MVC
 		char[] stateArray = state.toCharArray();
-		
+		System.err.println("Phase: " + gamePhase);
 		if(token == 'R' && playerOneTokensRemaining == 3){
 			moveAnywhere = true;
 		}else if(token == 'B' && playerTwoTokensRemaining == 3){

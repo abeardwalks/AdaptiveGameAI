@@ -109,5 +109,20 @@ public class Move {
 		
 		return new Move(action, turn, state, stateAfterMove, placementIndex.intValue(), removalIndex.intValue(), new IntPair(movementIndexs.getFirstInt(), movementIndexs.getSecondInt()));
 	}
+	
+	public void printDetails(){
+		System.out.println("-----------------move details-------------");
+		System.out.println("Action: " + action + ", Turn: " + turn);
+		System.out.println("Acting on: " + state);
+		System.out.println("Resulting: " + stateAfterMove);
+		System.out.println("Placement: " + placementIndex);
+		System.out.println("Removal: " + removalIndex);
+		if(movementIndexs != null){
+			System.out.println("Movement: " + movementIndexs.getFirstInt() + " - " + movementIndexs.getSecondInt());
+		}else{
+			System.out.println("Movement: " + movementIndexs);
+		}
+		System.out.println("-------------------------------------------");
+	}
 
 }
