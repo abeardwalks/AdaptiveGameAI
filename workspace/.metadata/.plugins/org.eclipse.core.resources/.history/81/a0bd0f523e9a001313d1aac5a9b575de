@@ -1,0 +1,82 @@
+package players;
+
+import java.util.Random;
+
+import interfaces.IntPairInterface;
+import interfaces.PlayerInterface;
+
+public class RuleAI implements PlayerInterface {
+	
+	private char tokenColour;
+	private char oppenentColour;
+	private int tokensToPlace = 9;
+	private int lastPlacement = -1;
+	private Random ran = new Random();
+	
+	
+	@Override
+	public int placeToken(String state) {
+		int placement = 0;
+		int coinFlip = ran.nextInt(1);
+		char[] stateArray = state.toCharArray();
+		if(tokensToPlace == 9){
+			if(stateArray[4] == 'N'){
+				placement = 4;
+			}else if(stateArray[10] == 'N'){
+				placement = 10;
+			}else if(stateArray[13] == 'N'){
+				placement = 13;
+			}else if(stateArray[19] == 'N'){
+				placement = 19;
+			}
+		}else if(tokensToPlace == 8){
+			if(lastPlacement == 4){
+				if(stateArray[10] == oppenentColour && stateArray[14] == oppenentColour){
+					if(coinFlip == 0){
+						placement = 6;
+					}else{
+						placement = 8;
+					}
+				}
+			}
+		}
+		
+		lastPlacement = placement;
+		tokensToPlace--;
+		return placement;
+		
+	}
+
+	@Override
+	public int removeToken(String state) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public IntPairInterface moveToken(String state) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getName() {
+		return "Rule Based AI";
+	}
+
+	@Override
+	public void setTokenColour(char c) {
+		tokenColour = c;
+		if(c == 'R'){
+			oppenentColour = 'B';
+		}else{
+			oppenentColour = 'R';
+		}
+	}
+
+	@Override
+	public char getTokenColour() {
+		return tokenColour;
+	}
+
+}

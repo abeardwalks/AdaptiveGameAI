@@ -23,6 +23,15 @@ public class MCTSAI implements PlayerInterface, Observer {
 	private TreeNode root;
 	private char color;
 	private String state;
+	
+	private void sleep(){
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	@Override
 	public int placeToken(String state) {
@@ -48,16 +57,17 @@ public class MCTSAI implements PlayerInterface, Observer {
 	private Move getMove(char action){
 		MoveChecker mc = new MoveChecker();
 		mc.setDetails(bd);
+		
 		Move m = new Move(action, getTokenColour(), state);
 		List<Move> moves = mc.getAllPossibleMoves(action, getTokenColour(), bd);
-		
+
 		if(moves.size() == 1){
 			return moves.get(0);
 		}
 		
 		root = new TreeNode(m, new MCTSGame(bd));
 		
-		long stop = System.currentTimeMillis() + 1000;
+		long stop = System.currentTimeMillis() + 10000;
 		
 		while(System.currentTimeMillis() < stop){
 			root.selectAction();
@@ -66,6 +76,8 @@ public class MCTSAI implements PlayerInterface, Observer {
 		double bestValue = Double.NEGATIVE_INFINITY;
 		Move bestMove = null;
 		for(TreeNode child : root.children){
+			System.out.println("Rewards..." + child.rewards[getPlayerID() - 1] + ", visits: " + child.nVisits);
+			
 			double value = child.rewards[getPlayerID() - 1] / child.nVisits;
 			if(value > bestValue){
 				bestValue = value;
@@ -171,27 +183,27 @@ public class MCTSAI implements PlayerInterface, Observer {
 			char turn = node.move.getTurn();
 			
 			Move m = game.makeMove(node.move);
-			game.printDetails();
+
 			List<Move> moves = moveCheck.getAllPossibleMoves(m.getAction(), m.getTurn(), game.getDetails());
+			
 			System.out.println("BEFORE ROLLOUT");
 			game.printDetails();
 			System.out.println("Starting rollout...");
 			
-			while(!game.isWon() && !moves.isEmpty()){
+			while(!game.isWon() && !moves.isEmpty() && !game.gameDraw()){
 				System.out.println("spinning in rollout loop");
 				Move result = game.makeMove(moves.get(r.nextInt(moves.size())));
+				System.out.println("The result...");
+				result.printDetails();
 				count++;
 				action = result.getAction();
-				turn = game.turn;
-				moveCheck.setDetails(game.getDetails());
+				turn = result.getTurn();
 				moves = moveCheck.getAllPossibleMoves(action, turn, game.getDetails());
-//				try {
-//					Thread.sleep(3000);
-					game.printDetails();
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
+				System.out.println("The new moves...");
+				for (Move move : moves) {
+					move.printDetails();
+				}
+//				sleep();
 			}
 			
 			double[] rewards = game.getRewards();
@@ -205,7 +217,14 @@ public class MCTSAI implements PlayerInterface, Observer {
 		private void expand() {
 			char action = this.move.getAction();
 			char turn = this.move.getTurn();
-			
+			if(game.playerOneTokensToPlace == 0 && game.playerTwoTokensToPlace == 1 && action == 'P'){
+				turn = 'B';
+			}else if(game.playerOneTokensToPlace == 1 && game.playerTwoTokensToPlace == 0 && action == 'P'){
+				turn = 'R';
+			}
+			if(game.playerOneTokensToPlace == 0 && game.playerTwoTokensToPlace == 0 && action == 'P'){
+				action = 'M';
+			}
 			List<Move> moves = moveCheck.getAllPossibleMoves(action, turn, game.getDetails());
 			children = new TreeNode[moves.size()];
 			if(moves.size() == 0){
@@ -216,6 +235,7 @@ public class MCTSAI implements PlayerInterface, Observer {
 				System.out.println("The action was: " + action);
 				System.out.println("The turn was: " + turn);
 				moveCheck.printDetails();
+				return;
 			}
 			int i = 0;
 			for (Move move : moves) {
@@ -226,18 +246,23 @@ public class MCTSAI implements PlayerInterface, Observer {
 		}
 
 		private TreeNode select() {
+			
 			TreeNode selected = children[0];
+			
 			double bestValue = Double.NEGATIVE_INFINITY;
 			if(children.length == 0){
 				System.out.println("No Children to select");
 			}
 			
 			for (TreeNode c : children) {
-				double uctValue = c.rewards[game.getPlayerID()-1]
-						/ (c.nVisits + epsilon)
+				double uctValue = Double.NEGATIVE_INFINITY;
+				if(c.nVisits < 10){
+					uctValue = c.rewards[game.getPlayerID()-1]
+						/ ((c.nVisits) + epsilon)
 						+ Math.sqrt(Math.log(nVisits + 1)
 								/ (c.nVisits + epsilon)) + r.nextDouble()
 						* epsilon;
+				}
 				if (uctValue > bestValue) {
 					selected = c;
 					bestValue = uctValue;
@@ -338,6 +363,7 @@ public class MCTSAI implements PlayerInterface, Observer {
 				break;
 			}
 			moveChecker.setDetails(getDetails());
+			
 			this.phase = moveChecker.getPhase();
 			
 		}
@@ -354,6 +380,14 @@ public class MCTSAI implements PlayerInterface, Observer {
 				}
 			}
 			return rewards;
+		}
+		
+		public boolean gameDraw(){
+			if(playerOneTokensRemaining == 3 && playerTwoTokensRemaining == 3){
+				return true;
+			}else{
+				return false;
+			}
 		}
 
 		public Move makeMove(Move move) {
@@ -444,6 +478,7 @@ public class MCTSAI implements PlayerInterface, Observer {
 			System.out.println("P2 TR: " + playerTwoTokensRemaining);
 			System.out.println("Current Turn: " + turn);
 			System.out.println("Phase: " + phase);
+			System.out.println("Game Won - " + isWon());
 			System.out.println("--------------------------------------");
 		}
 		

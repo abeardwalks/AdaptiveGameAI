@@ -46,7 +46,6 @@
 <fullyQualifiedTypeName name="java.util.Stack"/>
 <fullyQualifiedTypeName name="model.Phase"/>
 <fullyQualifiedTypeName name="model.board.BoardDetails"/>
-<fullyQualifiedTypeName name="java.util.ArrayList"/>
 <fullyQualifiedTypeName name="java.util.List"/>
 <fullyQualifiedTypeName name="players.MCTSAI.MCTSGame"/>
 <fullyQualifiedTypeName name="java.util.LinkedList"/>
@@ -59,5 +58,6 @@
 <fullyQualifiedTypeName name="players.IntPair"/>
 <fullyQualifiedTypeName name="java.lang.Thread"/>
 <fullyQualifiedTypeName name="java.lang.String"/>
+<fullyQualifiedTypeName name="java.util.ArrayList"/>
 <fullyQualifiedTypeName name="java.lang.System"/>
 </qualifiedTypeNameHistroy>

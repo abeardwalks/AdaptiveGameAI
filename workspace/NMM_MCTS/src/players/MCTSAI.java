@@ -67,7 +67,7 @@ public class MCTSAI implements PlayerInterface, Observer {
 		
 		root = new TreeNode(m, new MCTSGame(bd));
 		
-		long stop = System.currentTimeMillis() + 10000;
+		long stop = System.currentTimeMillis() + 60000;
 		
 		while(System.currentTimeMillis() < stop){
 			root.selectAction();
@@ -256,13 +256,12 @@ public class MCTSAI implements PlayerInterface, Observer {
 			
 			for (TreeNode c : children) {
 				double uctValue = Double.NEGATIVE_INFINITY;
-				if(c.nVisits < 10){
 					uctValue = c.rewards[game.getPlayerID()-1]
 						/ ((c.nVisits) + epsilon)
 						+ Math.sqrt(Math.log(nVisits + 1)
 								/ (c.nVisits + epsilon)) + r.nextDouble()
 						* epsilon;
-				}
+				
 				if (uctValue > bestValue) {
 					selected = c;
 					bestValue = uctValue;
@@ -373,7 +372,7 @@ public class MCTSAI implements PlayerInterface, Observer {
 			rewards[0] = 0.0;
 			rewards[1] = 0.0;
 			if(isWon()){
-				if(playerOneTokensRemaining < 3){
+				if(playerOneTokensRemaining <= 3){
 					rewards[1] = 1.0;
 				}else{
 					rewards[0] = 1.0;
@@ -453,6 +452,9 @@ public class MCTSAI implements PlayerInterface, Observer {
 
 		public boolean isWon() {
 			moveChecker.setDetails(getDetails());
+			if(playerOneTokensRemaining == 3 || playerTwoTokensRemaining == 3){
+				return true;
+			}
 			return moveChecker.gameWon();
 		}
 		
