@@ -394,33 +394,33 @@ public class PlayingView extends JPanel implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
-//		BoardDetails bd = (BoardDetails)arg;
-//		gs = bd.getGS();
-//		result = bd.getResult();
-//		playerOneTokens = bd.getPlayerOneToPlace();
-//		playerTwoTokens = bd.getPlayerTwoToPlace();
-//		turn = bd.getTurn();
-//		
-//		if(result == 0 && turn == 'B'){
-//			if(playerTwoTokens == 0){
-//				toolTip = "Player Two (Blue) to move, please click and drag a blue token to an empty node...";
-//			}else{
-//				toolTip = "Player Two (Blue) to place, click an empty node to play...";
-//			}
-//		}else if(result == 0 || result == -2){
-//			if(playerOneTokens == 0){
-//				toolTip = "Player One (Orange) to move, please click and drag a orange token to an empty node...";
-//			}else{
-//				toolTip = "Player One (Orange) to place, click an empty node to play...";
-//			}
-//		}else if(result == 1 && turn == 'R'){
-//			toolTip = "Player One (Orange) to remove, please click on a Blue piece to remove it from the game...";
-//		}else if(result == 1){
-//			toolTip = "Player Two (Blue) to remove, please click on a Orange piece to remove it from the game...";
-//		}else if(result == 2){
-//			toolTip = "The Game has been Won, hazzah!";
-//		}
-//		
+		BoardDetails bd = (BoardDetails)arg;
+		gs = bd.getGS();
+		result = bd.getResult();
+		playerOneTokens = bd.getPlayerOneToPlace();
+		playerTwoTokens = bd.getPlayerTwoToPlace();
+		turn = bd.getTurn();
+		
+		if(result == 0 && turn == 'B'){
+			if(playerTwoTokens == 0){
+				toolTip = "Player Two (Blue) to move, please click and drag a blue token to an empty node...";
+			}else{
+				toolTip = "Player Two (Blue) to place, click an empty node to play...";
+			}
+		}else if(result == 0 || result == -2){
+			if(playerOneTokens == 0){
+				toolTip = "Player One (Orange) to move, please click and drag a orange token to an empty node...";
+			}else{
+				toolTip = "Player One (Orange) to place, click an empty node to play...";
+			}
+		}else if(result == 1 && turn == 'R'){
+			toolTip = "Player One (Orange) to remove, please click on a Blue piece to remove it from the game...";
+		}else if(result == 1){
+			toolTip = "Player Two (Blue) to remove, please click on a Orange piece to remove it from the game...";
+		}else if(result == 2){
+			toolTip = "The Game has been Won, hazzah!";
+		}
+		
 		repaint();
 	}
 	
