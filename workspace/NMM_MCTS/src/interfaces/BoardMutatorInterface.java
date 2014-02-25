@@ -1,5 +1,8 @@
 package interfaces;
 
+import model.Phase;
+import move.AbstractMove;
+
 /**
  * Interface to allow the controller to modify the game state. It decouples it 
  * from the rest of the program and hides methods not required by the controller.
@@ -10,29 +13,26 @@ package interfaces;
 public interface BoardMutatorInterface {
 	
 	/**
-	 * Adds a token to the board i.e. the model.
+	 * Executes the passed in move.
 	 * 
-	 * @param playerColour - The colour of the players who is performing the action 
-	 * 						 i.e. the colour of token to be placed..
-	 * @param     position - The index (0-23) of where the token should be placed.
+	 * @param move - The Move to be excuted on the game.
 	 */
-	void addToken(char playerColour, int position);
+	void executeMove(AbstractMove move);
 	
 	/**
-	 * Removes a token from the board i.e. the model.
-	 * 
-	 * @param playerColour - The colour of the player who is performing the action
-	 * @param     position - The index (0-23) of where the token should be removed from.
+	 * Undoes the last move excuted on the game.
 	 */
-	void removeToken(char playerColour, int position);
+	void undo();
 	
 	/**
-	 * Moves a token from one position to another.
-	 * 
-	 * @param from - The index (0-23) of where the token currently resides.
-	 * @param   to - The index (0-23) of where the token is moving to. 
+	 * Changes whos turn it is.
 	 */
-	void moveToken(int from, int to);
+	void setTurn();
+	
+	/**
+	 * @param phase - the new phase of the game.
+	 */
+	void setPhase(Phase phase);
 	
 	/**
 	 * Resets the entire state of the game. 

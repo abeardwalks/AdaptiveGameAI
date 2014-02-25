@@ -1,0 +1,23 @@
+package move;
+
+public class RemovalMove extends AbstractMove{
+
+	private int removal;
+	
+	public RemovalMove(String state, char action, char playerColour, int removal) {
+		super(state, action, playerColour);
+		this.removal = removal;
+	}
+
+	public int getRemovalIndex(){
+		return removal;
+	}
+	
+	@Override
+	public String getStatePostAction() {
+		// TODO Auto-generated method stub
+		return null;
+	
+	}
+
+}

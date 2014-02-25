@@ -1,0 +1,96 @@
+package model.board;
+
+import java.util.Observable;
+import java.util.Stack;
+
+import model.Phase;
+import interfaces.BoardDetailsInterface;
+import interfaces.BoardMutatorInterface;
+import interfaces.MoveInterface;
+
+public class BoardModel extends Observable implements BoardDetailsInterface, BoardMutatorInterface {
+	
+	private String state;
+	private Stack<MoveInterface> history;
+	private int playerOneToPlace, playerTwoToPlace;
+	private int playerOneRemaining, playerTwoRemaining;
+	private Phase phase;
+	private char turn;
+	
+	public BoardModel(){
+		
+		state = "NNNNNNNNNNNNNNNNNNNNNNNN";
+		history = new Stack<MoveInterface>();
+		
+		playerOneToPlace = 9;
+		playerTwoToPlace = 9;
+		playerOneRemaining = 9;
+		playerTwoRemaining = 9;
+		
+		phase = Phase.ONE;
+		
+		turn = 'R';
+		
+	}
+
+	@Override
+	public void executeMove(MoveInterface move) {
+		history.push(move);
+		
+	}
+
+	@Override
+	public void undo() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void reset() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getState() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getPlayerOneToPlace() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getPlayerTwoToPlace() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getPlayerOneRemaining() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getPlayerTwoRemaining() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public Phase getPhase() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getTurn() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+}

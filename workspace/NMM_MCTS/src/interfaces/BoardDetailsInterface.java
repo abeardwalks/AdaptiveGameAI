@@ -48,5 +48,10 @@ public interface BoardDetailsInterface {
 	 * @return - the player ID number of whose turn it currently is. 
 	 */
 	int getTurn();
+	
+	/**
+	 * @return - true if the game has been won, false otherwise.
+	 */
+	boolean gameWon();
 
 }

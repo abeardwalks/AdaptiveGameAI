@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="model.Phase"/>
 <fullyQualifiedTypeName name="java.util.Observable"/>
+<fullyQualifiedTypeName name="players.MCTS.Move"/>
+<fullyQualifiedTypeName name="java.util.Stack"/>
+<fullyQualifiedTypeName name="java.lang.String"/>
+<fullyQualifiedTypeName name="move.AbstractMove"/>
+<fullyQualifiedTypeName name="move.MovementMove"/>
+<fullyQualifiedTypeName name="move.RemovalMove"/>
+<fullyQualifiedTypeName name="interfaces.BoardDetailsInterface"/>
+<fullyQualifiedTypeName name="interfaces.BoardMutatorInterface"/>
+<fullyQualifiedTypeName name="model.board.BoardModel"/>
+<fullyQualifiedTypeName name="model.Phase"/>
 </qualifiedTypeNameHistroy>
