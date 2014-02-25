@@ -3,38 +3,38 @@ package players;
 import interfaces.IntPairInterface;
 import interfaces.PlayerInterface;
 
-public class Human implements PlayerInterface {
+public class EvilAI implements PlayerInterface {
 
-	private char c;
-
+	private char colour;
+	
 	@Override
-	public int placeToken(String game) {
+	public int placeToken(String state) {
 		return 0;
 	}
 
 	@Override
-	public int removeToken(String game) {
+	public int removeToken(String state) {
 		return 0;
 	}
 
 	@Override
-	public IntPairInterface moveToken(String gamee) {
+	public IntPairInterface moveToken(String state) {
 		return null;
 	}
 
 	@Override
 	public String getName() {
-		return "Human";
+		return "Evil AI";
 	}
 
 	@Override
 	public void setTokenColour(char c) {
-		this.c = c;
+		colour = c;
 	}
 
 	@Override
 	public char getTokenColour() {
-		return c;
+		return colour;
 	}
-
+	
 }

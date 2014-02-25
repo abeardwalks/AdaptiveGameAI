@@ -15,8 +15,6 @@ import java.util.Observer;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
-import model.board.BoardDetails;
-
 public class MoveModelPlayingView extends JPanel implements Observer {
 
 	private static final long serialVersionUID = -68209173743986677L;

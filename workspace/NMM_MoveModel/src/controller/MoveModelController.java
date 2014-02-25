@@ -18,11 +18,8 @@ import view.ApplicationView;
 import view.MoveModelPlayingView;
 import view.MoveModelSetupView;
 import view.PauseView;
-import view.PlayingView;
-import view.SetupView;
 import model.Phase;
 import model.board.BoardModel;
-import model.board.MorrisBoard;
 import move.MovementMove;
 import move.PlacementMove;
 import move.RemovalMove;
@@ -30,7 +27,6 @@ import interfaces.BoardDetailsInterface;
 import interfaces.BoardMutatorInterface;
 import interfaces.IntPairInterface;
 import interfaces.Player;
-import interfaces.PlayerInterface;
 
 public class MoveModelController {
 	
@@ -52,11 +48,13 @@ public class MoveModelController {
 	private boolean millMade;
 	
 	private boolean paused;
+	private boolean started;
 	
 	public MoveModelController() {
 		model = new BoardModel();
 		
 		primaryView = new ApplicationView();
+		primaryView.addKeyListener(new HumanKeyListener());
 		primaryView.setFocusable(true);
 		
 		List<Player> players1 = getPlayers();
@@ -72,6 +70,7 @@ public class MoveModelController {
 		
 		pauseView = new PauseView(new PauseMenuListener());
 		paused = false;
+		started = false;
 		
 		mc = new MoveChecker();
 		turn = 'R';
@@ -94,6 +93,7 @@ public class MoveModelController {
 		player1.setTokenColour('R');
 		player2.setTokenColour('B');
 		
+		started = true;
 		thread = new Thread(new Runnable() {
 			
 			@Override
@@ -255,14 +255,18 @@ public class MoveModelController {
 		@Override
 		public void keyReleased(KeyEvent e) {
 			System.out.println("Key Released " + e.getKeyCode());
-			
-			if(e.getKeyCode() == 27){
-				if(paused){
-					paused = false;
-				}else{
-					paused = true;
+			int code = e.getKeyCode();
+			if(started){
+				if(code == 27 || code == 32 || code == 80 || code == 10){
+					if(paused){
+						paused = false;
+						gameView.setEnabled(true);
+					}else{
+						paused = true;
+						gameView.setEnabled(false);
+					}
+					showPauseMenu();
 				}
-				showPauseMenu();
 			}
 		}
 
@@ -286,17 +290,25 @@ public class MoveModelController {
 			String action = e.getActionCommand();
 			if(action.equals("resume")){
 				paused = false;
+				gameView.setEnabled(true);
 				showPauseMenu();
 			}else if(action.equals("reset")){
 				reset();
+				gameView.setEnabled(true);
 				thread.suspend();
 				start();
 			}else if(action.equals("setup")){
 				paused = false;
+				started = false;
 				reset();
 				thread.suspend();
+				gameView.setEnabled(false);
+				pauseView.setEnabled(false);
+				pauseView.setVisible(false);
+				primaryView.remove(pauseView);
 				primaryView.remove(gameView);
 				primaryView.add(setupView);
+				primaryView.repaint();
 			}else if(action.equals("quit")){
 				System.exit(0);
 			}
@@ -319,18 +331,31 @@ public class MoveModelController {
 		
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if(result != 2){
-				int x = e.getX();
-				int y = e.getY();
-				int position = findNodeClicked(x, y);
-				if(player1 instanceof Human && player1.getTokenColour() == turn && position != -1){	
-					humanClick(position, player1);
-				} else if(player2 instanceof Human && player2.getTokenColour() == turn && position != -1){	
-					humanClick(position, player2);
+			if(e.getButton() == 3){
+				if(started){
+					if(paused){
+						paused = false;
+						gameView.setEnabled(true);
+					}else{
+						paused = true;
+						gameView.setEnabled(false);
+					}
+					showPauseMenu();
 				}
 			}
-			
-			phase = mc.getPhase();
+			if(e.getButton() == 1 && !paused){
+				if(result != 2){
+					int x = e.getX();
+					int y = e.getY();
+					int position = findNodeClicked(x, y);
+					if(player1 instanceof Human && player1.getTokenColour() == turn && position != -1){	
+						humanClick(position, player1);
+					} else if(player2 instanceof Human && player2.getTokenColour() == turn && position != -1){	
+						humanClick(position, player2);
+					}
+				}
+				phase = mc.getPhase();
+			}
 		}
 
 		@Override
@@ -352,48 +377,50 @@ public class MoveModelController {
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			String state = ((BoardDetailsInterface) model).getState();
-			if(!mill){
-				if((phase.equals(Phase.TWO) || phase.equals(Phase.THREE)) && (result == 0 || result == -1)){
-					int x2 = e.getX();
-					int y2 = e.getY();
-					int firstNode = findNodeClicked(x, y);
-					int secondNode = findNodeClicked(x2, y2);
-					if((player1 instanceof Human && player1.getTokenColour() == turn) && (firstNode != -1 && secondNode != -1)){
-						if(result == -1 || result == 0){
-							result = mc.moveToken(player1.getTokenColour(), firstNode, secondNode);
-							if(result != -1){
-								model.executeMove(new MovementMove(state, 'M', player1.getTokenColour(), firstNode, secondNode));
+			if(!paused){
+				if(!mill){
+					if((phase.equals(Phase.TWO) || phase.equals(Phase.THREE)) && (result == 0 || result == -1)){
+						int x2 = e.getX();
+						int y2 = e.getY();
+						int firstNode = findNodeClicked(x, y);
+						int secondNode = findNodeClicked(x2, y2);
+						if((player1 instanceof Human && player1.getTokenColour() == turn) && (firstNode != -1 && secondNode != -1)){
+							if(result == -1 || result == 0){
+								result = mc.moveToken(player1.getTokenColour(), firstNode, secondNode);
+								if(result != -1){
+									model.executeMove(new MovementMove(state, 'M', player1.getTokenColour(), firstNode, secondNode));
+								}
+								if(result == 1){
+									mill = true;
+								}
 							}
-							if(result == 1){
-								mill = true;
+						} else if((player2 instanceof Human && player2.getTokenColour() == turn) && (firstNode != -1 && secondNode != -1)){	
+							if(result == -1 || result == 0){
+								result = mc.moveToken(player2.getTokenColour(), firstNode, secondNode);
+								if(result != -1){
+									model.executeMove(new MovementMove(state, 'M', player2.getTokenColour(), firstNode, secondNode));
+								}
+								if(result == 1){
+									mill = true;
+								}
 							}
+						} else if(firstNode == -1 || secondNode == -1){
+							result = -1;
 						}
-					} else if((player2 instanceof Human && player2.getTokenColour() == turn) && (firstNode != -1 && secondNode != -1)){	
-						if(result == -1 || result == 0){
-							result = mc.moveToken(player2.getTokenColour(), firstNode, secondNode);
-							if(result != -1){
-								model.executeMove(new MovementMove(state, 'M', player2.getTokenColour(), firstNode, secondNode));
-							}
-							if(result == 1){
-								mill = true;
-							}
-						}
-					} else if(firstNode == -1 || secondNode == -1){
-						result = -1;
 					}
 				}
-			}
-			if((phase.equals(Phase.TWO) || phase.equals(Phase.THREE)) && !mill && result != -1){
-				if(turn == 'R'){
-					turn = 'B';
-				}else{
-					turn = 'R';
+				if((phase.equals(Phase.TWO) || phase.equals(Phase.THREE)) && !mill && result != -1){
+					if(turn == 'R'){
+						turn = 'B';
+					}else{
+						turn = 'R';
+					}
+					model.setPhase(mc.getPhase());
+					model.setTurn();
 				}
-				model.setPhase(mc.getPhase());
-				model.setTurn();
+				
+				phase = mc.getPhase();
 			}
-			
-			phase = mc.getPhase();
 			
 		}
 

@@ -1,7 +1,6 @@
 package view;
 
 import interfaces.Player;
-import interfaces.PlayerInterface;
 
 import java.awt.Color;
 import java.awt.Dimension;

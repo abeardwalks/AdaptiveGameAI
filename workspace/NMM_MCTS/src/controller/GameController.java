@@ -1,7 +1,5 @@
 package controller;
 
-import interfaces.BoardDetailsInterface;
-import interfaces.BoardMutatorInterface;
 import interfaces.GameStateInterface;
 import interfaces.IntPairInterface;
 import interfaces.PlayerInterface;
@@ -27,7 +25,6 @@ import players.MCTSAI;
 
 
 import model.Phase;
-import model.board.BoardModel;
 import model.board.MorrisBoard;
 import view.ApplicationView;
 import view.PauseView;
