@@ -182,7 +182,8 @@ public class MoveChecker {
 
 	private boolean partOfMill(int position) {
 		char toMatch = state.charAt(position);
-		
+		System.out.println("Mill chars = " + state.charAt(0) + ", " + state.charAt(1) + ", " + state.charAt(2));
+
 		switch(position){
 			case 0:
 				if((state.charAt(1) == toMatch && state.charAt(2) == toMatch)

@@ -17,7 +17,7 @@ import javax.swing.JPanel;
 
 import model.board.BoardDetails;
 
-public class PlayingView extends JPanel implements Observer {
+public class MoveModelPlayingView extends JPanel implements Observer {
 
 	private static final long serialVersionUID = -68209173743986677L;
 	
@@ -36,7 +36,7 @@ public class PlayingView extends JPanel implements Observer {
 	private int result;
 	private int playerOneTokens;
 	private int playerTwoTokens;
-	private char turn;
+	private int previousTurn;
 	
 	private int x0,x1,x2,x3,x4,x5,x6;
 	private int y0,y1,y2,y3,y4,y5,y6;
@@ -44,19 +44,20 @@ public class PlayingView extends JPanel implements Observer {
 	private boolean showToolTip;
 	private String toolTip;
 	
+	private BoardDetailsInterface model;
 	
-	public PlayingView(){
+	public MoveModelPlayingView(BoardDetailsInterface model){
 		super();
 		setOpaque(false);
 		setSize(800,650);
 		setBackground(Color.white);
 		
-		gs = "NNNNNNNNNNNNNNNNNNNNNNNN";
-		result = -2;
-		playerOneTokens = 9;
-		playerTwoTokens = 9;
-		turn = 'R';
 		
+		this.model = model;
+		gs = model.getState();
+		playerOneTokens = model.getPlayerOneToPlace();
+		playerTwoTokens = model.getPlayerTwoToPlace();
+		previousTurn = 1;
 		intializeCordinates();
 		
 		toolTip = "Player One (Orange) to place, click an empty node to play...";
@@ -373,7 +374,7 @@ public class PlayingView extends JPanel implements Observer {
 		}
 		
 			g2.setColor(Color.black);
-		if(turn == 'R'){
+		if(model.getTurn() == 1){
 			g2.fillOval(35, 540, tokenWidth, tokenWidth);
 			g2.setColor(Color.gray);
 			g2.fillOval(40, 545, tokenWidth - 10, tokenWidth - 10);
@@ -393,14 +394,13 @@ public class PlayingView extends JPanel implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
-		BoardDetails bd = (BoardDetails)arg;
-		gs = bd.getGS();
-		result = bd.getResult();
-		playerOneTokens = bd.getPlayerOneToPlace();
-		playerTwoTokens = bd.getPlayerTwoToPlace();
-		turn = bd.getTurn();
+		gs = model.getState();
+//		result = bd.getResult();
+		playerOneTokens = model.getPlayerOneToPlace();
+		playerTwoTokens = model.getPlayerTwoToPlace();
+		int turn = model.getTurn();
 		
-		if(result == 0 && turn == 'B'){
+		if(previousTurn != turn){
 			if(playerTwoTokens == 0){
 				toolTip = "Player Two (Blue) to move, please click and drag a blue token to an empty node...";
 			}else{
@@ -412,14 +412,14 @@ public class PlayingView extends JPanel implements Observer {
 			}else{
 				toolTip = "Player One (Orange) to place, click an empty node to play...";
 			}
-		}else if(result == 1 && turn == 'R'){
+		}else if(result == 1 && turn == 1){
 			toolTip = "Player One (Orange) to remove, please click on a Blue piece to remove it from the game...";
 		}else if(result == 1){
 			toolTip = "Player Two (Blue) to remove, please click on a Orange piece to remove it from the game...";
 		}else if(result == 2){
 			toolTip = "The Game has been Won, hazzah!";
 		}
-		
+		previousTurn = turn;
 		repaint();
 	}
 	

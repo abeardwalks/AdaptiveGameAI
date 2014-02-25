@@ -1,40 +1,29 @@
 package players;
 
+import interfaces.BoardDetailsInterface;
 import interfaces.IntPairInterface;
-import interfaces.PlayerInterface;
 
-public class Human implements PlayerInterface {
+public class Human extends AbstractPlayer {
 
-	private char colour;
 
 	@Override
-	public int placeToken(String state) {
+	public int placeToken(BoardDetailsInterface game) {
 		return 0;
 	}
 
 	@Override
-	public int removeToken(String state) {
+	public int removeToken(BoardDetailsInterface game) {
 		return 0;
 	}
 
 	@Override
-	public IntPairInterface moveToken(String state) {
+	public IntPairInterface moveToken(BoardDetailsInterface gamee) {
 		return null;
 	}
 
 	@Override
 	public String getName() {
 		return "Human";
-	}
-
-	@Override
-	public void setTokenColour(char c) {
-		colour = c;
-	}
-
-	@Override
-	public char getTokenColour() {
-		return colour;
 	}
 
 }

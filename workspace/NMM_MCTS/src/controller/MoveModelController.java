@@ -15,14 +15,21 @@ import java.util.Observable;
 
 import players.Human;
 import view.ApplicationView;
+import view.MoveModelPlayingView;
+import view.MoveModelSetupView;
 import view.PauseView;
 import view.PlayingView;
 import view.SetupView;
 import model.Phase;
 import model.board.BoardModel;
+import model.board.MorrisBoard;
+import move.MovementMove;
+import move.PlacementMove;
+import move.RemovalMove;
 import interfaces.BoardDetailsInterface;
 import interfaces.BoardMutatorInterface;
 import interfaces.IntPairInterface;
+import interfaces.Player;
 import interfaces.PlayerInterface;
 
 public class MoveModelController {
@@ -30,13 +37,13 @@ public class MoveModelController {
 	private BoardMutatorInterface model;
 	
 	private ApplicationView primaryView;
-	private SetupView setupView;
-	private PlayingView gameView;
+	private MoveModelSetupView setupView;
+	private MoveModelPlayingView gameView;
 	private PauseView pauseView;
 	
 	private Thread thread;
 	
-	private PlayerInterface player1, player2;
+	private Player player1, player2;
 	private char turn;
 	
 	private MoveChecker mc;
@@ -52,13 +59,13 @@ public class MoveModelController {
 		primaryView = new ApplicationView();
 		primaryView.setFocusable(true);
 		
-		List<PlayerInterface> players1 = getPlayers();
-		List<PlayerInterface> players2 = getPlayers();
+		List<Player> players1 = getPlayers();
+		List<Player> players2 = getPlayers();
 		
-		setupView = new SetupView(new SetupActionListener(), players1, players2);
+		setupView = new MoveModelSetupView(new SetupActionListener(), players1, players2);
 		primaryView.add(setupView);
 		
-		gameView = new PlayingView((BoardDetailsInterface) model);
+		gameView = new MoveModelPlayingView((BoardDetailsInterface) model);
 		gameView.addMouseListener(new HumanMouseListener());
 		gameView.addKeyListener(new HumanKeyListener());
 		gameView.setFocusable(true);
@@ -80,8 +87,9 @@ public class MoveModelController {
 	
 	private void start() {
 		primaryView.remove(setupView);
-		player1 = setupView.getPlayerOne();
-		player2 = setupView.getPlayerTwo();
+		//TODO - fix this so setupView uses new player interface
+		player1 = (Player) setupView.getPlayerOne();
+		player2 = (Player) setupView.getPlayerTwo();
 		
 		player1.setTokenColour('R');
 		player2.setTokenColour('B');
@@ -108,7 +116,7 @@ public class MoveModelController {
 					e.printStackTrace();
 				}
 				if(turn == 'R'){
-					executeMove('R', player1);
+					executeMove(player1);
 				}
 			}
 				
@@ -119,77 +127,58 @@ public class MoveModelController {
 					e.printStackTrace();
 				}
 				if(turn == 'B'){
-					executeMove('B', player2);
+					executeMove(player2);
 				}
 			}
 		}
 	}
 	
-	private void executeMove(char tokenColour, PlayerInterface player){
+	private void executeMove(Player player){
 		boolean notPlayed = true;
+		String state = ((BoardDetailsInterface) model).getState();
+		char playerColour = player.getTokenColour();
 		while(notPlayed){
 			if(phase.equals(Phase.ONE) && (result == -2 || result == 0 || result == -1)){
-				int position = player.placeToken(gs.getState());
-				result = mc.addToken(tokenColour, position);
-				if(result == 0 || result == 1){
-					if(tokenColour == 'R'){
-						gs.lowerPlayerOneCount();
-					}else{
-						gs.lowerPlayerTwoCount();
-					}
-					gs.setResult(result);
-					gs.addToken(tokenColour, position);
-					System.out.println("Result: " + result + ", " + phase);
+				int placement = player.placeToken((BoardDetailsInterface) model);
+				result = mc.addToken(playerColour, placement);
+				if(result != -1){
+					model.executeMove(new PlacementMove(state, 'P', playerColour, placement));
 				}
 				if(result == 1){
-					gs.setResult(result);
 					millMade = true;
 				}
 			}
 			if(phase.equals(Phase.TWO) || phase.equals(Phase.THREE) && (result == 0 || result == -1)){
-				IntPairInterface ip = player.moveToken(gs.getState());
-				result = mc.moveToken(tokenColour, ip.getFirstInt(), ip.getSecondInt());
-				if(result == 0 || result == 1){
-					gs.moveToken(ip.getFirstInt(), ip.getSecondInt());
-					System.out.println("Result: " + result + ", " + phase);
+				IntPairInterface movement = player.moveToken((BoardDetailsInterface) model);
+				result = mc.moveToken(playerColour, movement.getFirstInt(), movement.getSecondInt());
+				if(result != -1){
+					model.executeMove(new MovementMove(state, 'M', playerColour, movement.getFirstInt(), movement.getSecondInt()));
 				}
 				if(result == 1){
-					gs.setResult(result);
 					millMade = true;
 				}
 			}
 			if(millMade && (result == -1 || result == 1)){
-				
-				int position = player.removeToken(gs.getState());
-				result = mc.removeToken(tokenColour, position);
-				if(result == 0){
-					try {
-						Thread.sleep(2000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-					millMade = false;
-					gs.setResult(result);
-					gs.removeToken(position);
-					System.out.println("Result: " + result + ", " + phase);
+				int removal = player.removeToken((BoardDetailsInterface) model);
+				result = mc.removeToken(playerColour, removal);
+				if(result != -1){
+					model.executeMove(new RemovalMove(state, 'R', playerColour, removal));
 				}
 			}
 			
 			if(result == 0){
 				notPlayed = false;
 				phase = mc.getPhase();
-				System.out.println(phase);
+				model.setPhase(phase);
 				if(turn == 'R'){
 					turn = 'B';
+					
 				}else{
 					turn = 'R';
 				}
-				gs.setResult(result);
-				gs.setTurn();
+				millMade = false;
+				model.setTurn();
 			}
-		}
-		if(!millMade){
-			
 		}
 	}
 	
@@ -229,11 +218,11 @@ public class MoveModelController {
 		}
 	}
 	
-	private List<PlayerInterface> getPlayers() {
-		List<PlayerInterface> players = new ArrayList<PlayerInterface>();
+	private List<Player> getPlayers() {
+		List<Player> players = new ArrayList<Player>();
 		File dir = new File("bin" + System.getProperty("file.separator") + "players" );
 		for(String file : dir.list()){
-			PlayerInterface player = null;
+			Player player = null;
 			if(!file.contains("$")){
 				try {
 					player = loadPlyaer("players." + file.substring(0, file.length() - 6));
@@ -247,12 +236,12 @@ public class MoveModelController {
 		return players;
 	}
 
-	private PlayerInterface loadPlyaer(String playerClass) {
-		PlayerInterface player = null;
+	private Player loadPlyaer(String playerClass) {
+		Player player = null;
 		try {
 			Class<?> theClass = Class.forName(playerClass);
 			Constructor<?>[] cons = theClass.getConstructors();
-			player = (PlayerInterface) cons[0].newInstance();
+			player = (Player) cons[0].newInstance();
 		} catch (Throwable e) {}
 		return player;
 	}
@@ -323,7 +312,6 @@ public class MoveModelController {
 		private int x0,x1,x2,x3,x4,x5,x6;
 		private int y0,y1,y2,y3,y4,y5,y6;
 		boolean mill = false;
-//		private Graphics g;
 		
 		public HumanMouseListener(){
 			initializeCordinates();
@@ -363,35 +351,29 @@ public class MoveModelController {
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
+			String state = ((BoardDetailsInterface) model).getState();
 			if(!mill){
 				if((phase.equals(Phase.TWO) || phase.equals(Phase.THREE)) && (result == 0 || result == -1)){
 					int x2 = e.getX();
 					int y2 = e.getY();
 					int firstNode = findNodeClicked(x, y);
 					int secondNode = findNodeClicked(x2, y2);
-					System.out.println("First Node: " + firstNode + ", Second Node: " + secondNode);
-					System.err.println(turn);
 					if((player1 instanceof Human && player1.getTokenColour() == turn) && (firstNode != -1 && secondNode != -1)){
 						if(result == -1 || result == 0){
-							System.err.println("In movement code...");
 							result = mc.moveToken(player1.getTokenColour(), firstNode, secondNode);
 							if(result != -1){
-								gs.setResult(result);
-								gs.moveToken(firstNode, secondNode);
+								model.executeMove(new MovementMove(state, 'M', player1.getTokenColour(), firstNode, secondNode));
 							}
 							if(result == 1){
 								mill = true;
 							}
-							System.out.println("Result: " + result + ", " + phase);
 						}
 					} else if((player2 instanceof Human && player2.getTokenColour() == turn) && (firstNode != -1 && secondNode != -1)){	
 						if(result == -1 || result == 0){
 							result = mc.moveToken(player2.getTokenColour(), firstNode, secondNode);
 							if(result != -1){
-								gs.setResult(result);
-								gs.moveToken(firstNode, secondNode);
+								model.executeMove(new MovementMove(state, 'M', player2.getTokenColour(), firstNode, secondNode));
 							}
-							System.out.println("Result: " + result + ", " + phase);
 							if(result == 1){
 								mill = true;
 							}
@@ -407,39 +389,31 @@ public class MoveModelController {
 				}else{
 					turn = 'R';
 				}
-				gs.setResult(result);
-				gs.setTurn();
+				model.setPhase(mc.getPhase());
+				model.setTurn();
 			}
 			
 			phase = mc.getPhase();
 			
 		}
 
-		private void humanClick(int position, PlayerInterface player){
+		private void humanClick(int position, Player player){
+			String state = ((BoardDetailsInterface) model).getState();
 			if(phase.equals(Phase.ONE) && (result == -1 || result == -2 || result == 0) && !mill){
 				result = mc.addToken(player.getTokenColour(), position);
 				if(result != -1){
-					if(turn == 'R'){
-						gs.lowerPlayerOneCount();
-					}else{
-						gs.lowerPlayerTwoCount();
-					}
-					gs.setResult(result);
-					gs.addToken(player.getTokenColour(), position);
+					model.executeMove(new PlacementMove(state, 'P', player.getTokenColour(), position));
 				}
-				System.out.println("Result: " + result + ", " + phase);
 				if(result == 1){
 					mill = true;
+					System.out.println("mill created");
 				}
 			}else if(mill && (result == -1 || result == 1)){
 				result = mc.removeToken(player.getTokenColour(), position);
 				if(result != -1){
-					gs.setResult(result);
-					gs.removeToken(position);
-					
+					model.executeMove(new RemovalMove(state, 'R', player.getTokenColour(), position));
 					mill = false;
 				}
-				System.out.println("Result: " + result + ", " + phase);
 			}
 			if(!mill && result != -1 && result != -2){
 				if(turn == 'R'){
@@ -447,6 +421,7 @@ public class MoveModelController {
 				}else{
 					turn = 'R';
 				}
+				model.setPhase(mc.getPhase());
 				model.setTurn();
 			}
 		}

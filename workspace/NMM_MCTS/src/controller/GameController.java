@@ -37,7 +37,6 @@ import view.SetupView;
 public class GameController {
 	
 	private GameStateInterface gs;
-	private BoardMutatorInterface game;
 	private ApplicationView primaryView;
 	private Thread thread;
 	private PlayingView gameView;
@@ -60,7 +59,6 @@ public class GameController {
 		List<PlayerInterface> players1 = getPlayers();
 		List<PlayerInterface> players2 = getPlayers();
 		gs = new MorrisBoard();
-		game = new BoardModel();
 		turn = 'R';
 		result = -2;
 		mc = new MoveChecker();
@@ -69,7 +67,7 @@ public class GameController {
 		setupView = new SetupView(new SetupActionListener(), players1, players2);
 		primaryView.add(setupView);
 		
-		gameView = new PlayingView((BoardDetailsInterface) game);
+		gameView = new PlayingView();
 		gameView.addMouseListener(new HumanMouseListener());
 		gameView.addMouseMotionListener(new HumanMouseListener());
 		gameView.addKeyListener(new HumanKeyListened());
