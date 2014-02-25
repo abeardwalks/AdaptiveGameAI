@@ -67,11 +67,30 @@ public class MCTSAI implements PlayerInterface, Observer {
 		
 		root = new TreeNode(m, new MCTSGame(bd));
 		
-		long stop = System.currentTimeMillis() + 60000;
+//		double stop = System.currentTimeMillis() + 1.8e+6;
+//		
+//		while(System.currentTimeMillis() < stop){
+//			root.selectAction();
+//		}
+		
+//		long stop = System.currentTimeMillis() + 1800000;
+//		
+//		while(System.currentTimeMillis() < stop){
+//			root.selectAction();
+//		}
+		
+		long stop = System.currentTimeMillis() + 600000;
 		
 		while(System.currentTimeMillis() < stop){
 			root.selectAction();
 		}
+		
+//		int count = 0;
+//		int limit = 100000;
+//		while(count < limit){
+//			root.selectAction();
+//			count++;
+//		}
 		
 		double bestValue = Double.NEGATIVE_INFINITY;
 		Move bestMove = null;
