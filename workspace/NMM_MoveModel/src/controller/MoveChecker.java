@@ -1,5 +1,7 @@
 package controller;
 
+import interfaces.BoardDetailsInterface;
+
 import java.util.ArrayList;
 
 import java.util.Collection;
@@ -9,10 +11,12 @@ import java.util.Stack;
 import players.MCTS.Move;
 
 import model.Phase;
+import move.AbstractMove;
 
 public class MoveChecker {
 	private String state;
 	private Collection<String> history;
+	private Stack<AbstractMove> moveHistory;
 	@SuppressWarnings("unused")
 	private static final int STRING_LENGTH = 23;
 	private Phase gamePhase;
@@ -35,6 +39,19 @@ public class MoveChecker {
 		
 		moveAnywhere = false;
 
+	}
+	
+	public MoveChecker(BoardDetailsInterface game){
+		state = game.getState();
+		moveHistory = new Stack<AbstractMove>();
+		
+		playerOneTokensToPlace = game.getPlayerOneToPlace();
+		playerTwoTokensToPlace = game.getPlayerTwoToPlace();
+		playerOneTokensRemaining = game.getPlayerOneRemaining();
+		playerTwoTokensRemaining = game.getPlayerTwoRemaining();
+		gamePhase = game.getPhase();
+		
+		moveAnywhere = false;
 	}
 
 
@@ -634,6 +651,12 @@ public class MoveChecker {
 		System.out.println("P2 TR: " + playerTwoTokensRemaining);
 		System.out.println("Phase: " + gamePhase);
 		System.out.println("--------------------------------------------------");
+	}
+
+	public List<AbstractMove> getAllPossibleMoves(char action,
+			char tokenColour) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

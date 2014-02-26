@@ -6,9 +6,10 @@ import java.util.Stack;
 import model.Phase;
 import move.AbstractMove;
 import interfaces.BoardDetailsInterface;
+import interfaces.BoardFacadeInterface;
 import interfaces.BoardMutatorInterface;
 
-public class BoardModel extends Observable implements BoardMutatorInterface, BoardDetailsInterface {
+public class BoardModel extends Observable implements BoardFacadeInterface {
 	
 	private String state;
 	private Stack<AbstractMove> history;
@@ -30,6 +31,26 @@ public class BoardModel extends Observable implements BoardMutatorInterface, Boa
 		phase = Phase.ONE;
 		
 		turn = 'R';
+		
+	}
+	
+	public BoardModel(String state, int playerOneToPlace, int playerTwoToPlace, int playerOneRemianing, int playerTwoRemaining, Phase phase, int turn){
+		
+		this.state = state;
+		history = new Stack<AbstractMove>();
+		
+		this.playerOneToPlace = playerOneToPlace;
+		this.playerTwoToPlace = playerTwoToPlace;
+		this.playerOneRemaining = playerOneRemianing;
+		this.playerTwoRemaining = playerTwoRemaining;
+		
+		this.phase = phase;
+		
+		if(turn == 1){
+			this.turn = 'R';
+		}else{
+			this.turn = 'B';
+		}
 		
 	}
 
@@ -76,22 +97,26 @@ public class BoardModel extends Observable implements BoardMutatorInterface, Boa
 		case 'P':
 			if(playerID == 1){
 				playerOneToPlace++;
-				turn = 'B';
+				turn = 'R';
 			}else{
 				playerTwoToPlace++;
-				turn = 'R';
+				turn = 'B';
 			}
 			break;
 		case 'R':
 			if(playerID == 1){
 				playerOneRemaining++;
+				turn = 'R';
 			}else{
 				playerTwoRemaining++;
+				turn = 'B';
 			}
 			break;
 		case 'M':
 			if(playerID == 1){
-				
+				turn = 'R';
+			}else{
+				turn = 'B';
 			}
 			break;
 		default:
@@ -181,6 +206,31 @@ public class BoardModel extends Observable implements BoardMutatorInterface, Boa
 		}else{
 			return false;
 		}
+	}
+
+	@Override
+	public double[] getRewards() {
+		
+		double[] rewards = new double[2];
+	
+		if(playerOneRemaining < 3){
+			rewards[0] = 0.0;
+			rewards[1] = 1.0;
+		}else if(playerTwoRemaining < 3){
+			rewards[0] = 1.0;
+			rewards[1] = 0.0;
+		}else if(playerOneRemaining == playerTwoRemaining){
+			rewards[0] = 0.5;
+			rewards[1] = 0.5;
+		}else if(playerOneRemaining > playerTwoRemaining){
+			rewards[0] = 0.5;
+			rewards[1] = 0.0;
+		}else if(playerOneRemaining < playerTwoRemaining){
+			rewards[0] = 0.0;
+			rewards[1] = 0.5;
+		}
+		
+		return rewards;
 	}
 
 }
