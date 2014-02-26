@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Stack;
 
-import players.MCTS.Move;
 
 import model.Phase;
 import move.AbstractMove;
@@ -560,87 +559,87 @@ public class MoveChecker {
 //	}
 
 
-	private List<Move> getAllPossiblePlacements(char turn) {
-		
-		
-		List<Move> moves = new ArrayList<Move>();
-		System.out.println("calculating placements...");
-		System.out.println("Turn is: " + turn);
-		System.out.println("P1 TP: " + playerOneTokensToPlace);
-		System.out.println("P2 TP: " + playerTwoTokensToPlace);
-		if(turn == 'R' && playerOneTokensToPlace <= 0){
-			return moves;
-		}else if(turn == 'B' && playerTwoTokensToPlace <= 0){
-			return moves;
-		}
-		
-		char[] stateArray = state.toCharArray();
-		
-		for (int i = 0; i < stateArray.length; i++) {
-			if(stateArray[i] == 'N'){
-				Move m = new Move('P', turn, state);
-				m.setPlacementIndex(i);
-				moves.add(m);
-			}
-		}
-		
-		return moves;
-		
-	}
-	
-	
-	private List<Move> getAllPossibleRemovals(char turn) {
-		List<Move> moves = new ArrayList<Move>();
-		
-		char toRemove = 'R';
-		if(turn == 'R'){
-			toRemove = 'B';
-		}
-		
-		char[] stateArray = state.toCharArray();
-		
-		for (int i = 0; i < stateArray.length; i++) {
-			if(stateArray[i] == toRemove){
-				Move m = new Move('R', turn, state);
-				m.setRemovalIndex(i);
-				moves.add(m);
-			}
-		}
-		
-		return moves;
-	}
-	
-	public void setTokensToPlace(int p1, int p2){
-		playerOneTokensToPlace = p1;
-		playerTwoTokensToPlace = p2;
-	}
-
-	private List<Move> getAllPossibleMovements(char turn) {
-		List<Move> moves = new ArrayList<Move>();
-		
-		if(turn == 'R' && playerOneTokensRemaining < 4){
-			moveAnywhere = true;
-		}else if(turn == 'B' && playerTwoTokensRemaining < 4){
-			moveAnywhere = true;
-		}
-		
-		char[] stateArray = state.toCharArray();
-		
-		for(int i = 0; i < stateArray.length; i++){
-			if(stateArray[i] == turn){
-				for(int j = 0; j < stateArray.length; j++){
-					if(validMove(i, j)){
-						Move m = new Move('M', turn, state);
-						m.setMovementIndexs(i, j);
-						moves.add(m);
-					}
-				}
-			}
-		}
-		
-		return moves;
-		
-	}
+//	private List<Move> getAllPossiblePlacements(char turn) {
+//		
+//		
+//		List<Move> moves = new ArrayList<Move>();
+//		System.out.println("calculating placements...");
+//		System.out.println("Turn is: " + turn);
+//		System.out.println("P1 TP: " + playerOneTokensToPlace);
+//		System.out.println("P2 TP: " + playerTwoTokensToPlace);
+//		if(turn == 'R' && playerOneTokensToPlace <= 0){
+//			return moves;
+//		}else if(turn == 'B' && playerTwoTokensToPlace <= 0){
+//			return moves;
+//		}
+//		
+//		char[] stateArray = state.toCharArray();
+//		
+//		for (int i = 0; i < stateArray.length; i++) {
+//			if(stateArray[i] == 'N'){
+//				Move m = new Move('P', turn, state);
+//				m.setPlacementIndex(i);
+//				moves.add(m);
+//			}
+//		}
+//		
+//		return moves;
+//		
+//	}
+//	
+//	
+//	private List<Move> getAllPossibleRemovals(char turn) {
+//		List<Move> moves = new ArrayList<Move>();
+//		
+//		char toRemove = 'R';
+//		if(turn == 'R'){
+//			toRemove = 'B';
+//		}
+//		
+//		char[] stateArray = state.toCharArray();
+//		
+//		for (int i = 0; i < stateArray.length; i++) {
+//			if(stateArray[i] == toRemove){
+//				Move m = new Move('R', turn, state);
+//				m.setRemovalIndex(i);
+//				moves.add(m);
+//			}
+//		}
+//		
+//		return moves;
+//	}
+//	
+//	public void setTokensToPlace(int p1, int p2){
+//		playerOneTokensToPlace = p1;
+//		playerTwoTokensToPlace = p2;
+//	}
+//
+//	private List<Move> getAllPossibleMovements(char turn) {
+//		List<Move> moves = new ArrayList<Move>();
+//		
+//		if(turn == 'R' && playerOneTokensRemaining < 4){
+//			moveAnywhere = true;
+//		}else if(turn == 'B' && playerTwoTokensRemaining < 4){
+//			moveAnywhere = true;
+//		}
+//		
+//		char[] stateArray = state.toCharArray();
+//		
+//		for(int i = 0; i < stateArray.length; i++){
+//			if(stateArray[i] == turn){
+//				for(int j = 0; j < stateArray.length; j++){
+//					if(validMove(i, j)){
+//						Move m = new Move('M', turn, state);
+//						m.setMovementIndexs(i, j);
+//						moves.add(m);
+//					}
+//				}
+//			}
+//		}
+//		
+//		return moves;
+//		
+//	}
 	
 	public void printDetails(){
 		System.out.println("-------------- Move Checker Details --------------");
