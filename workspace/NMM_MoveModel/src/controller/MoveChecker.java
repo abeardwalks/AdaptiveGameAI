@@ -11,23 +11,25 @@ import java.util.Stack;
 
 import model.Phase;
 import move.AbstractMove;
+import move.MovementMove;
+import move.PlacementMove;
+import move.RemovalMove;
 
 public class MoveChecker {
 	private String state;
-	private Collection<String> history;
+//	private Collection<String> history;
 	private Stack<AbstractMove> moveHistory;
 	@SuppressWarnings("unused")
 	private static final int STRING_LENGTH = 23;
 	private Phase gamePhase;
 	private int playerOneTokensToPlace, playerTwoTokensToPlace, playerOneTokensRemaining, playerTwoTokensRemaining;
 	private boolean moveAnywhere;
+	private char trappedPlayer;
 
 	
 	public MoveChecker(){
 	
 		state = "NNNNNNNNNNNNNNNNNNNNNNNN";
-		history = new Stack<String>();
-		history.add(state);
 		
 		gamePhase = Phase.ONE;
 		
@@ -72,7 +74,6 @@ public class MoveChecker {
 			gamePhase = Phase.TWO;
 		}
 		
-		history.add(state);
 		stateArray[position] = token;
 		state = new String(stateArray);
 		
@@ -131,7 +132,6 @@ public class MoveChecker {
 	public int moveToken(char token, int x, int y) {
 		Integer result = 0;			//for MVC
 		char[] stateArray = state.toCharArray();
-		System.err.println("Phase: " + gamePhase);
 		if(token == 'R' && playerOneTokensRemaining == 3){
 			moveAnywhere = true;
 		}else if(token == 'B' && playerTwoTokensRemaining == 3){
@@ -192,13 +192,20 @@ public class MoveChecker {
 		
 		if(playerOne && playerTwo){
 			return true;
+		}else if(!playerOne){
+			trappedPlayer = 'R';
+		}else if(!playerTwo){
+			trappedPlayer = 'B';
 		}
 		return false;
+	}
+	
+	public char trappedPlayer(){
+		return trappedPlayer;
 	}
 
 	private boolean partOfMill(int position) {
 		char toMatch = state.charAt(position);
-		System.out.println("Mill chars = " + state.charAt(0) + ", " + state.charAt(1) + ", " + state.charAt(2));
 
 		switch(position){
 			case 0:
@@ -511,6 +518,10 @@ public class MoveChecker {
 			gamePhase = Phase.THREE;
 		}
 		
+		if(!playersCanMove()){
+			gamePhase = Phase.FOUR;
+		}
+		
 		
 	}
 	
@@ -521,8 +532,7 @@ public class MoveChecker {
 
 	public void reset() {
 		state = "NNNNNNNNNNNNNNNNNNNNNNNN";
-		history = new Stack<String>();
-		history.add(state);
+
 		
 		gamePhase = Phase.ONE;
 		
@@ -648,14 +658,107 @@ public class MoveChecker {
 		System.out.println("P2 TP: " + playerTwoTokensToPlace);
 		System.out.println("P1 TR: " + playerOneTokensRemaining);
 		System.out.println("P2 TR: " + playerTwoTokensRemaining);
+		calculatePhase();
 		System.out.println("Phase: " + gamePhase);
 		System.out.println("--------------------------------------------------");
+	}
+	
+	public AbstractMove executeMove(AbstractMove move){
+		char action = move.getAction();
+		char turn = move.getPlayerColour();
+		
+		int result = -1;
+		switch (action) {
+		case 'P':
+			result = addToken(turn, ((PlacementMove) move).getPlacementIndex());
+			break;
+		case 'R':
+			result = removeToken(turn, ((RemovalMove) move).getRemovalIndex());
+			break;
+		case 'M':
+			result = moveToken(turn, ((MovementMove) move).getFrom(), ((MovementMove) move).getTo());
+			break;
+		default:
+			break;
+		}
+		if(result == 0 && gamePhase == Phase.ONE && ((turn == 'R' && playerTwoTokensToPlace > 0) || (turn == 'B' && playerOneTokensToPlace >0))){
+			if(turn == 'R'){
+				turn = 'B';
+			}else{
+				turn = 'R';
+			}
+			return new PlacementMove(state, turn, -1);
+		}else if(result == 0){
+			if(turn == 'R'){
+				turn = 'B';
+			}else{
+				turn = 'R';
+			}
+			return new MovementMove(state, turn, -1, -1);
+		}else if(result == 1){
+			return new RemovalMove(state, turn, -1);
+		}
+		return null;
 	}
 
 	public List<AbstractMove> getAllPossibleMoves(char action,
 			char tokenColour) {
-		// TODO Auto-generated method stub
+		
+		switch (action) {
+		case 'P':
+			return getAllPossiblePlacements(tokenColour);
+		case 'R':
+			return getAllPossibleRemovals(tokenColour);
+		case 'M':
+			return getAllPossibleMovements(tokenColour);
+		default:
+			break;
+		}
+		
 		return null;
 	}
+
+	private List<AbstractMove> getAllPossiblePlacements(char tokenColour) {
+		char[] stateArray = state.toCharArray();
+		List<AbstractMove> moves = new ArrayList<AbstractMove>();
+		if((tokenColour == 'R' && playerOneTokensToPlace > 0) || (tokenColour == 'B' && playerTwoTokensToPlace > 0)){
+			for (int i = 0; i < stateArray.length; i++) {
+				if(stateArray[i] == 'N'){
+					moves.add(new PlacementMove(state, tokenColour, i));
+				}
+			}
+		}
+		return moves;
+	}
+	
+	private List<AbstractMove> getAllPossibleRemovals(char tokenColour) {
+		char[] stateArray = state.toCharArray();
+		List<AbstractMove> moves = new ArrayList<AbstractMove>();
+		if((tokenColour == 'R' && playerTwoTokensRemaining > 2) || (tokenColour == 'B' && playerOneTokensRemaining > 2)){
+			for (int i = 0; i < stateArray.length; i++) {
+				if(stateArray[i] != 'N' && stateArray[i] != tokenColour && (!partOfMill(i) || onlyAvailable(tokenColour, i)) ){
+					moves.add(new RemovalMove(state, tokenColour, i));
+				}
+			}
+		}
+		
+		return moves;
+	}
+	
+	private List<AbstractMove> getAllPossibleMovements(char tokenColour) {
+		char[] stateArray = state.toCharArray();
+		List<AbstractMove> moves = new ArrayList<AbstractMove>();
+		for (int i = 0; i < stateArray.length; i++) {
+			if(stateArray[i] == tokenColour){
+				for (int j = 0; j < stateArray.length; j++) {
+					if(validMove(i, j)){
+						moves.add(new MovementMove(state, tokenColour, i, j));
+					}
+				}
+			}
+		}
+		return moves;
+	}
+
 
 }

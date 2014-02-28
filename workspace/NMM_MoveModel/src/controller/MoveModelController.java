@@ -142,7 +142,7 @@ public class MoveModelController {
 				int placement = player.placeToken((BoardDetailsInterface) model);
 				result = mc.addToken(playerColour, placement);
 				if(result != -1){
-					model.executeMove(new PlacementMove(state, 'P', playerColour, placement));
+					model.executeMove(new PlacementMove(state, playerColour, placement));
 				}
 				if(result == 1){
 					millMade = true;
@@ -152,7 +152,7 @@ public class MoveModelController {
 				IntPairInterface movement = player.moveToken((BoardDetailsInterface) model);
 				result = mc.moveToken(playerColour, movement.getFirstInt(), movement.getSecondInt());
 				if(result != -1){
-					model.executeMove(new MovementMove(state, 'M', playerColour, movement.getFirstInt(), movement.getSecondInt()));
+					model.executeMove(new MovementMove(state, playerColour, movement.getFirstInt(), movement.getSecondInt()));
 				}
 				if(result == 1){
 					millMade = true;
@@ -162,7 +162,7 @@ public class MoveModelController {
 				int removal = player.removeToken((BoardDetailsInterface) model);
 				result = mc.removeToken(playerColour, removal);
 				if(result != -1){
-					model.executeMove(new RemovalMove(state, 'R', playerColour, removal));
+					model.executeMove(new RemovalMove(state, playerColour, removal));
 				}
 			}
 			
@@ -388,7 +388,7 @@ public class MoveModelController {
 							if(result == -1 || result == 0){
 								result = mc.moveToken(player1.getTokenColour(), firstNode, secondNode);
 								if(result != -1){
-									model.executeMove(new MovementMove(state, 'M', player1.getTokenColour(), firstNode, secondNode));
+									model.executeMove(new MovementMove(state, player1.getTokenColour(), firstNode, secondNode));
 								}
 								if(result == 1){
 									mill = true;
@@ -398,7 +398,7 @@ public class MoveModelController {
 							if(result == -1 || result == 0){
 								result = mc.moveToken(player2.getTokenColour(), firstNode, secondNode);
 								if(result != -1){
-									model.executeMove(new MovementMove(state, 'M', player2.getTokenColour(), firstNode, secondNode));
+									model.executeMove(new MovementMove(state, player2.getTokenColour(), firstNode, secondNode));
 								}
 								if(result == 1){
 									mill = true;
@@ -429,7 +429,7 @@ public class MoveModelController {
 			if(phase.equals(Phase.ONE) && (result == -1 || result == -2 || result == 0) && !mill){
 				result = mc.addToken(player.getTokenColour(), position);
 				if(result != -1){
-					model.executeMove(new PlacementMove(state, 'P', player.getTokenColour(), position));
+					model.executeMove(new PlacementMove(state, player.getTokenColour(), position));
 				}
 				if(result == 1){
 					mill = true;
@@ -438,7 +438,7 @@ public class MoveModelController {
 			}else if(mill && (result == -1 || result == 1)){
 				result = mc.removeToken(player.getTokenColour(), position);
 				if(result != -1){
-					model.executeMove(new RemovalMove(state, 'R', player.getTokenColour(), position));
+					model.executeMove(new RemovalMove(state, player.getTokenColour(), position));
 					mill = false;
 				}
 			}

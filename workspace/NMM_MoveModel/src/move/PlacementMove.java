@@ -4,8 +4,8 @@ public class PlacementMove extends AbstractMove{
 
 	private int placement;
 	
-	public PlacementMove(String state, char action, char playerColour, int placement) {
-		super(state, action, playerColour);
+	public PlacementMove(String state,char playerColour, int placement) {
+		super(state, playerColour);
 		this.placement = placement;
 	}
 	
@@ -19,6 +19,11 @@ public class PlacementMove extends AbstractMove{
 		char[] actingOnArray = actingOn.toCharArray(); 
 		actingOnArray[placement] = super.getPlayerColour();
 		return new String(actingOnArray);
+	}
+
+	@Override
+	public char getAction() {
+		return 'P';
 	}
 
 }

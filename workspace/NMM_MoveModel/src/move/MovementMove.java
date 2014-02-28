@@ -4,8 +4,8 @@ public class MovementMove extends AbstractMove {
 	
 	private int from, to;
 
-	public MovementMove(String state, char action, char playerColour, int from, int to) {
-		super(state, action, playerColour);
+	public MovementMove(String state, char playerColour, int from, int to) {
+		super(state, playerColour);
 		this.from = from;
 		this.to = to;
 	}
@@ -26,6 +26,11 @@ public class MovementMove extends AbstractMove {
 		actingOnArray[from] = 'N';
 		actingOnArray[to] = token;
 		return new String(actingOnArray);
+	}
+
+	@Override
+	public char getAction() {
+		return 'M';
 	}
 
 }

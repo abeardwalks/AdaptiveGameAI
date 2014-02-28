@@ -70,9 +70,9 @@ public class BoardModel extends Observable implements BoardFacadeInterface {
 			break;
 		case 'R':
 			if(turn == 'R'){
-				playerOneRemaining--;
-			}else{
 				playerTwoRemaining--;
+			}else{
+				playerOneRemaining--;
 			}
 			break;
 		case 'M':
@@ -97,27 +97,23 @@ public class BoardModel extends Observable implements BoardFacadeInterface {
 		case 'P':
 			if(playerID == 1){
 				playerOneToPlace++;
-				turn = 'R';
+				turn = move.getPlayerColour();
 			}else{
 				playerTwoToPlace++;
-				turn = 'B';
+				turn = move.getPlayerColour();
 			}
 			break;
 		case 'R':
 			if(playerID == 1){
-				playerOneRemaining++;
-				turn = 'R';
-			}else{
 				playerTwoRemaining++;
-				turn = 'B';
+				turn = move.getPlayerColour();
+			}else{
+				playerOneRemaining++;
+				turn = move.getPlayerColour();
 			}
 			break;
 		case 'M':
-			if(playerID == 1){
-				turn = 'R';
-			}else{
-				turn = 'B';
-			}
+			turn = move.getPlayerColour();
 			break;
 		default:
 			break;
@@ -201,7 +197,7 @@ public class BoardModel extends Observable implements BoardFacadeInterface {
 
 	@Override
 	public boolean gameWon() {
-		if(playerOneRemaining == 2 || playerTwoRemaining == 2){
+		if(playerOneRemaining == 2 || playerTwoRemaining == 2 || phase == phase.FOUR){
 			return true;
 		}else{
 			return false;
@@ -231,6 +227,25 @@ public class BoardModel extends Observable implements BoardFacadeInterface {
 		}
 		
 		return rewards;
+	}
+
+	@Override
+	public void printDetails() {
+		System.out.println("-------------- Board Details ---------------------");
+		System.out.println("State: " + state);
+		System.out.println("P1 TP: " + playerOneToPlace);
+		System.out.println("P2 TP: " + playerTwoToPlace);
+		System.out.println("P1 TR: " + playerOneRemaining);
+		System.out.println("P2 TR: " + playerTwoRemaining);
+		System.out.println("Phase: " + phase);
+		System.out.println("--------------------------------------------------");
+	}
+
+	private char trappedPlayer;
+	
+	@Override
+	public void setTrappedPlayer(char c) {
+		trappedPlayer = c;
 	}
 
 }

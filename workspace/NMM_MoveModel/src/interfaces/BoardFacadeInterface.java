@@ -9,4 +9,8 @@ public interface BoardFacadeInterface extends BoardDetailsInterface, BoardMutato
 	 */
 	double[] getRewards();
 	
+	
+	void printDetails();
+	
+	void setTrappedPlayer(char c);
 }

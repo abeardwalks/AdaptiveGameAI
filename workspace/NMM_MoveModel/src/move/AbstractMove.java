@@ -4,12 +4,10 @@ package move;
 public abstract class AbstractMove  {
 	
 	private String stateActedOn;
-	private char action;
 	private char playerColour;
 	
-	public AbstractMove(String state, char action, char playerColour){
+	public AbstractMove(String state, char playerColour){
 		stateActedOn = state;
-		this.action = action;
 		this.playerColour = playerColour;
 	}
 	
@@ -19,9 +17,7 @@ public abstract class AbstractMove  {
 
 	public abstract String getStatePostAction();
 
-	public char getAction() {
-		return action;
-	}
+	public abstract char getAction();
 
 	public char getPlayerColour() {
 		return playerColour;
