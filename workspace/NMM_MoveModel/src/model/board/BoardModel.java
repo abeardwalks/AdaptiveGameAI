@@ -199,7 +199,7 @@ public class BoardModel extends Observable implements BoardFacadeInterface {
 
 	@Override
 	public boolean gameWon() {
-		if(playerOneRemaining == 2 || playerTwoRemaining == 2 || phase == phase.FOUR){
+		if(playerOneRemaining == 2 || playerTwoRemaining == 2 || phase == Phase.FOUR){
 			return true;
 		}else{
 			return false;
@@ -226,6 +226,14 @@ public class BoardModel extends Observable implements BoardFacadeInterface {
 		}else if(playerOneRemaining < playerTwoRemaining){
 			rewards[0] = 0.0;
 			rewards[1] = 0.5;
+		}
+		
+		if(trappedPlayer == 'R'){
+			rewards[0] = 0.0;
+			rewards[1] = 1.0;
+		}else if(trappedPlayer == 'B'){
+			rewards[0] = 1.0;
+			rewards[1] = 0.0;
 		}
 		
 		return rewards;

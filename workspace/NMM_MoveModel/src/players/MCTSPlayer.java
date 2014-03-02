@@ -134,6 +134,10 @@ public class MCTSPlayer extends AbstractPlayer {
 				try{
 					AbstractMove result = mc.executeMove(current.move);
 					workingGame.executeMove(current.move);
+					if(current == null || result == null){
+						System.err.println("The result move is: " + result);
+						System.err.println("The current move is: " + current);
+					}
 					if(result.getPlayerID() != current.move.getPlayerID()){
 						workingGame.setTurn();
 					}
@@ -290,6 +294,7 @@ public class MCTSPlayer extends AbstractPlayer {
 					workingGame.setPhase(mc.getPhase());
 					if(mc.getPhase() == Phase.FOUR){
 						workingGame.setTrappedPlayer(mc.trappedPlayer());
+						
 					}
 					moves = mc.getAllPossibleMoves(nextAction.getAction(), nextAction.getPlayerColour());
 //					System.out.println("--------------------------------");
