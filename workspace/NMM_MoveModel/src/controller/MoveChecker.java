@@ -369,7 +369,7 @@ public class MoveChecker {
 			return false;
 		}
 		
-		if(gamePhase == Phase.THREE && moveAnywhere){
+		if(moveAnywhere){
 			return true;
 		}
 
