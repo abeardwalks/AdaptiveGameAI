@@ -79,9 +79,9 @@ public class MCTSPlayer extends AbstractPlayer {
 		}else if(action == 'M'){
 			m = new MovementMove(workingGame.getState(), getTokenColour(), -1, -1);
 		}
-		root = new TreeNode(m);
+		root = new TreeNode(m, 0);
 		
-		long stop = System.currentTimeMillis() + 1000;
+		long stop = System.currentTimeMillis() + 5000;
 		
 		while(System.currentTimeMillis() < stop){
 			mc = new MoveChecker(workingGame);
@@ -111,16 +111,18 @@ public class MCTSPlayer extends AbstractPlayer {
 		
 		private double epsilon = 1e-6;
 		private Random r = new Random();
-		
+		private int depth;
+		private AbstractMove expandMove;
 		private AbstractMove move;
 		
 		TreeNode[] children;
 		double nVisits;
 		double[] rewards;
 		
-		public TreeNode(AbstractMove move){
+		public TreeNode(AbstractMove move, int depth){
 			this.move = move;
 			rewards = new double[2];
+			this.depth = depth;
 		}
 		
 		public void selectAction(){
@@ -130,8 +132,15 @@ public class MCTSPlayer extends AbstractPlayer {
 			while(!current.isLeaf() && !workingGame.gameWon()){
 				current = current.select();
 				try{
+					AbstractMove result = mc.executeMove(current.move);
 					workingGame.executeMove(current.move);
+					if(result.getPlayerID() != current.move.getPlayerID()){
+						workingGame.setTurn();
+					}
+					workingGame.setPhase(mc.getPhase());
+					
 				}catch(Exception e){
+					e.printStackTrace();
 				}
 				visited.add(current);
 			}
@@ -141,29 +150,29 @@ public class MCTSPlayer extends AbstractPlayer {
 			if(workingGame.gameWon()){
 				rewards = workingGame.getRewards();
 			}else{
-				System.out.println("BEFORE ROLLOUT-------------------");
-				workingGame.printDetails();
-				mc = new MoveChecker(workingGame);
-				mc.printDetails();
+//				System.out.println("BEFORE ROLLOUT-------------------");
+//				workingGame.printDetails();
+//				mc.printDetails();
+//				mc = new MoveChecker(workingGame);
+			
 				current.expand();
 				
 				TreeNode newNode = current.select();
-				
 //				workingGame.executeMove(newNode.move);
 				
 				rewards = rollOut(newNode);
 			}
 			
 			for (TreeNode node : visited) {
-				System.out.println("Number of visits: " + node.nVisits + ", rewards: " + node.rewards);
+//				System.out.println("Number of visits: " + node.nVisits + ", rewards: " + node.rewards);
 				workingGame.undo();
 				node.updateStats(rewards);
 			}
-			System.out.println("AFTER UNDO-------------------------");
-			workingGame.printDetails();
-			mc.printDetails();
+//			System.out.println("AFTER UNDO-------------------------");
+//			workingGame.printDetails();
+//			mc.printDetails();
 			mc = new MoveChecker(workingGame);
-			System.out.println("-----------------------------------");
+//			System.out.println("-----------------------------------");
 
 			
 			this.updateStats(rewards);
@@ -171,16 +180,48 @@ public class MCTSPlayer extends AbstractPlayer {
 		}
 
 		private void expand() {
-			List<AbstractMove> moves = mc.getAllPossibleMoves(this.move.getAction(), this.move.getPlayerColour());
-			
+			List<AbstractMove> moves;
+			if(depth == 0){
+				moves = mc.getAllPossibleMoves(this.move.getAction(), this.move.getPlayerColour());
+			}else{
+//				System.out.println(depth + " excuting move: " + move.getAction() + ", " + move.getPlayerColour());
+
+//				mc.printDetails();
+//				AbstractMove expand = mc.executeMove(move);
+//				mc = new MoveChecker(workingGame);
+//				if(expand == null){
+//					System.err.println("It's null");
+//				}
+//				
+//				System.err.println("Depth: " + depth + ", move is: " + move.getAction() + ", turn: " + move.getPlayerColour() + " position: " + ((PlacementMove)move).getPlacementIndex());
+//				System.err.println("Expand move: " + expand);
+//				System.err.println("New action was: " + mc.getNewAction() + ", new turn was: " + mc.getNewPlayerTurn());
+				moves = mc.getAllPossibleMoves(mc.getNewAction(), mc.getNewPlayerTurn());
+				
+			}
 			children = new TreeNode[moves.size()];
 			if(moves.size() == 0){
-				System.err.println("Error expanding " + moves.size() + " children.");
+				System.out.println("Expanding Error, Depth: " + depth);
+				if(depth == 0){
+					System.out.println("Tried to expand with the action: " + this.move.getAction() + ", turn was: " + this.move.getPlayerColour());
+				}else{
+					System.out.println("Tried to expand with the action: " + mc.getNewAction() + ", turn was: " + mc.getNewPlayerTurn());
+				}
+				workingGame.printDetails();
+				mc.printDetails();
+				System.err.println("Error expanding " + moves.size() + " children. Was the game won? " + mc.gameWon());
+				
 			}
 			
 			int i = 0;
+//			if(depth == 2){
+//				System.out.println(expandMove.getAction() + "    " + expandMove.getPlayerColour());
+//				System.out.println(moves.get(0).getAction() + "  " + moves.get(0).getPlayerColour());
+//				System.exit(0);
+//			}
+			
 			for(AbstractMove m : moves){
-				children[i] = new TreeNode(m);
+				children[i] = new TreeNode(m, depth + 1);
 				i++;
 			}
 		}
@@ -258,6 +299,8 @@ public class MCTSPlayer extends AbstractPlayer {
 				if(workingGame.getPlayerOneRemaining() == 3 || workingGame.getPlayerTwoRemaining() == 3){
 					break;
 				}
+//				workingGame.printDetails();
+
 			}
 			
 //			System.out.println("Rollout Ended " + (numberOfRollouts - 1));
@@ -265,11 +308,10 @@ public class MCTSPlayer extends AbstractPlayer {
 //			mc.printDetails();
 //			System.exit(0);
 			double[] rewards = workingGame.getRewards();
-			
+
 			for (int i = 0; i < count; i++) {
 				workingGame.undo();
 			}
-			
 			mc = new MoveChecker(workingGame);
 			workingGame.setPhase(mc.getPhase());
 			

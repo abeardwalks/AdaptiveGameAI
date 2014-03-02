@@ -159,6 +159,7 @@ public class MoveModelController {
 				}
 			}
 			if(millMade && (result == -1 || result == 1)){
+				state = ((BoardDetailsInterface) model).getState();
 				int removal = player.removeToken((BoardDetailsInterface) model);
 				result = mc.removeToken(playerColour, removal);
 				if(result != -1){
@@ -172,9 +173,10 @@ public class MoveModelController {
 				model.setPhase(phase);
 				if(turn == 'R'){
 					turn = 'B';
-					
+					playerColour = 'B';
 				}else{
 					turn = 'R';
+					playerColour = 'R';
 				}
 				millMade = false;
 				model.setTurn();

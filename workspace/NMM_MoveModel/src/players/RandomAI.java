@@ -2,74 +2,60 @@ package players;
 
 import java.util.Random;
 
+import interfaces.BoardDetailsInterface;
 import interfaces.IntPairInterface;
-import interfaces.PlayerInterface;
 
-public class RandomAI implements PlayerInterface {
+public class RandomAI extends AbstractPlayer {
 
-	private Random rdm;
+	private Random rdm = new Random();
 	private char colour;
-
+	
 	@Override
-	public int placeToken(String state) {
-		rdm = new Random();
+	public int placeToken(BoardDetailsInterface game) {
+		char[] stateArray = game.getState().toCharArray();
 		boolean found = false;
-		int position = 0;
-		while (!found) {
-			position = rdm.nextInt(24);
-			if (state.charAt(position) == 'N') {
-				found = true;
+		int index = 0;
+		while(!found){
+			index = rdm.nextInt(24);
+			if(stateArray[index] == 'N'){
+				found = true; 
 			}
 		}
-		return position;
+		return index;
 	}
-
 	@Override
-	public int removeToken(String state) {
-		rdm = new Random();
+	public int removeToken(BoardDetailsInterface game) {
+		char[] stateArray = game.getState().toCharArray();
 		boolean found = false;
-		int position = 0;
-		while (!found) {
-			position = rdm.nextInt(24);
-			if (state.charAt(position) != colour
-					&& state.charAt(position) != 'N') {
-				found = true;
+		int index = 0;
+		while(!found){
+			index = rdm.nextInt(24);
+			if(stateArray[index] != this.getTokenColour() && stateArray[index] != 'N'){
+				found = true; 
 			}
 		}
-		return position;
+		return index;
 	}
-
 	@Override
-	public IntPairInterface moveToken(String state) {
-		rdm = new Random();
+	public IntPairInterface moveToken(BoardDetailsInterface game) {
+		char[] stateArray = game.getState().toCharArray();
 		boolean found = false;
 		int positionFrom = 0;
 		int positionToo = 0;
 		while (!found) {
 			positionFrom = rdm.nextInt(24);
-			if (state.charAt(positionFrom) == colour) {
+			positionToo = rdm.nextInt(24);
+			if (stateArray[positionFrom] == this.getTokenColour() && stateArray[positionToo] == 'N' ) {
 				found = true;
 			}
-			positionToo = rdm.nextInt(24);
-			if (state.charAt(positionToo) == 'N')
-				;
 		}
 		return new IntPair(positionFrom, positionToo);
 	}
-
 	@Override
 	public String getName() {
 		return "Random AI";
 	}
 
-	@Override
-	public void setTokenColour(char c) {
-		colour = c;
-	}
-
-	@Override
-	public char getTokenColour() {
-		return colour;
-	}
+	
 
 }

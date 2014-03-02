@@ -93,7 +93,7 @@ public class MoveChecker {
 		
 		if(candidate == 'N' || candidate == token || ((partOfMill(position) && !onlyAvailable(token, position)))){
 			result = -1; 		//for MVC
-			return result = -1;
+			return result;
 		}else{
 			if(token == 'R'){
 				playerTwoTokensRemaining--;
@@ -109,6 +109,7 @@ public class MoveChecker {
 		}
 		
 		if(gameWon()){
+			System.err.println("Game Won");
 			result = 2;				//for MVC
 		}
 
@@ -663,10 +664,13 @@ public class MoveChecker {
 		System.out.println("--------------------------------------------------");
 	}
 	
+	private char newAction;
+	private char newPlayerTurn;
+	
 	public AbstractMove executeMove(AbstractMove move){
 		char action = move.getAction();
 		char turn = move.getPlayerColour();
-		
+		AbstractMove newMove = null;
 		int result = -1;
 		switch (action) {
 		case 'P':
@@ -682,23 +686,40 @@ public class MoveChecker {
 			break;
 		}
 		if(result == 0 && gamePhase == Phase.ONE && ((turn == 'R' && playerTwoTokensToPlace > 0) || (turn == 'B' && playerOneTokensToPlace >0))){
+			newAction = 'P';
 			if(turn == 'R'){
 				turn = 'B';
+				newPlayerTurn = 'B';
 			}else{
 				turn = 'R';
+				newPlayerTurn = 'R';
 			}
-			return new PlacementMove(state, turn, -1);
+			newMove = new PlacementMove(state, turn, -1);
+			
 		}else if(result == 0){
+			newAction = 'M';
 			if(turn == 'R'){
 				turn = 'B';
+				newPlayerTurn = 'B';
 			}else{
 				turn = 'R';
+				newPlayerTurn = 'R';
 			}
-			return new MovementMove(state, turn, -1, -1);
+			newMove = new MovementMove(state, turn, -1, -1);
 		}else if(result == 1){
-			return new RemovalMove(state, turn, -1);
+			newAction = 'R';
+			newPlayerTurn = turn;
+			newMove = new RemovalMove(state, turn, -1);
 		}
-		return null;
+		return newMove;
+	}
+	
+	public char getNewAction(){
+		return newAction;
+	}
+	
+	public char getNewPlayerTurn(){
+		return newPlayerTurn;
 	}
 
 	public List<AbstractMove> getAllPossibleMoves(char action,

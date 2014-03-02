@@ -130,6 +130,8 @@ public class BoardModel extends Observable implements BoardFacadeInterface {
 		}else{
 			turn = 'R';
 		}
+		setChanged();
+		notifyObservers();
 	}
 	
 	@Override
