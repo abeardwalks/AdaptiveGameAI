@@ -175,14 +175,14 @@ public class MoveChecker {
 		boolean playerOne = false;
 		boolean playerTwo = false;
 		
-		while(index < limit && (playerOne == false || playerTwo == false)){
+		while(index < limit || (playerOne == false && playerTwo == false)){
 			char token = state.charAt(index);
 			int i = 0; 
 			while(i < limit){
 				if(validMove(index, i)){
 					if(token == 'R'){
 						playerOne = true;
-					}else{
+					}else if(token == 'B'){
 						playerTwo = true;
 					}
 				}
@@ -365,7 +365,7 @@ public class MoveChecker {
 		char[] stateArray = state.toCharArray();
 		
 		
-		if(stateArray[y] != 'N'){
+		if(stateArray[x] == 'N' || stateArray[y] != 'N'){
 			return false;
 		}
 		

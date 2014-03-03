@@ -84,6 +84,44 @@ public class MoveModelController {
 		
 	}
 	
+	public MoveModelController(BoardMutatorInterface model){
+		
+		this.model = model;
+		
+		primaryView = new ApplicationView();
+		primaryView.addKeyListener(new HumanKeyListener());
+		primaryView.setFocusable(true);
+		
+		List<Player> players1 = getPlayers();
+		List<Player> players2 = getPlayers();
+		
+		setupView = new MoveModelSetupView(new SetupActionListener(), players1, players2);
+		primaryView.add(setupView);
+		
+		gameView = new MoveModelPlayingView((BoardDetailsInterface) this.model);
+		gameView.addMouseListener(new HumanMouseListener());
+		gameView.addKeyListener(new HumanKeyListener());
+		gameView.setFocusable(true);
+		
+		pauseView = new PauseView(new PauseMenuListener());
+		paused = false;
+		started = false;
+		
+		mc = new MoveChecker((BoardDetailsInterface) this.model);
+		if(((BoardDetailsInterface) this.model).getTurn() == 1){
+			turn = 'R';
+		}else{
+			turn = 'B';
+		}
+		result = 0;
+		phase = ((BoardDetailsInterface) this.model).getPhase();
+		millMade = false;
+		
+		((Observable) this.model).addObserver(gameView);
+		
+		primaryView.setVisible(true);
+	}
+	
 	private void start() {
 		primaryView.remove(setupView);
 		//TODO - fix this so setupView uses new player interface

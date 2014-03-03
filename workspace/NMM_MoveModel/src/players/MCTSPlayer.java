@@ -134,12 +134,14 @@ public class MCTSPlayer extends AbstractPlayer {
 				try{
 					AbstractMove result = mc.executeMove(current.move);
 					workingGame.executeMove(current.move);
-					if(current == null || result == null){
-						System.err.println("The result move is: " + result);
-						System.err.println("The current move is: " + current);
-					}
-					if(result.getPlayerID() != current.move.getPlayerID()){
-						workingGame.setTurn();
+					if(result != null){
+						if(current == null || result == null){
+							System.err.println("The result move is: " + result);
+							System.err.println("The current move is: " + current);
+						}
+						if(result.getPlayerID() != current.move.getPlayerID()){
+							workingGame.setTurn();
+						}
 					}
 					workingGame.setPhase(mc.getPhase());
 					
