@@ -1,5 +1,11 @@
 package move;
 
+/**
+ * Class representative of a movement by a player. 
+ * 
+ * @author Andrew White - BSc Software Engineering, 200939787
+ *
+ */
 public class MovementMove extends AbstractMove {
 	
 	private int from, to;

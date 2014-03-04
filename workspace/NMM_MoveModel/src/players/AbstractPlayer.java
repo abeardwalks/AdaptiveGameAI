@@ -4,6 +4,13 @@ import interfaces.BoardDetailsInterface;
 import interfaces.IntPairInterface;
 import interfaces.Player;
 
+/**
+ * The abstract player, providing the common functionality that all
+ * players have. E.g. Their token colour and ID. 
+ * 
+ * @author Andy
+ *
+ */
 public abstract class AbstractPlayer implements Player {
 	
 	private char tokenColour;

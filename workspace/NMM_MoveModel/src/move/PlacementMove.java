@@ -1,5 +1,11 @@
 package move;
 
+/**
+ * Class representative of a placement by a player.
+ * 
+ * @author Andrew White - BSc Software Engineering, 200939787
+ *
+ */
 public class PlacementMove extends AbstractMove{
 
 	private int placement;

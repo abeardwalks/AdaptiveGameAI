@@ -1,5 +1,11 @@
 package move;
 
+/**
+ * Class representative of a removal by a player.
+ * 
+ * @author Andrew White - BSc Software Engineering, 200939787
+ *
+ */
 public class RemovalMove extends AbstractMove{
 
 	private int removal;

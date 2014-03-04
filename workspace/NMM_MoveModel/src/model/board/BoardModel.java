@@ -5,19 +5,27 @@ import java.util.Stack;
 
 import model.Phase;
 import move.AbstractMove;
-import interfaces.BoardDetailsInterface;
 import interfaces.BoardFacadeInterface;
-import interfaces.BoardMutatorInterface;
 
+/**
+ * The Concrete class that represents the board, i.e. the model. This class extends
+ * the Observable class and implements the BoardFacadeInterface.
+ * 
+ * @author Andrew White - BSc Software Engineering, 200939787
+ *
+ */
 public class BoardModel extends Observable implements BoardFacadeInterface {
 	
 	private String state;
-	private Stack<AbstractMove> history;
+	private Stack<AbstractMove> history;				//the history of the game, this allows for moves to be undone. 
 	private int playerOneToPlace, playerTwoToPlace;
 	private int playerOneRemaining, playerTwoRemaining;
 	private Phase phase;
 	private char turn;
 	
+	/**
+	 * Constructs a new BoardModel with data representative of a new game.
+	 */
 	public BoardModel(){
 		
 		state = "NNNNNNNNNNNNNNNNNNNNNNNN";
@@ -34,6 +42,17 @@ public class BoardModel extends Observable implements BoardFacadeInterface {
 		
 	}
 	
+	/**
+	 * Constructs a new board model with passed in values, this is primarily used for test purposes and the MCTS. 
+	 * 
+	 * @param              state - The 24 character state string made up of the letters N | R | B.
+	 * @param   playerOneToPlace - The number of tokens player one has left to place.
+	 * @param   playerTwoToPlace - The number of tokens player two has left to place.
+	 * @param playerOneRemianing - The number of tokens player one has left in the game.
+	 * @param playerTwoRemaining - The number of tokens player two has left in the game.
+	 * @param              phase - The phase of the game. 
+	 * @param               turn - Whos turn it is. 
+	 */
 	public BoardModel(String state, int playerOneToPlace, int playerTwoToPlace, int playerOneRemianing, int playerTwoRemaining, Phase phase, int turn){
 		
 		this.state = state;
@@ -55,6 +74,9 @@ public class BoardModel extends Observable implements BoardFacadeInterface {
 	}
 
 	@Override
+	/**
+	 * @param move - executes the passed in move on the board, storing it in the stack. 
+	 */
 	public void executeMove(AbstractMove move) {
 		history.push(move);
 		state = move.getStatePostAction();
@@ -62,17 +84,17 @@ public class BoardModel extends Observable implements BoardFacadeInterface {
 		
 		switch (action) {
 		case 'P':
-			if(turn == 'R'){
-				playerOneToPlace--;
+			if(turn == 'R'){			//if player one placed a token...
+				playerOneToPlace--;		//...lower their placement count.
 			}else{
-				playerTwoToPlace--;
+				playerTwoToPlace--;		//otherwise lower player twos account. 
 			}
 			break;
 		case 'R':
-			if(turn == 'R'){
-				playerTwoRemaining--;
+			if(turn == 'R'){			//if player one removed a token...
+				playerTwoRemaining--;	//...lower the number of tokens player two has remaining. 
 			}else{
-				playerOneRemaining--;
+				playerOneRemaining--;	//otherwise lower player one tokens remaining.
 			}
 			break;
 		case 'M':
@@ -81,13 +103,17 @@ public class BoardModel extends Observable implements BoardFacadeInterface {
 			break;
 		}
 		
+		//Notify Observers. 
 		setChanged();
 		notifyObservers();
 	}
 
 	@Override
+	/**
+	 * Undoes the last executed move. 
+	 */
 	public void undo() {
-		AbstractMove move = history.pop();
+		AbstractMove move = history.pop();		//pop the last executed move from the history stack. 
 		
 		state = move.getStateActedOn();
 		char action = move.getAction();
@@ -119,6 +145,7 @@ public class BoardModel extends Observable implements BoardFacadeInterface {
 			break;
 		}
 		
+		//notify observers
 		setChanged();
 		notifyObservers();
 	}
@@ -130,6 +157,8 @@ public class BoardModel extends Observable implements BoardFacadeInterface {
 		}else{
 			turn = 'R';
 		}
+		
+		//notify observers
 		setChanged();
 		notifyObservers();
 	}
@@ -211,28 +240,28 @@ public class BoardModel extends Observable implements BoardFacadeInterface {
 		
 		double[] rewards = new double[2];
 	
-		if(playerOneRemaining < 3){
-			rewards[0] = 0.0;
-			rewards[1] = 1.0;
-		}else if(playerTwoRemaining < 3){
-			rewards[0] = 1.0;
+		if(playerOneRemaining < 3){			//if Player One has lost...
+			rewards[0] = 0.0;				
+			rewards[1] = 1.0;				//...give player 2 a point.
+		}else if(playerTwoRemaining < 3){	//if Player Two has lost...
+			rewards[0] = 1.0;				//...give player 1 a point.
 			rewards[1] = 0.0;
-		}else if(playerOneRemaining == playerTwoRemaining){
-			rewards[0] = 0.5;
+		}else if(playerOneRemaining == playerTwoRemaining){		//if the game is currently a draw...
+			rewards[0] = 0.5;									//each player gets 0.5
 			rewards[1] = 0.5;
-		}else if(playerOneRemaining > playerTwoRemaining){
-			rewards[0] = 0.5;
+		}else if((playerOneRemaining > playerTwoRemaining )){		//if player One has 3 more tokens than player 2. 
+			rewards[0] = 0.5;											//give them 0.5.
 			rewards[1] = 0.0;
-		}else if(playerOneRemaining < playerTwoRemaining){
-			rewards[0] = 0.0;
-			rewards[1] = 0.5;
+		}else if((playerTwoRemaining > playerOneRemaining)){		//if player Two has 3 more tokens than player 1
+			rewards[0] = 0.0;		
+			rewards[1] = 0.5;											//give them 0.5
 		}
 		
-		if(trappedPlayer == 'R'){
+		if(trappedPlayer == 'R'){			//if player 1 is trapped...
 			rewards[0] = 0.0;
-			rewards[1] = 1.0;
-		}else if(trappedPlayer == 'B'){
-			rewards[0] = 1.0;
+			rewards[1] = 1.0;				//...give player two 1 point.
+		}else if(trappedPlayer == 'B'){		//if player 2 is trapped...
+			rewards[0] = 1.0;				//...give player One 1 point.
 			rewards[1] = 0.0;
 		}
 		

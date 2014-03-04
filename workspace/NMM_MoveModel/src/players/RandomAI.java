@@ -8,7 +8,6 @@ import interfaces.IntPairInterface;
 public class RandomAI extends AbstractPlayer {
 
 	private Random rdm = new Random();
-	private char colour;
 	
 	@Override
 	public int placeToken(BoardDetailsInterface game) {
