@@ -19,6 +19,8 @@ import java.util.Observer;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
+import utility.NodeFinder;
+
 public class PlayingView extends JPanel implements Observer {
 
 	private static final long serialVersionUID = -68209173743986677L;
@@ -42,11 +44,19 @@ public class PlayingView extends JPanel implements Observer {
 	private int x0,x1,x2,x3,x4,x5,x6;
 	private int y0,y1,y2,y3,y4,y5,y6;
 	
+	private boolean  bd0, bd1, bd2, bd3, bd4, 
+					 bd5, bd6, bd7, bd8, bd9, 
+					bd10, bd11, bd12, bd13, 
+					bd14, bd15, bd16, bd17, 
+					bd18, bd19, bd20, bd21, 
+					bd22, bd23;
+	
 	private boolean showToolTip;
 	private String toolTip;
 	
 	private BoardDetailsInterface model;
 	
+	private Graphics g;
 	
 	
 	public PlayingView(BoardDetailsInterface model){
@@ -58,10 +68,13 @@ public class PlayingView extends JPanel implements Observer {
 		setFont(toolTipFont);
 		this.model = model;
 		addMouseMotionListener(new PlayerViewMouseListener());
+		addMouseListener(new PlayerViewMouseListener());
 		gs = model.getState();
 		playerOneTokens = model.getPlayerOneToPlace();
 		playerTwoTokens = model.getPlayerTwoToPlace();
+		
 		intializeCordinates();
+		initializeBeingDragged();
 		
 		toolTip = "Player One (Orange) to place, click an empty node to play...";
 		
@@ -73,12 +86,14 @@ public class PlayingView extends JPanel implements Observer {
 		}
 	}
 	
+	
 	public void setToolTip(boolean showToolTip){
 		this.showToolTip = showToolTip;
 	}
 
 
 	public void paint(Graphics g){
+		this.g = g;
 		Graphics2D g2 = (Graphics2D)g;
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 			    RenderingHints.VALUE_ANTIALIAS_ON);
@@ -110,266 +125,266 @@ public class PlayingView extends JPanel implements Observer {
 		
 		char[] nodes = gs.toCharArray();
 		
-		if(nodes[0] == 'R'){
+		if(nodes[0] == 'R' && !bd0){
 			g2.setColor(p1.darker());
 			g2.fillOval(x0, y0, tokenWidth, tokenWidth);
 			g2.setColor(p1);
 			g2.fillOval(x0 + 5, y0 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[0] == 'B'){
+		} else if(nodes[0] == 'B' && !bd0){
 			g2.setColor(p2.darker());
 			g2.fillOval(x0, y0, tokenWidth, tokenWidth);
 			g2.setColor(p2);
 			g2.fillOval(x0 + 5, y0 + 5, tokenWidth - 10, tokenWidth - 10);
 		}
 		
-		if(nodes[1] == 'R'){
+		if(nodes[1] == 'R' && !bd1){
 			g2.setColor(p1.darker());
 			g2.fillOval(x1, y0, tokenWidth, tokenWidth);
 			g2.setColor(p1);
 			g2.fillOval(x1 + 5, y0 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[1] == 'B'){
+		} else if(nodes[1] == 'B' && !bd1){
 			g2.setColor(p2.darker());
 			g2.fillOval(x1, y0, tokenWidth, tokenWidth);
 			g2.setColor(p2);
 			g2.fillOval(x1 + 5, y0 + 5, tokenWidth - 10, tokenWidth - 10);
 		}
-		if(nodes[2] == 'R'){
+		if(nodes[2] == 'R' && !bd2){
 			g2.setColor(p1.darker());
 			g2.fillOval(x2, y0, tokenWidth, tokenWidth);
 			g2.setColor(p1);
 			g2.fillOval(x2 + 5, y0 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[2] == 'B'){
+		} else if(nodes[2] == 'B' && !bd2){
 			g2.setColor(p2.darker());
 			g2.fillOval(x2, y0, tokenWidth, tokenWidth);
 			g2.setColor(p2);
 			g2.fillOval(x2 + 5, y0 + 5, tokenWidth - 10, tokenWidth - 10);
 		}
-		if(nodes[3] == 'R'){
+		if(nodes[3] == 'R' && !bd3){
 			g2.setColor(p1.darker());
 			g2.fillOval(x3, y1, tokenWidth, tokenWidth);
 			g2.setColor(p1);
 			g2.fillOval(x3 + 5, y1 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[3] == 'B'){
+		} else if(nodes[3] == 'B' && !bd3){
 			g2.setColor(p2.darker());
 			g2.fillOval(x3, y1, tokenWidth, tokenWidth);
 			g2.setColor(p2);
 			g2.fillOval(x3 + 5, y1 + 5, tokenWidth - 10, tokenWidth - 10);
 		}
-		if(nodes[4] == 'R'){
+		if(nodes[4] == 'R' && !bd4){
 			g2.setColor(p1.darker());
 			g2.fillOval(x1, y1, tokenWidth, tokenWidth);
 			g2.setColor(p1);
 			g2.fillOval(x1 + 5, y1 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[4] == 'B'){
+		} else if(nodes[4] == 'B' && !bd4){
 			g2.setColor(p2.darker());
 			g2.fillOval(x1, y1, tokenWidth, tokenWidth);
 			g2.setColor(p2);
 			g2.fillOval(x1 + 5, y1 + 5, tokenWidth - 10, tokenWidth - 10);
 		}
-		if(nodes[5] == 'R'){
+		if(nodes[5] == 'R' && !bd5){
 			g2.setColor(p1.darker());
 			g2.fillOval(x4, y1, tokenWidth, tokenWidth);
 			g2.setColor(p1);
 			g2.fillOval(x4 + 5, y1 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[5] == 'B'){
+		} else if(nodes[5] == 'B' && !bd5){
 			g2.setColor(p2.darker());
 			g2.fillOval(x4, y1, tokenWidth, tokenWidth);
 			g2.setColor(p2);
 			g2.fillOval(x4 + 5, y1 + 5, tokenWidth - 10, tokenWidth - 10);
 		}
-		if(nodes[6] == 'R'){
+		if(nodes[6] == 'R' && !bd6){
 			g2.setColor(p1.darker());
 			g2.fillOval(x5, y2, tokenWidth, tokenWidth);
 			g2.setColor(p1);
 			g2.fillOval(x5 + 5, y2 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[6] == 'B'){
+		} else if(nodes[6] == 'B' && !bd6){
 			g2.setColor(p2.darker());
 			g2.fillOval(x5, y2, tokenWidth, tokenWidth);
 			g2.setColor(p2);
 			g2.fillOval(x5 + 5, y2 + 5, tokenWidth - 10, tokenWidth - 10);
 		}
-		if(nodes[7] == 'R'){
+		if(nodes[7] == 'R' && !bd7){
 			g2.setColor(p1.darker());
 			g2.fillOval(x1, y2, tokenWidth, tokenWidth);
 			g2.setColor(p1);
 			g2.fillOval(x1 + 5, y2 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[7] == 'B'){
+		} else if(nodes[7] == 'B' && !bd7){
 			g2.setColor(p2.darker());
 			g2.fillOval(x1, y2, tokenWidth, tokenWidth);
 			g2.setColor(p2);
 			g2.fillOval(x1 + 5, y2 + 5, tokenWidth - 10, tokenWidth - 10);
 		}
-		if(nodes[8] == 'R'){
+		if(nodes[8] == 'R' && !bd8){
 			g2.setColor(p1.darker());
 			g2.fillOval(x6, y2, tokenWidth, tokenWidth);
 			g2.setColor(p1);
 			g2.fillOval(x6 + 5, y2 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[8] == 'B'){
+		} else if(nodes[8] == 'B' && !bd8){
 			g2.setColor(p2.darker());
 			g2.fillOval(x6, y2, tokenWidth, tokenWidth);
 			g2.setColor(p2);
 			g2.fillOval(x6 + 5, y2 + 5, tokenWidth - 10, tokenWidth - 10);
 		}
-		if(nodes[9] == 'R'){
+		if(nodes[9] == 'R' && !bd9){
 			g2.setColor(p1.darker());
 			g2.fillOval(x0, y3, tokenWidth, tokenWidth);
 			g2.setColor(p1);
 			g2.fillOval(x0 + 5, y3 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[9] == 'B'){
+		} else if(nodes[9] == 'B' && !bd9){
 			g2.setColor(p2.darker());
 			g2.fillOval(x0, y3, tokenWidth, tokenWidth);
 			g2.setColor(p2);
 			g2.fillOval(x0 + 5, y3 + 5, tokenWidth - 10, tokenWidth - 10);
 		}
-		if(nodes[10] == 'R'){
+		if(nodes[10] == 'R' && !bd10){
 			g2.setColor(p1.darker());
 			g2.fillOval(x3, y3, tokenWidth, tokenWidth);
 			g2.setColor(p1);
 			g2.fillOval(x3 + 5, y3 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[10] == 'B'){
+		} else if(nodes[10] == 'B' && !bd10){
 			g2.setColor(p2.darker());
 			g2.fillOval(x3, y3, tokenWidth, tokenWidth);
 			g2.setColor(p2);
 			g2.fillOval(x3 + 5, y3 + 5, tokenWidth - 10, tokenWidth - 10);
 		}
-		if(nodes[11] == 'R'){
+		if(nodes[11] == 'R' && !bd11){
 			g2.setColor(p1.darker());
 			g2.fillOval(x5, y3, tokenWidth, tokenWidth);
 			g2.setColor(p1);
 			g2.fillOval(x5 + 5, y3 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[11] == 'B'){
+		} else if(nodes[11] == 'B' && !bd11){
 			g2.setColor(p2.darker());
 			g2.fillOval(x5, y3, tokenWidth, tokenWidth);
 			g2.setColor(p2);
 			g2.fillOval(x5 + 5, y3 + 5, tokenWidth - 10, tokenWidth - 10);
 		}
-		if(nodes[12] == 'R'){
+		if(nodes[12] == 'R' && !bd12){
 			g2.setColor(p1.darker());
 			g2.fillOval(x6, y3, tokenWidth, tokenWidth);
 			g2.setColor(p1);
 			g2.fillOval(x6 + 5, y3 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[12] == 'B'){
+		} else if(nodes[12] == 'B' && !bd12){
 			g2.setColor(p2.darker());
 			g2.fillOval(x6, y3, tokenWidth, tokenWidth);
 			g2.setColor(p2);
 			g2.fillOval(x6 + 5, y3 + 5, tokenWidth - 10, tokenWidth - 10);
 		}
-		if(nodes[13] == 'R'){
+		if(nodes[13] == 'R' && !bd13){
 			g2.setColor(p1.darker());
 			g2.fillOval(x4, y3, tokenWidth, tokenWidth);
 			g2.setColor(p1);
 			g2.fillOval(x4 + 5, y3 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[13] == 'B'){
+		} else if(nodes[13] == 'B' && !bd13){
 			g2.setColor(p2.darker());
 			g2.fillOval(x4, y3, tokenWidth, tokenWidth);
 			g2.setColor(p2);
 			g2.fillOval(x4 + 5, y3 + 5, tokenWidth - 10, tokenWidth - 10);
 		}
-		if(nodes[14] == 'R'){
+		if(nodes[14] == 'R' && !bd14){
 			g2.setColor(p1.darker());
 			g2.fillOval(x2, y3, tokenWidth, tokenWidth);
 			g2.setColor(p1);
 			g2.fillOval(x2 + 5, y3 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[14] == 'B'){
+		} else if(nodes[14] == 'B' && !bd14){
 			g2.setColor(p2.darker());
 			g2.fillOval(x2, y3, tokenWidth, tokenWidth);
 			g2.setColor(p2);
 			g2.fillOval(x2 + 5, y3 + 5, tokenWidth - 10, tokenWidth - 10);
 		}
-		if(nodes[15] == 'R'){
+		if(nodes[15] == 'R' && !bd15){
 			g2.setColor(p1.darker());
 			g2.fillOval(x5, y4, tokenWidth, tokenWidth);
 			g2.setColor(p1);
 			g2.fillOval(x5 + 5, y4 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[15] == 'B'){
+		} else if(nodes[15] == 'B' && !bd15){
 			g2.setColor(p2.darker());
 			g2.fillOval(x5, y4, tokenWidth, tokenWidth);
 			g2.setColor(p2);
 			g2.fillOval(x5 + 5, y4 + 5, tokenWidth - 10, tokenWidth - 10);
 		}
-		if(nodes[16] == 'R'){
+		if(nodes[16] == 'R' && !bd16){
 			g2.setColor(p1.darker());
 			g2.fillOval(x1, y4, tokenWidth, tokenWidth);
 			g2.setColor(p1);
 			g2.fillOval(x1 + 5, y4 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[16] == 'B'){
+		} else if(nodes[16] == 'B' && !bd16){
 			g2.setColor(p2.darker());
 			g2.fillOval(x1, y4, tokenWidth, tokenWidth);
 			g2.setColor(p2);
 			g2.fillOval(x1 + 5, y4 + 5, tokenWidth - 10, tokenWidth - 10);
 		}
-		if(nodes[17] == 'R'){
+		if(nodes[17] == 'R' && !bd17){
 			g2.setColor(p1.darker());
 			g2.fillOval(x6, y4, tokenWidth, tokenWidth);
 			g2.setColor(p1);
 			g2.fillOval(x6 + 5, y4 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[17] == 'B'){
+		} else if(nodes[17] == 'B' && !bd17){
 			g2.setColor(p2.darker());
 			g2.fillOval(x6, y4, tokenWidth, tokenWidth);
 			g2.setColor(p2);
 			g2.fillOval(x6 + 5, y4 + 5, tokenWidth - 10, tokenWidth - 10);
 		}
-		if(nodes[18] == 'R'){
+		if(nodes[18] == 'R' && !bd18){
 			g2.setColor(p1.darker());
 			g2.fillOval(x3, y5, tokenWidth, tokenWidth);
 			g2.setColor(p1);
 			g2.fillOval(x3 + 5, y5 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[18] == 'B'){
+		} else if(nodes[18] == 'B' && !bd18){
 			g2.setColor(p2.darker());
 			g2.fillOval(x3, y5, tokenWidth, tokenWidth);
 			g2.setColor(p2);
 			g2.fillOval(x3 + 5, y5 + 5, tokenWidth - 10, tokenWidth - 10);
 		}
-		if(nodes[19] == 'R'){
+		if(nodes[19] == 'R' && !bd19){
 			g2.setColor(p1.darker());
 			g2.fillOval(x1, y5, tokenWidth, tokenWidth);
 			g2.setColor(p1);
 			g2.fillOval(x1 + 5, y5 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[19] == 'B'){
+		} else if(nodes[19] == 'B' && !bd19){
 			g2.setColor(p2.darker());
 			g2.fillOval(x1, y5, tokenWidth, tokenWidth);
 			g2.setColor(p2);
 			g2.fillOval(x1 + 5, y5 + 5, tokenWidth - 10, tokenWidth - 10);
 		}
-		if(nodes[20] == 'R'){
+		if(nodes[20] == 'R' && !bd20){
 			g2.setColor(p1.darker());
 			g2.fillOval(x4, y5, tokenWidth, tokenWidth);
 			g2.setColor(p1);
 			g2.fillOval(x4 + 5, y5 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[20] == 'B'){
+		} else if(nodes[20] == 'B' && !bd20){
 			g2.setColor(p2.darker());
 			g2.fillOval(x4, y5, tokenWidth, tokenWidth);
 			g2.setColor(p2);
 			g2.fillOval(x4 + 5, y5 + 5, tokenWidth - 10, tokenWidth - 10);
 		}
-		if(nodes[21] == 'R'){
+		if(nodes[21] == 'R' && !bd21){
 			g2.setColor(p1.darker());
 			g2.fillOval(x0, y6, tokenWidth, tokenWidth);
 			g2.setColor(p1);
 			g2.fillOval(x0 + 5, y6 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[21] == 'B'){
+		} else if(nodes[21] == 'B' && !bd21){
 			g2.setColor(p2.darker());
 			g2.fillOval(x0, y6, tokenWidth, tokenWidth);
 			g2.setColor(p2);
 			g2.fillOval(x0 + 5, y6 + 5, tokenWidth - 10, tokenWidth - 10);
 		}
-		if(nodes[22] == 'R'){
+		if(nodes[22] == 'R' && !bd22){
 			g2.setColor(p1.darker());
 			g2.fillOval(x1, y6, tokenWidth, tokenWidth);
 			g2.setColor(p1);
 			g2.fillOval(x1 + 5, y6 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[22] == 'B'){
+		} else if(nodes[22] == 'B' && !bd22){
 			g2.setColor(p2.darker());
 			g2.fillOval(x1, y6, tokenWidth, tokenWidth);
 			g2.setColor(p2);
 			g2.fillOval(x1 + 5, y6 + 5, tokenWidth - 10, tokenWidth - 10);
 		}
-		if(nodes[23] == 'R'){
+		if(nodes[23] == 'R' && !bd23){
 			g2.setColor(p1.darker());
 			g2.fillOval(x2, y6, tokenWidth, tokenWidth);
 			g2.setColor(p1);
 			g2.fillOval(x2 + 5, y6 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[23] == 'B'){
+		} else if(nodes[23] == 'B' && !bd23){
 			g2.setColor(p2.darker());
 			g2.fillOval(x2, y6, tokenWidth, tokenWidth);
 			g2.setColor(p2);
@@ -388,8 +403,22 @@ public class PlayingView extends JPanel implements Observer {
 		}
 		
 		if(showToolTip){				//change to Show Tool Tip
-			
 			g2.drawString(toolTip, 25, 630);
+		}
+		
+		if(dragging && model.getNextAction() == 'M'){
+			if(token == 'R'){
+				g2.setColor(p1.darker());
+				g2.fillOval(x - (tokenWidth/2), y - (tokenWidth/2), tokenWidth, tokenWidth);
+				g2.setColor(p1);
+				g2.fillOval(x + 5 - (tokenWidth/2), y + 5 - (tokenWidth/2), tokenWidth - 10, tokenWidth - 10);
+			}else if(token == 'B'){
+				g2.setColor(p2.darker());
+				g2.fillOval(x - (tokenWidth/2), y - (tokenWidth/2), tokenWidth, tokenWidth);
+				g2.setColor(p2);
+				g2.fillOval(x + 5 - (tokenWidth/2), y + 5 - (tokenWidth/2), tokenWidth - 10, tokenWidth - 10);
+			}
+			
 		}
 		
 		super.paint(g2);
@@ -454,16 +483,241 @@ public class PlayingView extends JPanel implements Observer {
 		y6 = 552;
 	}
 	
-	private class PlayerViewMouseListener implements  MouseMotionListener {
+	private void initializeBeingDragged() {
+		 bd0 = false;
+		 bd1 = false;
+		 bd2 = false;
+		 bd3 = false;
+		 bd4 = false;
+		 bd5 = false;
+		 bd6 = false;
+		 bd7 = false;
+		 bd8 = false; 
+		 bd9 = false;
+		bd10 = false; 
+		bd11 = false;
+		bd12 = false;
+		bd13 = false;
+		bd14 = false;
+		bd15 = false;
+		bd16 = false;
+		bd17 = false;
+		bd18 = false;
+		bd19 = false;
+		bd20 = false;
+		bd21 = false;
+		bd22 = false;
+		bd23 = false;
+	}
 
-
+	private boolean dragging;
+	private int x, y;
+	private char token;
+	
+	private class PlayerViewMouseListener implements  MouseMotionListener, MouseListener {
+		
+		
+		private NodeFinder finder;
+		private int node;
+		
+		public PlayerViewMouseListener(){
+			finder = new NodeFinder();
+			dragging = false;
+		}
+		
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			System.out.println("Mouse dragged x/y: " + e.getX() + ", " + e.getY());
+			dragging = true;
+			if(model.getNextAction() == 'M'){
+				x = e.getX();
+				y = e.getY();
+				repaint();
+			}
 		}
 
 		@Override
 		public void mouseMoved(MouseEvent e) {	
+		}
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			dragging = false;
+			switch (node) {
+			case 0:
+				bd0 = false;
+				break;
+			case 1:
+				bd1 = false;
+				break;
+			case 2:
+				bd2 = false;
+				break;
+			case 3:
+				bd3 = false;
+				break;
+			case 4:
+				bd4 = false;
+				break;
+			case 5:
+				bd5 = false;
+				break;
+			case 6:
+				bd6 = false;
+				break;
+			case 7:
+				bd7 = false;
+				break;
+			case 8:
+				bd8 = false;
+				break;
+			case 9:
+				bd9 = false;
+				break;
+			case 10:
+				bd10 = false;
+				break;
+			case 11:
+				bd11 = false;
+				break;
+			case 12:
+				bd12 = false;
+				break;
+			case 13:
+				bd13 = false;
+				break;
+			case 14:
+				bd14 = false;
+				break;
+			case 15:
+				bd15 = false;
+				break;
+			case 16:
+				bd16 = false;
+				break;
+			case 17:
+				bd17 = false;
+				break;
+			case 18:
+				bd18 = false;
+				break;
+			case 19:
+				bd19 = false;
+				break;
+			case 20:
+				bd20 = false;
+				break;
+			case 21:
+				bd21 = false;
+				break;
+			case 22:
+				bd22 = false;
+				break;
+			case 23:
+				bd23 = false;
+				break;
+			default:
+				break;
+			}
+			repaint();
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			x = e.getX();
+			y = e.getY();
+			node = finder.getNode(x, y);
+			if(node != -1){
+				token = model.getState().charAt(node);
+			}
+			dragging = true;
+			switch (node) {
+			case 0:
+				bd0 = true;
+				break;
+			case 1:
+				bd1 = true;
+				break;
+			case 2:
+				bd2 = true;
+				break;
+			case 3:
+				bd3 = true;
+				break;
+			case 4:
+				bd4 = true;
+				break;
+			case 5:
+				bd5 = true;
+				break;
+			case 6:
+				bd6 = true;
+				break;
+			case 7:
+				bd7 = true;
+				break;
+			case 8:
+				bd8 = true;
+				break;
+			case 9:
+				bd9 = true;
+				break;
+			case 10:
+				bd10 = true;
+				break;
+			case 11:
+				bd11 = true;
+				break;
+			case 12:
+				bd12 = true;
+				break;
+			case 13:
+				bd13 = true;
+				break;
+			case 14:
+				bd14 = true;
+				break;
+			case 15:
+				bd15 = true;
+				break;
+			case 16:
+				bd16 = true;
+				break;
+			case 17:
+				bd17 = true;
+				break;
+			case 18:
+				bd18 = true;
+				break;
+			case 19:
+				bd19 = true;
+				break;
+			case 20:
+				bd20 = true;
+				break;
+			case 21:
+				bd21 = true;
+				break;
+			case 22:
+				bd22 = true;
+				break;
+			case 23:
+				bd23 = true;
+				break;
+			default:
+				break;
+			}
 		}
 	}
 
