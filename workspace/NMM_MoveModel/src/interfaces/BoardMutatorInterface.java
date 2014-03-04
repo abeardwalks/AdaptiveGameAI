@@ -35,6 +35,11 @@ public interface BoardMutatorInterface {
 	void setPhase(Phase phase);
 	
 	/**
+	 * @param action - next action that is to be played. 
+	 */
+	void setNextAction(char action);
+	
+	/**
 	 * Resets the entire state of the game. 
 	 */
 	void reset();

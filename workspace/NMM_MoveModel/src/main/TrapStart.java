@@ -20,8 +20,9 @@ public class TrapStart {
 		int playerTwoRemaining = 8;
 		Phase phase = Phase.TWO;
 		char turn = 1;
+		char nextAction = 'P';
 		
-		BoardFacadeInterface model = new BoardModel(state, playerOneToPlace, playerTwoToPlace, playerOneRemianing, playerTwoRemaining, phase, turn);
+		BoardFacadeInterface model = new BoardModel(state, playerOneToPlace, playerTwoToPlace, playerOneRemianing, playerTwoRemaining, phase, turn, nextAction);
 	
 		MoveChecker mc = new MoveChecker(model);
 		

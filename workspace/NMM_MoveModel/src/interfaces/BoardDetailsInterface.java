@@ -54,6 +54,10 @@ public interface BoardDetailsInterface {
 	 */
 	boolean gameWon();
 	
+	/**
+	 * @return - the next action that is to be executed on the board.
+	 */
+	char getNextAction();
 	
 
 }

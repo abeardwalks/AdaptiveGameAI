@@ -22,6 +22,7 @@ public class BoardModel extends Observable implements BoardFacadeInterface {
 	private int playerOneRemaining, playerTwoRemaining;
 	private Phase phase;
 	private char turn;
+	private char nextAction;
 	
 	/**
 	 * Constructs a new BoardModel with data representative of a new game.
@@ -39,6 +40,7 @@ public class BoardModel extends Observable implements BoardFacadeInterface {
 		phase = Phase.ONE;
 		
 		turn = 'R';
+		nextAction = 'P';
 		
 	}
 	
@@ -53,7 +55,7 @@ public class BoardModel extends Observable implements BoardFacadeInterface {
 	 * @param              phase - The phase of the game. 
 	 * @param               turn - Whos turn it is. 
 	 */
-	public BoardModel(String state, int playerOneToPlace, int playerTwoToPlace, int playerOneRemianing, int playerTwoRemaining, Phase phase, int turn){
+	public BoardModel(String state, int playerOneToPlace, int playerTwoToPlace, int playerOneRemianing, int playerTwoRemaining, Phase phase, int turn, char nextAction){
 		
 		this.state = state;
 		history = new Stack<AbstractMove>();
@@ -70,6 +72,8 @@ public class BoardModel extends Observable implements BoardFacadeInterface {
 		}else{
 			this.turn = 'B';
 		}
+		
+		this.nextAction = nextAction;
 		
 	}
 
@@ -285,6 +289,18 @@ public class BoardModel extends Observable implements BoardFacadeInterface {
 	@Override
 	public void setTrappedPlayer(char c) {
 		trappedPlayer = c;
+	}
+
+	@Override
+	public void setNextAction(char action) {
+		this.nextAction = action;
+		setChanged();
+		notifyObservers();
+	}
+
+	@Override
+	public char getNextAction() {
+		return nextAction;
 	}
 
 }

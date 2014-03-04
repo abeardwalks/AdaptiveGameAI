@@ -21,7 +21,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class MoveModelSetupView extends JPanel implements ActionListener{
+public class SetupView extends JPanel implements ActionListener{
 	
 	private static final long serialVersionUID = 1229785926175762299L;
 	
@@ -35,7 +35,7 @@ public class MoveModelSetupView extends JPanel implements ActionListener{
 	private Player playerOne, playerTwo;
 	private Image background;
 
-	public MoveModelSetupView(ActionListener a, List<Player> players1, List<Player> players2) {
+	public SetupView(ActionListener a, List<Player> players1, List<Player> players2) {
 		super();
 		setOpaque(false);
 		setSize(800,650);

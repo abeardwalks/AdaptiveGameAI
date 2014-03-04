@@ -37,7 +37,7 @@ public class MCTSPlayer extends AbstractPlayer {
 		workingGame = new BoardModel(game.getState(), 
 									 game.getPlayerOneToPlace(), game.getPlayerTwoToPlace(), 
 									 game.getPlayerOneRemaining(), game.getPlayerTwoRemaining(), 
-									 game.getPhase(), game.getTurn());
+									 game.getPhase(), game.getTurn(), game.getNextAction());
 		
 		AbstractMove m = getMove('P');
 		return ((PlacementMove)m).getPlacementIndex();
@@ -48,7 +48,7 @@ public class MCTSPlayer extends AbstractPlayer {
 		workingGame = new BoardModel(game.getState(), 
 				 game.getPlayerOneToPlace(), game.getPlayerTwoToPlace(), 
 				 game.getPlayerOneRemaining(), game.getPlayerTwoRemaining(), 
-				 game.getPhase(), game.getTurn());
+				 game.getPhase(), game.getTurn(), game.getNextAction());
 		AbstractMove m = getMove('R');
 		return ((RemovalMove)m).getRemovalIndex();
 	}
@@ -58,7 +58,7 @@ public class MCTSPlayer extends AbstractPlayer {
 		workingGame = new BoardModel(game.getState(), 
 				 game.getPlayerOneToPlace(), game.getPlayerTwoToPlace(), 
 				 game.getPlayerOneRemaining(), game.getPlayerTwoRemaining(), 
-				 game.getPhase(), game.getTurn());
+				 game.getPhase(), game.getTurn(), game.getNextAction());
 		AbstractMove m = getMove('M');
 		IntPairInterface pair = new IntPair(((MovementMove)m).getFrom(),((MovementMove)m).getTo());
 		return pair;

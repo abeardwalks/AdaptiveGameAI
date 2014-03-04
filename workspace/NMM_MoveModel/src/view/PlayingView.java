@@ -3,10 +3,14 @@ package view;
 import interfaces.BoardDetailsInterface;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.Observable;
@@ -15,11 +19,12 @@ import java.util.Observer;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
-public class MoveModelPlayingView extends JPanel implements Observer {
+public class PlayingView extends JPanel implements Observer {
 
 	private static final long serialVersionUID = -68209173743986677L;
 	
 	private Image board;
+	private Font toolTipFont;
 	
 	private final Color p1 = Color.ORANGE;
 	private final Color p2 = Color.BLUE;
@@ -31,10 +36,8 @@ public class MoveModelPlayingView extends JPanel implements Observer {
 	private final int p2StartY = 15;
 	
 	private String gs;
-	private int result;
 	private int playerOneTokens;
 	private int playerTwoTokens;
-	private int previousTurn;
 	
 	private int x0,x1,x2,x3,x4,x5,x6;
 	private int y0,y1,y2,y3,y4,y5,y6;
@@ -44,18 +47,20 @@ public class MoveModelPlayingView extends JPanel implements Observer {
 	
 	private BoardDetailsInterface model;
 	
-	public MoveModelPlayingView(BoardDetailsInterface model){
+	
+	
+	public PlayingView(BoardDetailsInterface model){
 		super();
 		setOpaque(false);
 		setSize(800,650);
 		setBackground(Color.white);
-		
-		
+		toolTipFont = new Font("Arial", Font.BOLD, 20);
+		setFont(toolTipFont);
 		this.model = model;
+		addMouseMotionListener(new PlayerViewMouseListener());
 		gs = model.getState();
 		playerOneTokens = model.getPlayerOneToPlace();
 		playerTwoTokens = model.getPlayerTwoToPlace();
-		previousTurn = 1;
 		intializeCordinates();
 		
 		toolTip = "Player One (Orange) to place, click an empty node to play...";
@@ -383,7 +388,8 @@ public class MoveModelPlayingView extends JPanel implements Observer {
 		}
 		
 		if(showToolTip){				//change to Show Tool Tip
-			g2.drawString(toolTip, 25, 635);
+			
+			g2.drawString(toolTip, 25, 630);
 		}
 		
 		super.paint(g2);
@@ -396,28 +402,37 @@ public class MoveModelPlayingView extends JPanel implements Observer {
 //		result = bd.getResult();
 		playerOneTokens = model.getPlayerOneToPlace();
 		playerTwoTokens = model.getPlayerTwoToPlace();
-		int turn = model.getTurn();
 		
-		if(previousTurn != turn){
-			if(playerTwoTokens == 0){
-				toolTip = "Player Two (Blue) to move, please click and drag a blue token to an empty node...";
+		switch (model.getNextAction()) {
+		case 'P':
+			if(model.getTurn() == 1){
+				toolTip = "Player One (Orange) to place, click an empty node to play...";
 			}else{
 				toolTip = "Player Two (Blue) to place, click an empty node to play...";
 			}
-		}else if(result == 0 || result == -2){
-			if(playerOneTokens == 0){
+			break;
+		case 'R':
+			if(model.getTurn() == 1){
+				toolTip = "Player One (Orange) to remove, please click on a Blue piece to remove it from the game...";
+			}else{
+				toolTip = "Player Two (Blue) to remove, please click on a Orange piece to remove it from the game...";
+			}
+			break;
+		case 'M':
+			if(model.getTurn() == 1){
 				toolTip = "Player One (Orange) to move, please click and drag a orange token to an empty node...";
 			}else{
-				toolTip = "Player One (Orange) to place, click an empty node to play...";
+				toolTip = "Player Two (Blue) to move, please click and drag a blue token to an empty node...";
 			}
-		}else if(result == 1 && turn == 1){
-			toolTip = "Player One (Orange) to remove, please click on a Blue piece to remove it from the game...";
-		}else if(result == 1){
-			toolTip = "Player Two (Blue) to remove, please click on a Orange piece to remove it from the game...";
-		}else if(result == 2){
-			toolTip = "The Game has been Won, hazzah!";
+			break;
+		default:
+			break;
 		}
-		previousTurn = turn;
+		
+		if(model.gameWon()){
+			toolTip = "The Game has been won, hazzah!";
+		}
+		
 		repaint();
 	}
 	
@@ -437,6 +452,19 @@ public class MoveModelPlayingView extends JPanel implements Observer {
 		y4 = 371;
 		y5 = 462;
 		y6 = 552;
+	}
+	
+	private class PlayerViewMouseListener implements  MouseMotionListener {
+
+
+		@Override
+		public void mouseDragged(MouseEvent e) {
+			System.out.println("Mouse dragged x/y: " + e.getX() + ", " + e.getY());
+		}
+
+		@Override
+		public void mouseMoved(MouseEvent e) {	
+		}
 	}
 
 }

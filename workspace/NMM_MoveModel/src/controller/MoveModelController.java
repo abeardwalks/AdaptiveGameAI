@@ -14,9 +14,10 @@ import java.util.List;
 import java.util.Observable;
 
 import players.Human;
+import utility.NodeFinder;
 import view.ApplicationView;
-import view.MoveModelPlayingView;
-import view.MoveModelSetupView;
+import view.PlayingView;
+import view.SetupView;
 import view.PauseView;
 import model.Phase;
 import model.board.BoardModel;
@@ -33,8 +34,8 @@ public class MoveModelController {
 	private BoardMutatorInterface model;
 	
 	private ApplicationView primaryView;
-	private MoveModelSetupView setupView;
-	private MoveModelPlayingView gameView;
+	private SetupView setupView;
+	private PlayingView gameView;
 	private PauseView pauseView;
 	
 	private Thread thread;
@@ -60,10 +61,10 @@ public class MoveModelController {
 		List<Player> players1 = getPlayers();
 		List<Player> players2 = getPlayers();
 		
-		setupView = new MoveModelSetupView(new SetupActionListener(), players1, players2);
+		setupView = new SetupView(new SetupActionListener(), players1, players2);
 		primaryView.add(setupView);
 		
-		gameView = new MoveModelPlayingView((BoardDetailsInterface) model);
+		gameView = new PlayingView((BoardDetailsInterface) model);
 		gameView.addMouseListener(new HumanMouseListener());
 		gameView.addKeyListener(new HumanKeyListener());
 		gameView.setFocusable(true);
@@ -95,10 +96,10 @@ public class MoveModelController {
 		List<Player> players1 = getPlayers();
 		List<Player> players2 = getPlayers();
 		
-		setupView = new MoveModelSetupView(new SetupActionListener(), players1, players2);
+		setupView = new SetupView(new SetupActionListener(), players1, players2);
 		primaryView.add(setupView);
 		
-		gameView = new MoveModelPlayingView((BoardDetailsInterface) this.model);
+		gameView = new PlayingView((BoardDetailsInterface) this.model);
 		gameView.addMouseListener(new HumanMouseListener());
 		gameView.addKeyListener(new HumanKeyListener());
 		gameView.setFocusable(true);
@@ -157,7 +158,9 @@ public class MoveModelController {
 					executeMove(player1);
 				}
 			}
-				
+			if(result == 2){
+				break;
+			}
 			if(!player2.getName().equals("Human")){
 				try {
 					Thread.sleep(2000);
@@ -184,6 +187,7 @@ public class MoveModelController {
 				}
 				if(result == 1){
 					millMade = true;
+					model.setNextAction('R');
 				}
 			}
 			if(phase.equals(Phase.TWO) || phase.equals(Phase.THREE) && (result == 0 || result == -1)){
@@ -194,6 +198,7 @@ public class MoveModelController {
 				}
 				if(result == 1){
 					millMade = true;
+					model.setNextAction('R');
 				}
 			}
 			if(millMade && (result == -1 || result == 1)){
@@ -208,6 +213,11 @@ public class MoveModelController {
 			if(result == 0){
 				notPlayed = false;
 				phase = mc.getPhase();
+				if(!phase.equals(Phase.ONE)){
+					model.setNextAction('M');
+				}else{
+					model.setNextAction('P');
+				}
 				model.setPhase(phase);
 				if(turn == 'R'){
 					turn = 'B';
@@ -333,9 +343,15 @@ public class MoveModelController {
 				gameView.setEnabled(true);
 				showPauseMenu();
 			}else if(action.equals("reset")){
+				paused = false;
 				reset();
 				gameView.setEnabled(true);
-				thread.suspend();
+				pauseView.setEnabled(false);
+				pauseView.setVisible(false);
+				primaryView.remove(pauseView);
+				primaryView.remove(gameView);
+				primaryView.add(setupView);
+				primaryView.repaint();
 				start();
 			}else if(action.equals("setup")){
 				paused = false;
@@ -355,18 +371,17 @@ public class MoveModelController {
 		}
 	}
 	
-	private class HumanMouseListener implements MouseListener, MouseMotionListener{
+	private class HumanMouseListener implements MouseListener{
 		
 		private int x = 0;
 		private int y = 0;
 		
 		
-		private int x0,x1,x2,x3,x4,x5,x6;
-		private int y0,y1,y2,y3,y4,y5,y6;
+		private NodeFinder finder;
 		boolean mill = false;
 		
 		public HumanMouseListener(){
-			initializeCordinates();
+			finder = new NodeFinder();
 		}
 		
 		@Override
@@ -387,7 +402,7 @@ public class MoveModelController {
 				if(result != 2){
 					int x = e.getX();
 					int y = e.getY();
-					int position = findNodeClicked(x, y);
+					int position = finder.getNode(x, y);
 					if(player1 instanceof Human && player1.getTokenColour() == turn && position != -1){	
 						humanClick(position, player1);
 					} else if(player2 instanceof Human && player2.getTokenColour() == turn && position != -1){	
@@ -422,8 +437,8 @@ public class MoveModelController {
 					if((phase.equals(Phase.TWO) || phase.equals(Phase.THREE)) && (result == 0 || result == -1)){
 						int x2 = e.getX();
 						int y2 = e.getY();
-						int firstNode = findNodeClicked(x, y);
-						int secondNode = findNodeClicked(x2, y2);
+						int firstNode = finder.getNode(x, y);
+						int secondNode = finder.getNode(x2, y2);
 						if((player1 instanceof Human && player1.getTokenColour() == turn) && (firstNode != -1 && secondNode != -1)){
 							if(result == -1 || result == 0){
 								result = mc.moveToken(player1.getTokenColour(), firstNode, secondNode);
@@ -432,6 +447,7 @@ public class MoveModelController {
 								}
 								if(result == 1){
 									mill = true;
+									model.setNextAction('R');
 								}
 							}
 						} else if((player2 instanceof Human && player2.getTokenColour() == turn) && (firstNode != -1 && secondNode != -1)){	
@@ -442,6 +458,7 @@ public class MoveModelController {
 								}
 								if(result == 1){
 									mill = true;
+									model.setNextAction('R');
 								}
 							}
 						} else if(firstNode == -1 || secondNode == -1){
@@ -473,7 +490,7 @@ public class MoveModelController {
 				}
 				if(result == 1){
 					mill = true;
-					System.out.println("mill created");
+					model.setNextAction('R');
 				}
 			}else if(mill && (result == -1 || result == 1)){
 				result = mc.removeToken(player.getTokenColour(), position);
@@ -489,102 +506,15 @@ public class MoveModelController {
 					turn = 'R';
 				}
 				model.setPhase(mc.getPhase());
+				if(!mc.getPhase().equals(Phase.ONE)){
+					model.setNextAction('M');
+				}else{
+					model.setNextAction('P');
+				}
 				model.setTurn();
 			}
-		}
 		
-		private void initializeCordinates() {
-			x0 = 102;
-			x1 = 375;
-			x2 = 647;
-			x3 = 193;
-			x4 = 557;
-			x5 = 285;
-			x6 = 465;
-			
-			y0 = 7;
-			y1 = 97;
-			y2 = 188;
-			y3 = 281;
-			y4 = 371;
-			y5 = 462;
-			y6 = 552;
-		}
 		
-		private int findNodeClicked(int x, int y){
-			if((x >= x0 && x <= (x0 + 40)) && (y >= y0 && y <= (y0 + 40))){
-				return 0;
-			} else if((x >= x1 && x <= x1 + 40) && (y >= y0 && y <= y0 + 40)){
-				return 1;
-			} else if((x >= x2 && x <= x2 + 40) && (y >= y0 && y <= y0 + 40)){
-				return 2;
-			} else if((x >= x3 && x <= x3 + 40) && (y >= y1 && y <= y1 + 40)){
-				return 3;
-			} else if((x >= x1 && x <= x1 + 40) && (y >= y1 && y <= y1 + 40)){
-				return 4;
-			} else if((x >= x4 && x <= x4 + 40) && (y >= y1 && y <= y1 + 40)){
-				return 5;
-			} else if((x >= x5 && x <= x5 + 40) && (y >= y2 && y <= y2 + 40)){
-				return 6;
-			} else if((x >= x1 && x <= x1 + 40) && (y >= y2 && y <= y2 + 40)){
-				return 7;
-			} else if((x >= x6 && x <= x6 + 40) && (y >= y2 && y <= y2 + 40)){
-				return 8;
-			} else if((x >= x0 && x <= x0 + 40) && (y >= y3 && y <= y3 + 40)){
-				return 9;
-			} else if((x >= x3 && x <= x3 + 40) && (y >= y3 && y <= y3 + 40)){
-				return 10;
-			} else if((x >= x5 && x <= x5 + 40) && (y >= y3 && y <= y3 + 40)){
-				return 11;
-			} else if((x >= x6 && x <= x6 + 40) && (y >= y3 && y <= y3 + 40)){
-				return 12;
-			} else if((x >= x4 && x <= x4 + 40) && (y >= y3 && y <= y3 + 40)){
-				return 13;
-			} else if((x >= x2 && x <= x2 + 40) && (y >= y3 && y <= y3 + 40)){
-				return 14;
-			} else if((x >= x5 && x <= x5 + 40) && (y >= y4 && y <= y4 + 40)){
-				return 15;
-			} else if((x >= x1 && x <= x1 + 40) && (y >= y4 && y <= y4 + 40)){
-				return 16;
-			} else if((x >= x6 && x <= x6 + 40) && (y >= y4 && y <= y4 + 40)){
-				return 17;
-			} else if((x >= x3 && x <= x3 + 40) && (y >= y5 && y <= y5 + 40)){
-				return 18;
-			} else if((x >= x1 && x <= x1 + 40) && (y >= y5 && y <= y5 + 40)){
-				return 19;
-			} else if((x >= x4 && x <= x4 + 40) && (y >= y5 && y <= y5 + 40)){
-				return 20;
-			} else if((x >= x0 && x <= x0 + 40) && (y >= y6 && y <= y6 + 40)){
-				return 21;
-			} else if((x >= x1 && x <= x1 + 40) && (y >= y6 && y <= y6 + 40)){
-				return 22;
-			} else if((x >= x2 && x <= x2 + 40) && (y >= y6 && y <= y6 + 40)){
-				return 23;
-			}
-			return -1;
-		}
-
-		@Override
-		public void mouseDragged(MouseEvent e) {
-		}
-
-		@Override
-		public void mouseMoved(MouseEvent e) {
-//			System.out.println("mmmeeeehhh");
-//			int x = e.getX();
-//			int y = e.getY();
-//			int position = findNodeClicked(x, y);
-//			if(position != -1){
-//				if(phase.equals(Phase.ONE) && !mill){
-//					System.out.println("Paiting..");
-//					g = gameView.getGraphics();
-//					g.setColor(Color.red);
-//					g.fillOval(100, 100, 50, 50);
-//					gameView.repaint();
-//					
-//				}
-//			}
-//			
 		}
 
 	}
