@@ -1,13 +1,9 @@
 package controller;
 
 import interfaces.BoardDetailsInterface;
-
 import java.util.ArrayList;
-
-import java.util.Collection;
 import java.util.List;
 import java.util.Stack;
-
 
 import model.Phase;
 import move.AbstractMove;
@@ -15,9 +11,18 @@ import move.MovementMove;
 import move.PlacementMove;
 import move.RemovalMove;
 
+/**
+ * MoveChecker is a utility class used for checking the legality of moves before the model is 
+ * updated. It provides methods for checking if mills have been made, whether players are trapped,
+ * if placements/movements/removals are valid etc. 
+ * 
+ * @author Andrew White - BSc Software Engineering, 200939787.
+ *
+ */
 public class MoveChecker {
+	
 	private String state;
-//	private Collection<String> history;
+	@SuppressWarnings("unused")
 	private Stack<AbstractMove> moveHistory;
 	@SuppressWarnings("unused")
 	private static final int STRING_LENGTH = 23;
@@ -42,6 +47,11 @@ public class MoveChecker {
 
 	}
 	
+	/**
+	 * Constructs a new Move Checker, setting its values to that of a passed in game. 
+	 * 
+	 * @param game - the model to base the move checker details. 
+	 */
 	public MoveChecker(BoardDetailsInterface game){
 		state = game.getState();
 		moveHistory = new Stack<AbstractMove>();
@@ -55,52 +65,73 @@ public class MoveChecker {
 		moveAnywhere = false;
 	}
 
-
-	public int addToken(char token, int position) {
+	/**
+	 * Checkes a placement of a token to the board, returning the result of the placement.
+	 * 
+	 * @param tokenColour - The colour of the token to be placed.
+	 * @param    position - The index (0-23) that the token is to be placed.
+	 * @return - The success of the move: -1 - Illegal placement.
+	 * 									   0 - Valid Placement.
+	 * 									   1 - Valid Placement, Mill Created.
+	 * 									   2 - Valid Placement, Game Won. 
+	 */
+	public int placeToken(char tokenColour, int position) {
 		Integer result = 0;  		//for MVC
 		char[] stateArray = state.toCharArray();
 		
-		if(stateArray[position] != 'N'){
-			result = -1; 		//for MVC
+		if(stateArray[position] != 'N'){	//checks to ensure a token can be placed here...
+			result = -1; 					//...if not return -1.
 			return result;
 		}
-		if(token == 'R'){
-			playerOneTokensToPlace--;
+		
+		if(tokenColour == 'R'){				//if the token colour is R (Red)...
+			playerOneTokensToPlace--;		//decrement player ones tokens to place.
 		}else{
-			playerTwoTokensToPlace--;
+			playerTwoTokensToPlace--;		//otherwise decrement player twos tokens to place.
 		}
 		
-		if(playerOneTokensToPlace == 0 && playerTwoTokensToPlace == 0){
+		if(playerOneTokensToPlace == 0 && playerTwoTokensToPlace == 0){		//if both players have no tokens remaining to place change phase.	
 			gamePhase = Phase.TWO;
 		}
 		
-		stateArray[position] = token;
+		stateArray[position] = tokenColour;
 		state = new String(stateArray);
 		
-		if(partOfMill(position)){
+		if(partOfMill(position)){			//check if a Mill Was Made.
 			result = 1;			//for MVC
-		}else if(gameWon()){
+		}else if(gameWon()){				//check if the game was won.
 			result = 2;			//for MVC
 		}	
 		
 		return result;
 	}
 	
+	/**
+	 * Checks the removal of a token from the board, returning the result of the removal.
+	 * 
+	 * @param tokenColour - The colour of the player removing the token.
+	 * @param    position - The index (0-23) that the token is to be removed from.
+	 * @return - The success of the move: -1 - Illegal Removal.
+	 * 									   0 - Valid Removal.
+	 * 									   2 - Valid Removal, Game Won. 
+	 */
 	public int removeToken(char token, int position) {
 		Integer result = 0;			//for MVC
 		char candidate = state.charAt(position);
 		char[] stateArray = state.toCharArray();
 		
-		if(candidate == 'N' || candidate == token || ((partOfMill(position) && !onlyAvailable(token, position)))){
+		//Checks for all illegal removal scenarios related to the passed in position. 
+		if(candidate == 'N' || candidate == token || ((partOfMill(position) && !millFreeToken(token, position)))){
 			result = -1; 		//for MVC
 			return result;
-		}else{
-			if(token == 'R'){
-				playerTwoTokensRemaining--;
+		}else{									//otherwise...
+			if(token == 'R'){					//if the token was R (Red)
+				playerTwoTokensRemaining--;		//reduce player Twos remaining tokens.
 			}else{
-				playerOneTokensRemaining--;
+				playerOneTokensRemaining--;		//otherwise reduce player Ones remaining tokens.
 			}
 			
+			//Check whether the chase phase has stated (Phase Three)
 			if(playerTwoTokensRemaining == 3 || playerOneTokensRemaining == 3){
 				gamePhase = Phase.THREE;
 			}
@@ -109,14 +140,64 @@ public class MoveChecker {
 		}
 		
 		if(gameWon()){
-			System.err.println("Game Won");
 			result = 2;				//for MVC
 		}
 
 		return result;
 	}
 
-	private boolean onlyAvailable(char token, int position) {
+	/**
+	 * Checks the move of a token on the board, returning the result of the movement.
+	 * 
+	 * @param token - The colour of the player moving the token.
+	 * @param  from - The position the token is moving from.
+	 * @param    to - The position the token is moving to.
+	 * @return - The success of the move: -1 - Illegal movement.
+	 * 									   0 - Valid movement.
+	 * 									   1 - Valid movement, Mill Created.
+	 * 									   2 - Valid movement, Game Won. 
+	 */
+	public int moveToken(char token, int from, int to) {
+		Integer result = 0;			//for MVC
+		char[] stateArray = state.toCharArray();
+		
+		//determine whether the player can move anywhere.
+		if(token == 'R' && playerOneTokensRemaining == 3){			
+			moveAnywhere = true;
+		}else if(token == 'B' && playerTwoTokensRemaining == 3){
+			moveAnywhere = true;
+		}
+		
+		if((stateArray[from] == token) && validMove(from, to)){
+			stateArray[from] = 'N';
+			stateArray[to] = token;
+			state = new String(stateArray);
+		}else{
+			result = -1; 		
+			return result;
+		}
+		
+		if(partOfMill(to)){
+			result = 1;				
+		}
+		
+		if(gameWon()){
+			result = 2;				
+		}
+		moveAnywhere = false;
+		return result;
+	}
+	
+	/**
+	 * When removing tokens, players must select tokens that are NOT part of a mill
+	 * first over those that are if any exist. millFreeToken checks whether or not
+	 * there are any tokens on the board free of mills. 
+	 * 
+	 * @param    token - The colour of the player attempting to remove a token.
+	 * @param position - The position of the removal. 
+	 * @return - True if there are mill free tokens, false otherwise.
+	 */
+	private boolean millFreeToken(char token, int position) {
 		
 		char[] stateArray = state.toCharArray();
 		for (int i = 0; i < stateArray.length; i++) {
@@ -128,36 +209,6 @@ public class MoveChecker {
 		}
 		return true;
 	}
-
-
-	public int moveToken(char token, int x, int y) {
-		Integer result = 0;			//for MVC
-		char[] stateArray = state.toCharArray();
-		if(token == 'R' && playerOneTokensRemaining == 3){
-			moveAnywhere = true;
-		}else if(token == 'B' && playerTwoTokensRemaining == 3){
-			moveAnywhere = true;
-		}
-		
-		if((stateArray[x] == token) && validMove(x, y)){
-			stateArray[x] = 'N';
-			stateArray[y] = token;
-			state = new String(stateArray);
-		}else{
-			result = -1; 		
-			return result;
-		}
-		
-		if(partOfMill(y)){
-			result = 1;				
-		}
-		
-		if(gameWon()){
-			result = 2;				
-		}
-		moveAnywhere = false;
-		return result;
-	}
 	
 	public boolean gameWon() {
 		if((playerOneTokensRemaining >= 3 && playerTwoTokensRemaining >= 3) && playersCanMove()){
@@ -166,6 +217,12 @@ public class MoveChecker {
 		return true;
 	}
 
+	/**
+	 * If one of the players is unable to move i.e. they are trapped, the game has been won 
+	 * by the untrapped player. 
+	 * 
+	 * @return - true if players are able to move, false otherwise.
+	 */
 	public boolean playersCanMove() {
 		if(gamePhase == Phase.ONE){
 			return true;
@@ -193,18 +250,25 @@ public class MoveChecker {
 		
 		if(playerOne && playerTwo){
 			return true;
-		}else if(!playerOne){
-			trappedPlayer = 'R';
-		}else if(!playerTwo){
-			trappedPlayer = 'B';
+		}else if(!playerOne){			//if player one cannot move...
+			trappedPlayer = 'R';		//...set it as the trapped player. 
+		}else if(!playerTwo){			//if player two cannot move...
+			trappedPlayer = 'B';		//...set it as the trapped player. 
 		}
 		return false;
 	}
-	
+
 	public char trappedPlayer(){
 		return trappedPlayer;
 	}
 
+	/**
+	 * Checks if the position passed in against all other positions that could
+	 * be a Mill.
+	 * 
+	 * @param position - The Position to check (Between 0-23). 
+	 * @return - True if it is part of a mill, false otherwise. 
+	 */
 	private boolean partOfMill(int position) {
 		char toMatch = state.charAt(position);
 
@@ -358,14 +422,19 @@ public class MoveChecker {
 		return false;
 	}
 
-
-
-	private boolean validMove(int x, int y) {
+	/**
+	 * Method used by the movement method to check whether or not it is valid. 
+	 * 
+	 * @param from - the position to move from.
+	 * @param   to - the position to move to.
+	 * @return     - True if valid, false otherwise.
+	 */
+	private boolean validMove(int from, int to) {
 		
 		char[] stateArray = state.toCharArray();
 		
 		
-		if(stateArray[x] == 'N' || stateArray[y] != 'N'){
+		if(stateArray[from] == 'N' || stateArray[to] != 'N'){
 			return false;
 		}
 		
@@ -373,124 +442,124 @@ public class MoveChecker {
 			return true;
 		}
 
-		switch(x){
+		switch(from){
 		case 0:
-			if((y != 1) && (y != 9)){
+			if((to != 1) && (to != 9)){
 				return false;
 			}
 			break;
 		case 1:
-			if(y != 0 && y != 2 && y != 4){
+			if(to != 0 && to != 2 && to != 4){
 				return false;
 			}
 			break;
 		case 2:
-			if(y != 1 && y != 14){
+			if(to != 1 && to != 14){
 				return false;
 			}
 			break;
 		case 3:
-			if(y != 4 && y != 10){
+			if(to != 4 && to != 10){
 				return false;
 			}
 			break;
 		case 4:
-			if(y != 1 && y != 3 && y != 5 && y != 7){
+			if(to != 1 && to != 3 && to != 5 && to != 7){
 				return false;
 			}
 			break;
 		case 5:
-			if(y != 4 && y != 13){
+			if(to != 4 && to != 13){
 				return false;
 			}
 			break;
 		case 6:
-			if(y != 7 && y != 11){
+			if(to != 7 && to != 11){
 				return false;
 			}
 			break;
 		case 7:
-			if(y != 6 && y != 8 && y != 4){
+			if(to != 6 && to != 8 && to != 4){
 				return false;
 			}
 			break;
 		case 8:
-			if(y != 7 && y != 12){
+			if(to != 7 && to != 12){
 				return false;
 			}
 			break;
 		case 9:
-			if(y != 0 && y != 21 && y != 10){
+			if(to != 0 && to != 21 && to != 10){
 				return false;
 			}
 			break;
 		case 10:
-			if(y != 3 && y != 9 && y != 11 && y != 18){
+			if(to != 3 && to != 9 && to != 11 && to != 18){
 				return false;
 			}
 			break;
 		case 11:
-			if(y != 6 && y != 10 && y != 15){
+			if(to != 6 && to != 10 && to != 15){
 				return false;
 			}
 			break;
 		case 12:
-			if(y != 8 && y != 17 && y != 13){
+			if(to != 8 && to != 17 && to != 13){
 				return false;
 			}
 			break;
 		case 13:
-			if(y != 5 && y != 12 && y != 14 && y != 20){
+			if(to != 5 && to != 12 && to != 14 && to != 20){
 				return false;
 			}
 			break;
 		case 14:
-			if(y != 13 && y != 2 && y != 23){
+			if(to != 13 && to != 2 && to != 23){
 				return false;
 			}
 			break;
 		case 15:
-			if(y != 11 && y != 16){
+			if(to != 11 && to != 16){
 				return false;
 			}
 			break;
 		case 16:
-			if(y != 15 && y != 17 && y != 19){
+			if(to != 15 && to != 17 && to != 19){
 				return false;
 			}
 			break;
 		case 17:
-			if(y != 16 && y != 12){
+			if(to != 16 && to != 12){
 				return false;
 			}
 			break;
 		case 18:
-			if(y != 10 && y != 19){
+			if(to != 10 && to != 19){
 				return false;
 			}
 			break;
 		case 19:
-			if(y != 18 && y != 16 && y != 20 && y != 22){
+			if(to != 18 && to != 16 && to != 20 && to != 22){
 				return false;
 			}
 			break;
 		case 20:
-			if(y != 19 && y != 13){
+			if(to != 19 && to != 13){
 				return false;
 			}
 			break;
 		case 21:
-			if(y != 9 && y != 22){
+			if(to != 9 && to != 22){
 				return false;
 			}
 			break;
 		case 22:
-			if(y != 21 && y != 19 && y != 23){
+			if(to != 21 && to != 19 && to != 23){
 				return false;
 			}
 			break;
 		case 23:
-			if(y != 22 && y != 14){
+			if(to != 22 && to != 14){
 				return false;
 			}
 			break;
@@ -507,6 +576,9 @@ public class MoveChecker {
 		return gamePhase;
 	}
 	
+	/**
+	 * Calculates the phase to ensure it is valid.
+	 */
 	private void calculatePhase(){
 		
 		gamePhase = Phase.ONE;
@@ -526,15 +598,14 @@ public class MoveChecker {
 		
 	}
 	
+	
 	public String getState(){
 		return state;
 	}
 
-
 	public void reset() {
 		state = "NNNNNNNNNNNNNNNNNNNNNNNN";
 
-		
 		gamePhase = Phase.ONE;
 		
 		playerOneTokensToPlace = 9;
@@ -544,113 +615,6 @@ public class MoveChecker {
 		
 		moveAnywhere = false;
 	}
-	
-
-	
-	
-//	public List<Move> getAllPossibleMoves(char action, char turn, BoardDetails bd){
-//		setDetails(bd);
-//		List<Move> moves = new ArrayList<Move>();
-//		
-//		switch (action) {
-//		case 'P':
-//			moves = getAllPossiblePlacements(turn);
-//			break;
-//		case 'R':
-//			moves = getAllPossibleRemovals(turn);
-//			break;
-//		case 'M':
-//			moves = getAllPossibleMovements(turn);
-//			break;
-//		default:
-//			break;
-//		}
-//		
-//		return moves;
-//	}
-
-
-//	private List<Move> getAllPossiblePlacements(char turn) {
-//		
-//		
-//		List<Move> moves = new ArrayList<Move>();
-//		System.out.println("calculating placements...");
-//		System.out.println("Turn is: " + turn);
-//		System.out.println("P1 TP: " + playerOneTokensToPlace);
-//		System.out.println("P2 TP: " + playerTwoTokensToPlace);
-//		if(turn == 'R' && playerOneTokensToPlace <= 0){
-//			return moves;
-//		}else if(turn == 'B' && playerTwoTokensToPlace <= 0){
-//			return moves;
-//		}
-//		
-//		char[] stateArray = state.toCharArray();
-//		
-//		for (int i = 0; i < stateArray.length; i++) {
-//			if(stateArray[i] == 'N'){
-//				Move m = new Move('P', turn, state);
-//				m.setPlacementIndex(i);
-//				moves.add(m);
-//			}
-//		}
-//		
-//		return moves;
-//		
-//	}
-//	
-//	
-//	private List<Move> getAllPossibleRemovals(char turn) {
-//		List<Move> moves = new ArrayList<Move>();
-//		
-//		char toRemove = 'R';
-//		if(turn == 'R'){
-//			toRemove = 'B';
-//		}
-//		
-//		char[] stateArray = state.toCharArray();
-//		
-//		for (int i = 0; i < stateArray.length; i++) {
-//			if(stateArray[i] == toRemove){
-//				Move m = new Move('R', turn, state);
-//				m.setRemovalIndex(i);
-//				moves.add(m);
-//			}
-//		}
-//		
-//		return moves;
-//	}
-//	
-//	public void setTokensToPlace(int p1, int p2){
-//		playerOneTokensToPlace = p1;
-//		playerTwoTokensToPlace = p2;
-//	}
-//
-//	private List<Move> getAllPossibleMovements(char turn) {
-//		List<Move> moves = new ArrayList<Move>();
-//		
-//		if(turn == 'R' && playerOneTokensRemaining < 4){
-//			moveAnywhere = true;
-//		}else if(turn == 'B' && playerTwoTokensRemaining < 4){
-//			moveAnywhere = true;
-//		}
-//		
-//		char[] stateArray = state.toCharArray();
-//		
-//		for(int i = 0; i < stateArray.length; i++){
-//			if(stateArray[i] == turn){
-//				for(int j = 0; j < stateArray.length; j++){
-//					if(validMove(i, j)){
-//						Move m = new Move('M', turn, state);
-//						m.setMovementIndexs(i, j);
-//						moves.add(m);
-//					}
-//				}
-//			}
-//		}
-//		
-//		return moves;
-//		
-//	}
 	
 	public void printDetails(){
 		System.out.println("-------------- Move Checker Details --------------");
@@ -667,6 +631,13 @@ public class MoveChecker {
 	private char newAction;
 	private char newPlayerTurn;
 	
+	/**
+	 * Executes a move on the Move Checker, this (and the next methods) are all used
+	 * by the MCTS Player(s). 
+	 * 
+	 * @param  move - the move to execute.
+	 * @return      - the next type of move to be executed based on the result of this move. 
+	 */
 	public AbstractMove executeMove(AbstractMove move){
 		char action = move.getAction();
 		char turn = move.getPlayerColour();
@@ -674,7 +645,7 @@ public class MoveChecker {
 		int result = -1;
 		switch (action) {
 		case 'P':
-			result = addToken(turn, ((PlacementMove) move).getPlacementIndex());
+			result = placeToken(turn, ((PlacementMove) move).getPlacementIndex());
 			break;
 		case 'R':
 			result = removeToken(turn, ((RemovalMove) move).getRemovalIndex());
@@ -722,8 +693,14 @@ public class MoveChecker {
 		return newPlayerTurn;
 	}
 
-	public List<AbstractMove> getAllPossibleMoves(char action,
-			char tokenColour) {
+	/**
+	 * Determines all legal moves available, based on an action and player colour. 
+	 * 
+	 * @param      action - The action to find all the moves from. 
+	 * @param tokenColour - The colour of the token related to the action.
+	 * @return 			  - The list of possible moves. 
+	 */
+	public List<AbstractMove> getAllPossibleMoves(char action, char tokenColour) {
 		
 		switch (action) {
 		case 'P':
@@ -739,6 +716,12 @@ public class MoveChecker {
 		return null;
 	}
 
+	/**
+	 * Gets all possible placements for the passed in token colour. 
+	 * 
+	 * @param tokenColour - The colour that is to be placed.
+	 * @return		      - The list of placement moves available. 
+	 */
 	private List<AbstractMove> getAllPossiblePlacements(char tokenColour) {
 		char[] stateArray = state.toCharArray();
 		List<AbstractMove> moves = new ArrayList<AbstractMove>();
@@ -752,20 +735,31 @@ public class MoveChecker {
 		return moves;
 	}
 	
+	/**
+	 * Gets all possible removals for the passed in token colour.
+	 * 
+	 * @param tokenColour - The colour of the player carrying out the removals.
+	 * @return			  - The list of removals available. 
+	 */
 	private List<AbstractMove> getAllPossibleRemovals(char tokenColour) {
 		char[] stateArray = state.toCharArray();
 		List<AbstractMove> moves = new ArrayList<AbstractMove>();
 		if((tokenColour == 'R' && playerTwoTokensRemaining > 2) || (tokenColour == 'B' && playerOneTokensRemaining > 2)){
 			for (int i = 0; i < stateArray.length; i++) {
-				if(stateArray[i] != 'N' && stateArray[i] != tokenColour && (!partOfMill(i) || onlyAvailable(tokenColour, i)) ){
+				if(stateArray[i] != 'N' && stateArray[i] != tokenColour && (!partOfMill(i) || millFreeToken(tokenColour, i)) ){
 					moves.add(new RemovalMove(state, tokenColour, i));
 				}
 			}
 		}
-		
 		return moves;
 	}
 	
+	/**
+	 * Gets all possible movements for the passed in token colour. 
+	 * 
+	 * @param tokenColour - the colour to check for movements. 
+	 * @return			  - The list of all movements available. 
+	 */
 	private List<AbstractMove> getAllPossibleMovements(char tokenColour) {
 		char[] stateArray = state.toCharArray();
 		List<AbstractMove> moves = new ArrayList<AbstractMove>();
@@ -780,6 +774,5 @@ public class MoveChecker {
 		}
 		return moves;
 	}
-
 
 }

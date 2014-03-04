@@ -15,12 +15,22 @@ import interfaces.BoardDetailsInterface;
 import interfaces.BoardFacadeInterface;
 import interfaces.IntPairInterface;
 
+
+/**
+ * MCTS Player (Monte-Carlo Treesearch Player). This AI makes use the Monte-Carlo search technique.
+ * It carries out numerous rollouts to ascertain which move is the best. This AI is the hardest to have 
+ * been produced and has been successful in beating me. 
+ * 
+ * TODO: Adjust the AI to improve its play style during the chase phase of the game. 
+ * 
+ * @author Andrew White - BSc Software Engineering, 200939787
+ *
+ */
 public class MCTSPlayer extends AbstractPlayer {
 
 	private BoardFacadeInterface workingGame;
 	private MoveChecker mc;
 	private TreeNode root;
-	private int numberOfRollouts = 0;
 	
 	@Override
 	public int placeToken(BoardDetailsInterface game) {
@@ -54,25 +64,27 @@ public class MCTSPlayer extends AbstractPlayer {
 		return pair;
 	}
 	
-	private void sleep(){
-		try {
-			Thread.sleep(10000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
+	/**
+	 * This method setups up the tree and move checker to begin the MCTS. It also calculates
+	 * out of the possible moves available which is the best to place.
+	 * 
+	 * @param action - the type of move to search for, P - Placement.
+	 * 												   R - Removal.
+	 * 												   M - Movement.
+	 * @return - the best move found. 
+	 */
 	private AbstractMove getMove(char action){
-		mc = new MoveChecker(workingGame);
+		mc = new MoveChecker(workingGame);			//initialises the MoveChecker, a utility class for checking move validity. 
 		
-		List<AbstractMove> moves = mc.getAllPossibleMoves(action, getTokenColour());
+		List<AbstractMove> moves = mc.getAllPossibleMoves(action, getTokenColour());	//Gets all possible moves from the given action. 
 		
-		if(moves.size() == 1){
-			return moves.get(0);
+		if(moves.size() == 1){		//if there is only possible one move...
+			return moves.get(0);	//...return it. 
 		}
+		
+		//Construct the tree's root move. 
 		AbstractMove m = null;
-		if(action == 'P'){
+		if(action == 'P'){										
 			m = new PlacementMove(workingGame.getState(), getTokenColour(), -1);
 		}else if(action == 'R'){
 			m = new RemovalMove(workingGame.getState(), getTokenColour(), -1);
@@ -81,17 +93,18 @@ public class MCTSPlayer extends AbstractPlayer {
 		}
 		root = new TreeNode(m, 0);
 		
-		long stop = System.currentTimeMillis() + 5000;
+		long stop = System.currentTimeMillis() + 10000;		//Search for a set period of time. 
 		
-		while(System.currentTimeMillis() < stop){
+		while(System.currentTimeMillis() < stop){		//while stop time not reached
 			mc = new MoveChecker(workingGame);
-			root.selectAction();
+			root.selectAction();						//begin searching.
 		}
 		
+		//Determine the best move from the executed search. 
 		double bestValue = Double.NEGATIVE_INFINITY;
 		AbstractMove bestMove = null;
 		for(TreeNode child : root.children){
-			System.out.println("Rewards: " + child.rewards[getPlayerID() - 1] + ", after " + child.nVisits + " visits.");
+			System.out.println("Rewards: " + child.rewards[0] + " | " + child.rewards[1] + ", after " + child.nVisits + " visits.");
 			
 			double value = child.rewards[getPlayerID() - 1 ] / child.nVisits;
 			if(value > bestValue){
@@ -107,17 +120,23 @@ public class MCTSPlayer extends AbstractPlayer {
 		return "MCTS Player";
 	}
 	
+	/**
+	 * The Tree structure class that handles the MCTS rollout and move scoring. It was based on
+	 * the MCTS tree structure developed by Phil Rodgers. 
+	 * 
+	 * @author Andrew White - BSc Software Engineering, 200939787
+	 *
+	 */
 	private class TreeNode{
 		
-		private double epsilon = 1e-6;
-		private Random r = new Random();
-		private int depth;
-		private AbstractMove expandMove;
-		private AbstractMove move;
+		private double epsilon = 1e-6;		//weight for calculating the UCT value.
+		private Random r = new Random();	//Random generator for selecting the moves for the rollouts. 
+		private int depth;					//The depth of this node.
+		private AbstractMove move;			//The move this node executes on. 
 		
-		TreeNode[] children;
-		double nVisits;
-		double[] rewards;
+		TreeNode[] children;				//The children of this node.
+		double nVisits;						//The number of times this node has been visited.
+		double[] rewards;					//The rewards that each player could expect from this move. 
 		
 		public TreeNode(AbstractMove move, int depth){
 			this.move = move;
@@ -125,22 +144,22 @@ public class MCTSPlayer extends AbstractPlayer {
 			this.depth = depth;
 		}
 		
+		/**
+		 * Starts searching the tree for strong and correct moves. 
+		 */
 		public void selectAction(){
-			List<TreeNode> visited = new LinkedList<TreeNode>();
+			
+			List<TreeNode> visited = new LinkedList<TreeNode>();				//The list of nodes already visited.
 			TreeNode current = this;
 			
-			while(!current.isLeaf() && !workingGame.gameWon()){
+			while(!current.isLeaf() && !workingGame.gameWon()){					
 				current = current.select();
 				try{
-					AbstractMove result = mc.executeMove(current.move);
+					AbstractMove result = mc.executeMove(current.move);			//Executes the move
 					workingGame.executeMove(current.move);
-					if(result != null){
-						if(current == null || result == null){
-							System.err.println("The result move is: " + result);
-							System.err.println("The current move is: " + current);
-						}
-						if(result.getPlayerID() != current.move.getPlayerID()){
-							workingGame.setTurn();
+					if(result != null){							
+						if(result.getPlayerID() != current.move.getPlayerID()){	
+							workingGame.setTurn();								//sets the turn of the game depending of executing the move.
 						}
 					}
 					workingGame.setPhase(mc.getPhase());
@@ -148,65 +167,45 @@ public class MCTSPlayer extends AbstractPlayer {
 				}catch(Exception e){
 					e.printStackTrace();
 				}
-				visited.add(current);
+				visited.add(current);			//adds the processed node to the visited list. 
 			}
 			
 			double[] rewards;
 			
-			if(workingGame.gameWon()){
-				rewards = workingGame.getRewards();
-			}else{
-//				System.out.println("BEFORE ROLLOUT-------------------");
-//				workingGame.printDetails();
-//				mc.printDetails();
-//				mc = new MoveChecker(workingGame);
-			
-				current.expand();
-				
-				TreeNode newNode = current.select();
-//				workingGame.executeMove(newNode.move);
-				
-				rewards = rollOut(newNode);
-			}
-			
-			for (TreeNode node : visited) {
-//				System.out.println("Number of visits: " + node.nVisits + ", rewards: " + node.rewards);
-				workingGame.undo();
-				node.updateStats(rewards);
-			}
-//			System.out.println("AFTER UNDO-------------------------");
-//			workingGame.printDetails();
-//			mc.printDetails();
-			mc = new MoveChecker(workingGame);
-//			System.out.println("-----------------------------------");
+			if(workingGame.gameWon()){					//if the game is won...
+				rewards = workingGame.getRewards();		//...get its rewards...
+			}else{										//...otherwise...
+				current.expand();						//expand this node...
 
+				TreeNode newNode = current.select();	//...select a child node...
+				rewards = rollOut(newNode);				//...Rollout the game after this move.
+			}
 			
-			this.updateStats(rewards);
+			for (TreeNode node : visited) {				//for each node visited...
+				workingGame.undo();						//...undo the move...
+				node.updateStats(rewards);				//...update the rewards of the node.
+			}
 			
+			mc = new MoveChecker(workingGame);			//re-initialise the Move Checker to ensure it reflects the game.
+			this.updateStats(rewards);					
 		}
 
+		/**
+		 * Expands this node, to discover its children.  
+		 */
 		private void expand() {
+			
 			List<AbstractMove> moves;
+			
 			if(depth == 0){
-				moves = mc.getAllPossibleMoves(this.move.getAction(), this.move.getPlayerColour());
+				moves = mc.getAllPossibleMoves(this.move.getAction(), this.move.getPlayerColour());		//if this is the root node, get all possible moves based on its move...
 			}else{
-//				System.out.println(depth + " excuting move: " + move.getAction() + ", " + move.getPlayerColour());
-
-//				mc.printDetails();
-//				AbstractMove expand = mc.executeMove(move);
-//				mc = new MoveChecker(workingGame);
-//				if(expand == null){
-//					System.err.println("It's null");
-//				}
-//				
-//				System.err.println("Depth: " + depth + ", move is: " + move.getAction() + ", turn: " + move.getPlayerColour() + " position: " + ((PlacementMove)move).getPlacementIndex());
-//				System.err.println("Expand move: " + expand);
-//				System.err.println("New action was: " + mc.getNewAction() + ", new turn was: " + mc.getNewPlayerTurn());
-				moves = mc.getAllPossibleMoves(mc.getNewAction(), mc.getNewPlayerTurn());
-				
+				moves = mc.getAllPossibleMoves(mc.getNewAction(), mc.getNewPlayerTurn());		//...otherwise execute what the next action should be.
 			}
+
 			children = new TreeNode[moves.size()];
-			if(moves.size() == 0){
+			
+			if(moves.size() == 0){			//if there were no children the has been an error. 
 				System.out.println("Expanding Error, Depth: " + depth);
 				if(depth == 0){
 					System.out.println("Tried to expand with the action: " + this.move.getAction() + ", turn was: " + this.move.getPlayerColour());
@@ -216,22 +215,21 @@ public class MCTSPlayer extends AbstractPlayer {
 				workingGame.printDetails();
 				mc.printDetails();
 				System.err.println("Error expanding " + moves.size() + " children. Was the game won? " + mc.gameWon());
-				
 			}
 			
 			int i = 0;
-//			if(depth == 2){
-//				System.out.println(expandMove.getAction() + "    " + expandMove.getPlayerColour());
-//				System.out.println(moves.get(0).getAction() + "  " + moves.get(0).getPlayerColour());
-//				System.exit(0);
-//			}
 			
-			for(AbstractMove m : moves){
-				children[i] = new TreeNode(m, depth + 1);
+			for(AbstractMove m : moves){					//for each new move...
+				children[i] = new TreeNode(m, depth + 1);	//create a Tree Node.
 				i++;
 			}
 		}
 
+		/**
+		 * Selects the next tree node to select for expanding based on its Upper Confidence Bound
+		 * 
+		 * @return
+		 */
 		private TreeNode select() {
 			TreeNode selected = children[0];
 			double bestValue = Double.NEGATIVE_INFINITY;
@@ -254,84 +252,75 @@ public class MCTSPlayer extends AbstractPlayer {
 			return selected;
 		}
 
+		/**
+		 * @return - True if it is a leaf, false otherwise.
+		 */
 		private boolean isLeaf() {
 			return (children == null);
 		}
 		
+		/**
+		 * Rollout a game of NMM until it is either won or reaches a stopping state.
+		 * 
+		 * @param node - The node to rollout.
+		 * @return - The rewards from rolling out this game.
+		 */
 		private double[] rollOut(TreeNode node) {
+			
 			int count = 0;
 			
-			mc = new MoveChecker(workingGame);
-			List<AbstractMove> moves = mc.getAllPossibleMoves(node.move.getAction(), node.move.getPlayerColour());
+			mc = new MoveChecker(workingGame);			//ensure the move checker is up to date.
+			List<AbstractMove> moves = mc.getAllPossibleMoves(node.move.getAction(), node.move.getPlayerColour());		//get all possible moves.
 			
-//			System.out.println("Before Rollout....");
-//			workingGame.printDetails();
-//			mc.printDetails();
-//			System.out.println("Starting Rollout " + numberOfRollouts);
-			numberOfRollouts++;
-			while(!workingGame.gameWon()){
-//				sleep();
-//				System.out.println("looping in roolout");
+			while(!workingGame.gameWon()){		//while the game has not been won.
 				if(moves.size() == 0){
 					break;
 				}
-				AbstractMove move = moves.get(r.nextInt(moves.size()));
-//				System.out.println();
-//				System.out.println("Executing action: " + move.getAction() + " by player " + move.getPlayerColour());
-				AbstractMove nextAction = mc.executeMove(move);
-				workingGame.executeMove(move);
-				mc = new MoveChecker(workingGame);
-				if(workingGame.gameWon()){
-					count++;
-					break;
+				AbstractMove move = moves.get(r.nextInt(moves.size()));		//get a move at random...
+				AbstractMove nextAction = mc.executeMove(move);				//...execute it on the Move Checker...
+				workingGame.executeMove(move);								//...and the game.
+				mc = new MoveChecker(workingGame);							//update the move checker. 
+				if(workingGame.gameWon()){		//check if won...
+					count++;					
+					break;						//...break if won.
 				}
-//				workingGame.printDetails();
-//				mc.printDetails();
-				if(nextAction != null){
-//					System.out.println("Next action: " + nextAction.getAction() + " by player " + nextAction.getPlayerColour());
-					if(nextAction.getPlayerID() != move.getPlayerID()){
-						workingGame.setTurn();
+				if(nextAction != null){			//if the next move is not null...
+					if(nextAction.getPlayerID() != move.getPlayerID()){		
+						workingGame.setTurn();								//set the turn if necessary.
 					}
-					
-					workingGame.setPhase(mc.getPhase());
+					workingGame.setPhase(mc.getPhase());					//set the phase.
 					if(mc.getPhase() == Phase.FOUR){
-						workingGame.setTrappedPlayer(mc.trappedPlayer());
-						
+						workingGame.setTrappedPlayer(mc.trappedPlayer());	//determine which player is trapped.
 					}
-					moves = mc.getAllPossibleMoves(nextAction.getAction(), nextAction.getPlayerColour());
-//					System.out.println("--------------------------------");
-					
+					moves = mc.getAllPossibleMoves(nextAction.getAction(), nextAction.getPlayerColour());	//get all possible next moves.
 				}
 				count++;
-				if(workingGame.getPlayerOneRemaining() == 3 || workingGame.getPlayerTwoRemaining() == 3){
+				if(workingGame.getPlayerOneRemaining() == 3 || workingGame.getPlayerTwoRemaining() == 3){	//if the game is a chase state, break.
 					break;
 				}
-//				workingGame.printDetails();
-
 			}
 			
-//			System.out.println("Rollout Ended " + (numberOfRollouts - 1));
-//			workingGame.printDetails();
-//			mc.printDetails();
-//			System.exit(0);
-			double[] rewards = workingGame.getRewards();
+			double[] rewards = workingGame.getRewards();	//update the rewards after the rollout.
 
-			for (int i = 0; i < count; i++) {
-				workingGame.undo();
+			for (int i = 0; i < count; i++) {		//for each randomly selected move...
+				workingGame.undo();					//...undo it.
 			}
-			mc = new MoveChecker(workingGame);
+			mc = new MoveChecker(workingGame);		//update the move checker.
 			workingGame.setPhase(mc.getPhase());
-			
 			
 			return rewards;
 		}
 		
+		/**
+		 * Updates this nodes reward values.
+		 * 
+		 * @param rewards - The reward values to add on to the current reward values. 
+		 */
 		private void updateStats(double[] rewards) {
 			nVisits++;
-//			System.out.println("Visits: " + nVisits);
 			this.rewards[0] += rewards[0];
 			this.rewards[1] += rewards[1];
 		}
 	}
-
+	
 }

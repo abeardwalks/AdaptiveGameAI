@@ -178,7 +178,7 @@ public class MoveModelController {
 		while(notPlayed){
 			if(phase.equals(Phase.ONE) && (result == -2 || result == 0 || result == -1)){
 				int placement = player.placeToken((BoardDetailsInterface) model);
-				result = mc.addToken(playerColour, placement);
+				result = mc.placeToken(playerColour, placement);
 				if(result != -1){
 					model.executeMove(new PlacementMove(state, playerColour, placement));
 				}
@@ -467,7 +467,7 @@ public class MoveModelController {
 		private void humanClick(int position, Player player){
 			String state = ((BoardDetailsInterface) model).getState();
 			if(phase.equals(Phase.ONE) && (result == -1 || result == -2 || result == 0) && !mill){
-				result = mc.addToken(player.getTokenColour(), position);
+				result = mc.placeToken(player.getTokenColour(), position);
 				if(result != -1){
 					model.executeMove(new PlacementMove(state, player.getTokenColour(), position));
 				}
