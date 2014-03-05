@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Observable;
 
 import players.Human;
+import utility.MoveChecker;
 import utility.NodeFinder;
 import view.ApplicationView;
 import view.PlayingView;
@@ -131,6 +132,8 @@ public class MoveModelController {
 		
 		player1.setTokenColour('R');
 		player2.setTokenColour('B');
+		
+		gameView.setEnabled(true);
 		
 		started = true;
 		thread = new Thread(new Runnable() {

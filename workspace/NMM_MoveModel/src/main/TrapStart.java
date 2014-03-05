@@ -1,9 +1,9 @@
 package main;
 
+import utility.MoveChecker;
 import model.Phase;
 import model.board.BoardModel;
 import interfaces.BoardFacadeInterface;
-import controller.MoveChecker;
 import controller.MoveModelController;
 
 public class TrapStart {

@@ -4,7 +4,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-import controller.MoveChecker;
+import utility.MoveChecker;
+
 import model.Phase;
 import model.board.BoardModel;
 import move.AbstractMove;

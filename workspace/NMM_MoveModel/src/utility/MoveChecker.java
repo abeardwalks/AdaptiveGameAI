@@ -1,4 +1,4 @@
-package controller;
+package utility;
 
 import interfaces.BoardDetailsInterface;
 import java.util.ArrayList;
@@ -22,7 +22,6 @@ import move.RemovalMove;
 public class MoveChecker {
 	
 	private String state;
-	@SuppressWarnings("unused")
 	private Stack<AbstractMove> moveHistory;
 	@SuppressWarnings("unused")
 	private static final int STRING_LENGTH = 23;
@@ -42,6 +41,8 @@ public class MoveChecker {
 		playerTwoTokensToPlace = 9;
 		playerOneTokensRemaining = 9;
 		playerTwoTokensRemaining = 9;
+		
+		moveHistory = new Stack<AbstractMove>();
 		
 		moveAnywhere = false;
 
@@ -269,7 +270,7 @@ public class MoveChecker {
 	 * @param position - The Position to check (Between 0-23). 
 	 * @return - True if it is part of a mill, false otherwise. 
 	 */
-	private boolean partOfMill(int position) {
+	public boolean partOfMill(int position) {
 		char toMatch = state.charAt(position);
 
 		switch(position){
@@ -639,6 +640,7 @@ public class MoveChecker {
 	 * @return      - the next type of move to be executed based on the result of this move. 
 	 */
 	public AbstractMove executeMove(AbstractMove move){
+		moveHistory.push(move);
 		char action = move.getAction();
 		char turn = move.getPlayerColour();
 		AbstractMove newMove = null;
@@ -691,6 +693,35 @@ public class MoveChecker {
 	
 	public char getNewPlayerTurn(){
 		return newPlayerTurn;
+	}
+	
+	public void undo(){
+		AbstractMove move = moveHistory.pop();		//pop the last executed move from the history stack. 
+		
+		state = move.getStateActedOn();
+		char action = move.getAction();
+		int playerID = move.getPlayerID();
+		
+		switch (action) {
+		case 'P':
+			if(playerID == 1){
+				playerOneTokensToPlace++;
+			}else{
+				playerTwoTokensToPlace++;
+			}
+			break;
+		case 'R':
+			if(playerID == 1){
+				playerTwoTokensRemaining++;
+			}else{
+				playerOneTokensRemaining++;
+			}
+			break;
+		case 'M':
+			break;
+		default:
+			break;
+		}
 	}
 
 	/**
