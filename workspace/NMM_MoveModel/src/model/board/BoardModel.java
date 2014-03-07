@@ -1,5 +1,6 @@
 package model.board;
 
+import java.util.List;
 import java.util.Observable;
 import java.util.Stack;
 
@@ -323,4 +324,9 @@ public class BoardModel extends Observable implements BoardFacadeInterface {
 		return nextAction;
 	}
 
+	@Override
+	public List<AbstractMove> getAllPossibleMoves() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

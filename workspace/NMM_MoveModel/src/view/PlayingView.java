@@ -1,6 +1,7 @@
 package view;
 
 import interfaces.BoardDetailsInterface;
+import interfaces.BoardFacadeInterface;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -462,7 +463,7 @@ public class PlayingView extends JPanel implements Observer {
 		if(model.gameWon()){
 			toolTip = "The Game has been won, hazzah!";
 		}
-		
+		((BoardFacadeInterface)model).printDetails();
 		repaint();
 	}
 	

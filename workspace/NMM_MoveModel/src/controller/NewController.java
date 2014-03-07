@@ -101,7 +101,12 @@ public class NewController {
 	private void play() {
 		while(!model.gameWon()){
 			if(!player1.getName().equals("Human")){
-				if(model.getTurn() == 1){
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				if(model.getTurn() == 1 && !model.gameWon()){
 					executeMove(player1);
 				}
 			}
@@ -109,7 +114,12 @@ public class NewController {
 				break;
 			}
 			if(!player2.getName().equals("Human")){
-				if(model.getTurn() == 2){
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				if(model.getTurn() == 2 && !model.gameWon()){
 					executeMove(player2);
 				}
 			}
@@ -117,30 +127,26 @@ public class NewController {
 	}
 
 	private void executeMove(Player player){
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+
 		
 		char playerColour = player.getTokenColour();
 
 		if(model.getPhase().equals(Phase.ONE) && !model.millMade()){
 			int placement = player.placeToken((BoardDetailsInterface) model);
 			model.executeMove(new PlacementMove(model.getState(), playerColour, placement));
+			return;
 		}
-		if(model.getPhase().equals(Phase.TWO) || model.getPhase().equals(Phase.THREE) && !model.millMade()){
+		if((model.getPhase().equals(Phase.TWO) || model.getPhase().equals(Phase.THREE)) && !model.millMade()){
 			IntPairInterface movement = player.moveToken((BoardDetailsInterface) model);
 			model.executeMove(new MovementMove(model.getState(), playerColour, movement.getFirstInt(), movement.getSecondInt()));
+			return;
 		}
+		
 		if(model.millMade()){
-			try {
-				Thread.sleep(2000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			System.err.println("BEEN ASKED TO REMOVE");
 			int removal = player.removeToken((BoardDetailsInterface) model);
 			model.executeMove(new RemovalMove(model.getState(), playerColour, removal));
+			return;
 		}
 
 	}

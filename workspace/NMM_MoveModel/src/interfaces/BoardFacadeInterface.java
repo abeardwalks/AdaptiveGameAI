@@ -1,5 +1,9 @@
 package interfaces;
 
+import java.util.List;
+
+import move.AbstractMove;
+
 /**
  * This is the Facade interface used by MCTS based players. It allows it access to all methods
  * within the board model and the additional methods only required by MCTS type players. 
@@ -24,5 +28,7 @@ public interface BoardFacadeInterface extends BoardDetailsInterface, BoardContro
 	 * @param trappedPlayer - The Trapped Player. 
 	 */
 	void setTrappedPlayer(char trappedPlayer);
+
+	List<AbstractMove> getAllPossibleMoves();
 
 }

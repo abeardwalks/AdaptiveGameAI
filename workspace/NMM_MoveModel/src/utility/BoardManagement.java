@@ -24,10 +24,9 @@ public class BoardManagement {
 		this.board = board;
 	}
 	
-	public AbstractMove resultOfMove(AbstractMove move){
+	public int resultOfMove(AbstractMove move){
 		char action = move.getAction();
 		char turn = move.getPlayerColour();
-		AbstractMove newMove = null;
 		int result = -1;
 		switch (action) {
 		case 'P':
@@ -42,7 +41,50 @@ public class BoardManagement {
 		default:
 			break;
 		}
-		if(result == 0 && board.getPhase() == Phase.ONE && ((turn == 'R' && board.getPlayerOneToPlace() > 0) || (turn == 'B' && board.getPlayerTwoToPlace() >0))){
+		return result;
+	}
+	
+	public AbstractMove resultOfMove1(AbstractMove move){
+		char action = move.getAction();
+		char turn = move.getPlayerColour();
+		AbstractMove newMove = null;
+		int playerOneToPlace = board.getPlayerOneToPlace();
+		int playerTwoToPlace = board.getPlayerTwoToPlace();
+		int playerOneRemaining = board.getPlayerOneRemaining();
+		int playerTwoRemaining = board.getPlayerOneToPlace();
+		int result = -1;
+		Phase phase = board.getPhase();
+		switch (action) {
+		case 'P':
+			result = placeToken(turn, ((PlacementMove) move).getPlacementIndex());
+			if(turn == 'R' && result != -1){
+				playerOneToPlace--;
+			}else if(result != -1){
+				playerTwoToPlace--;
+			}
+			break;
+		case 'R':
+			result = removeToken(turn, ((RemovalMove) move).getRemovalIndex());
+			if(turn == 'R' && result != -1){
+				playerTwoRemaining--;
+			}else if(result != -1){
+				playerOneRemaining--;
+			}
+			break;
+		case 'M':
+			result = moveToken(turn, ((MovementMove) move).getFrom(), ((MovementMove) move).getTo());
+			break;
+		default:
+			break;
+		}
+		if(playerOneToPlace == 0 && playerTwoToPlace == 0){
+			phase = Phase.TWO;
+		}
+		if(playerOneRemaining == 3 && playerTwoRemaining == 3){
+			phase = Phase.THREE;
+		}
+		
+		if(result == 0 && phase == Phase.ONE && ((turn == 'R' && board.getPlayerOneToPlace() > 0) || (turn == 'B' && board.getPlayerTwoToPlace() >0))){
 			newAction = 'P';
 			if(turn == 'R'){
 				turn = 'B';
@@ -67,6 +109,38 @@ public class BoardManagement {
 			newAction = 'R';
 			newPlayerTurn = turn;
 			newMove = new RemovalMove(move.getStatePostAction(), turn, -1);
+		}
+		return newMove;
+	}
+	
+	public AbstractMove nextMove(AbstractMove move, int result) {
+		char turn = move.getPlayerColour();
+		AbstractMove newMove = null;
+		if(result == 0 && board.getPhase() == Phase.ONE){
+			newAction = 'P';
+			if(turn == 'R'){
+				turn = 'B';
+				newPlayerTurn = 'B';
+			}else{
+				turn = 'R';
+				newPlayerTurn = 'R';
+			}
+			newMove = new PlacementMove(board.getState(), turn, -1);
+			
+		}else if(result == 0){
+			newAction = 'M';
+			if(turn == 'R'){
+				turn = 'B';
+				newPlayerTurn = 'B';
+			}else{
+				turn = 'R';
+				newPlayerTurn = 'R';
+			}
+			newMove = new MovementMove(board.getState(), turn, -1, -1);
+		}else if(result == 1){
+			newAction = 'R';
+			newPlayerTurn = turn;
+			newMove = new RemovalMove(board.getState(), turn, -1);
 		}
 		return newMove;
 	}
@@ -433,7 +507,7 @@ public class BoardManagement {
 	}
 	
 	public boolean playersCanMove() {
-		if(board.getPhase() == Phase.ONE){
+		if(board.getPlayerOneToPlace() > 0 && board.getPlayerTwoToPlace() > 0){
 			return true;
 		}
 		int index = 0;
@@ -466,6 +540,8 @@ public class BoardManagement {
 		}
 		return false;
 	}
+	
+	
 
 	public Phase calculatePhase() {
 		
@@ -483,5 +559,66 @@ public class BoardManagement {
 		
 		return Phase.ONE;
 	}
+	
+	/**
+	 * Gets all possible placements for the passed in token colour. 
+	 * 
+	 * @param tokenColour - The colour that is to be placed.
+	 * @return		      - The list of placement moves available. 
+	 */
+	public List<AbstractMove> getAllPossiblePlacements(char tokenColour) {
+		char[] stateArray = board.getState().toCharArray();
+		List<AbstractMove> moves = new ArrayList<AbstractMove>();
+		if((tokenColour == 'R' && board.getPlayerOneToPlace() > 0) || (tokenColour == 'B' && board.getPlayerTwoToPlace() > 0)){
+			for (int i = 0; i < stateArray.length; i++) {
+				if(stateArray[i] == 'N'){
+					moves.add(new PlacementMove(board.getState(), tokenColour, i));
+				}
+			}
+		}
+		return moves;
+	}
+	
+	/**
+	 * Gets all possible removals for the passed in token colour.
+	 * 
+	 * @param tokenColour - The colour of the player carrying out the removals.
+	 * @return			  - The list of removals available. 
+	 */
+	public List<AbstractMove> getAllPossibleRemovals(char tokenColour) {
+		char[] stateArray = board.getState().toCharArray();
+		List<AbstractMove> moves = new ArrayList<AbstractMove>();
+		if((tokenColour == 'R' && board.getPlayerTwoRemaining() > 2) || (tokenColour == 'B' && board.getPlayerOneRemaining() > 2)){
+			for (int i = 0; i < stateArray.length; i++) {
+				if(stateArray[i] != 'N' && stateArray[i] != tokenColour && (!partOfMill(i, board.getState()) || millFreeToken(tokenColour, i)) ){
+					moves.add(new RemovalMove(board.getState(), tokenColour, i));
+				}
+			}
+		}
+		return moves;
+	}
+	
+	/**
+	 * Gets all possible movements for the passed in token colour. 
+	 * 
+	 * @param tokenColour - the colour to check for movements. 
+	 * @return			  - The list of all movements available. 
+	 */
+	public List<AbstractMove> getAllPossibleMovements(char tokenColour) {
+		char[] stateArray = board.getState().toCharArray();
+		List<AbstractMove> moves = new ArrayList<AbstractMove>();
+		for (int i = 0; i < stateArray.length; i++) {
+			if(stateArray[i] == tokenColour){
+				for (int j = 0; j < stateArray.length; j++) {
+					if(validMove(i, j)){
+						moves.add(new MovementMove(board.getState(), tokenColour, i, j));
+					}
+				}
+			}
+		}
+		return moves;
+	}
+
+
 	
 }

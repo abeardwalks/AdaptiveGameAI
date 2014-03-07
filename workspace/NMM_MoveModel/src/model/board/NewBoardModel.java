@@ -1,5 +1,6 @@
 package model.board;
 
+import java.util.List;
 import java.util.Observable;
 import java.util.Stack;
 
@@ -42,11 +43,34 @@ public class NewBoardModel extends Observable implements BoardFacadeInterface {
 		
 		manager = new BoardManagement(this);
 	}
+	
+	public NewBoardModel(String state, int playerOneToPlace, int playerTwoToPlace, int playerOneRemaining, int playerTwoRemaining, Phase phase, int turn, boolean millMade, char nextAction){
+		this.state = state;
+		history = new Stack<AbstractMove>();
+		
+		this.playerOneToPlace = playerOneToPlace;
+		this.playerTwoToPlace = playerTwoToPlace;
+		this.playerOneRemaining = playerOneRemaining;
+		this.playerTwoRemaining = playerTwoRemaining;
+		
+		this.phase = phase;
+		
+		if(turn == 1){
+			this.turn = 'R';
+		}else{
+			this.turn = 'B';
+		}
+		
+		valid = false;
+		this.millMade = millMade;
+		this.nextAction = nextAction;
+		manager = new BoardManagement(this);
+	}
 
 	@Override
 	public void executeMove(AbstractMove move) {
-		AbstractMove result = manager.resultOfMove(move);
-		if(result != null){
+		int result = manager.resultOfMove(move);
+		if(result > -1){
 			history.push(move);
 			valid = true;
 			state = move.getStatePostAction();
@@ -70,18 +94,19 @@ public class NewBoardModel extends Observable implements BoardFacadeInterface {
 			default:
 				break;
 			}
-			if(result.getAction() == 'R'){
+			phase = manager.calculatePhase();
+			AbstractMove nextmove = manager.nextMove(move, result);
+			if(nextmove.getAction() == 'R'){
 				millMade = true;
 			}else{
 				millMade = false;
 				setTurn();
 			}
-			nextAction = result.getAction();
+			nextAction = nextmove.getAction();
 		}else{
 			valid = false;
 		}
-		phase = manager.calculatePhase();
-		System.out.println("updating observers!");
+		
 		setChanged();
 		notifyObservers();
 	}
@@ -126,11 +151,11 @@ public class NewBoardModel extends Observable implements BoardFacadeInterface {
 			break;
 		case 'M':
 			turn = move.getPlayerColour();
-			
 			break;
 		default:
 			break;
 		}
+		nextAction = move.getAction();
 		phase = manager.calculatePhase();
 		//notify observers
 		setChanged();
@@ -145,9 +170,9 @@ public class NewBoardModel extends Observable implements BoardFacadeInterface {
 			turn = 'R';
 		}
 		
-		//notify observers
-		setChanged();
-		notifyObservers();
+//		//notify observers
+//		setChanged();
+//		notifyObservers();
 	}
 
 	@Override
@@ -214,6 +239,9 @@ public class NewBoardModel extends Observable implements BoardFacadeInterface {
 
 	@Override
 	public Phase getPhase() {
+		if(!manager.playersCanMove()){
+			phase = Phase.FOUR;
+		}
 		return phase;
 	}
 
@@ -281,7 +309,27 @@ public class NewBoardModel extends Observable implements BoardFacadeInterface {
 		System.out.println("P1 TR: " + playerOneRemaining);
 		System.out.println("P2 TR: " + playerTwoRemaining);
 		System.out.println("Phase: " + phase);
+		System.out.println("Turn: " + turn);
+		System.out.println("Mill Made? " + millMade);
+		System.out.println("Next Action: " + nextAction);
+		System.out.println("Players can Move: " + manager.playersCanMove());
 		System.out.println("--------------------------------------------------");
+	}
+	
+	public List<AbstractMove> getAllPossibleMoves(){
+		
+		switch (nextAction) {
+		case 'P':
+			return manager.getAllPossiblePlacements(turn);
+		case 'R':
+			return manager.getAllPossibleRemovals(turn);
+		case 'M':
+			return manager.getAllPossibleMovements(turn);
+		default:
+			break;
+		}
+		
+		return null;
 	}
 	
 }
