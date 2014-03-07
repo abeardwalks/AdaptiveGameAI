@@ -106,7 +106,7 @@ public class NewMCTSPlayer extends AbstractPlayer {
 		for(NewTreeNode child : root.children){
 			System.out.println("Rewards: " + child.rewards[0] + " | " + child.rewards[1] + ", after " + child.nVisits + " visits.");
 			
-			double value = child.rewards[workingGame.getTurn() - 1 ] / child.nVisits;
+			double value = child.rewards[getPlayerID() - 1 ] / child.nVisits;
 			if(value > bestValue){
 				bestValue = value;
 				bestMove = child.move;
@@ -223,7 +223,7 @@ public class NewMCTSPlayer extends AbstractPlayer {
 			}
 			
 			for (NewTreeNode c : children) {
-				double uctValue = c.rewards[getPlayerID()-1]
+				double uctValue = c.rewards[getPlayerID() - 1]
 						/ (c.nVisits + epsilon)
 						+ Math.sqrt(Math.log(nVisits + 1)
 								/ (c.nVisits + epsilon)) + r.nextDouble()
@@ -261,11 +261,6 @@ public class NewMCTSPlayer extends AbstractPlayer {
 				}
 				AbstractMove move = moves.get(r.nextInt(moves.size()));		//get a move at random...
 				workingGame.executeMove(move);								//...and the game.
-				if(workingGame.gameWon()){		//check if won...
-					count++;					
-					break;						//...break if won.
-				}
-				
 				moves = workingGame.getAllPossibleMoves();	//get all possible next moves.
 				
 				count++;

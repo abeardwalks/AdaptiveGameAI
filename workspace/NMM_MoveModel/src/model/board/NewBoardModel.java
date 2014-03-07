@@ -25,6 +25,9 @@ public class NewBoardModel extends Observable implements BoardFacadeInterface {
 	
 	private BoardManagement manager;
 	
+	private double p1millcount;
+	private double p2millcount;
+	
 	public NewBoardModel(){
 		state = "NNNNNNNNNNNNNNNNNNNNNNNN";
 		history = new Stack<AbstractMove>();
@@ -34,6 +37,8 @@ public class NewBoardModel extends Observable implements BoardFacadeInterface {
 		playerOneRemaining = 9;
 		playerTwoRemaining = 9;
 		
+		p1millcount = 0;
+		p2millcount = 0;
 		phase = Phase.ONE;
 		
 		turn = 'R';
@@ -53,6 +58,8 @@ public class NewBoardModel extends Observable implements BoardFacadeInterface {
 		this.playerOneRemaining = playerOneRemaining;
 		this.playerTwoRemaining = playerTwoRemaining;
 		
+		p1millcount = 0;
+		p2millcount = 0;
 		this.phase = phase;
 		
 		if(turn == 1){
@@ -85,8 +92,10 @@ public class NewBoardModel extends Observable implements BoardFacadeInterface {
 			case 'R':
 				if(move.getPlayerID() == 1){
 					playerTwoRemaining--;
+					p1millcount++;
 				}else{
 					playerOneRemaining--;
+					p2millcount++;
 				}
 				break;
 			case 'M':
@@ -142,9 +151,11 @@ public class NewBoardModel extends Observable implements BoardFacadeInterface {
 		case 'R':
 			if(playerID == 1){
 				playerTwoRemaining++;
+				p1millcount--;
 				turn = move.getPlayerColour();
 			}else{
 				playerOneRemaining++;
+				p2millcount--;
 				turn = move.getPlayerColour();
 			}
 			millMade = true;
@@ -278,7 +289,8 @@ public class NewBoardModel extends Observable implements BoardFacadeInterface {
 		}else if(playerTwoRemaining < 3){	//if Player Two has lost...
 			rewards[0] = 1.0;				//...give player 1 a point.
 			rewards[1] = 0.0;
-		}else if(playerOneRemaining == playerTwoRemaining){		//if the game is currently a draw...
+		}
+		else if(playerOneRemaining == playerTwoRemaining){		//if the game is currently a draw...
 			rewards[0] = 0.5;									//each player gets 0.5
 			rewards[1] = 0.5;
 		}else if((playerOneRemaining > playerTwoRemaining )){		//if player One has 3 more tokens than player 2. 
@@ -289,6 +301,7 @@ public class NewBoardModel extends Observable implements BoardFacadeInterface {
 			rewards[1] = 0.5;											//give them 0.5
 		}
 		
+		
 		if(trappedPlayer == 'R'){			//if player 1 is trapped...
 			rewards[0] = 0.0;
 			rewards[1] = 1.0;				//...give player two 1 point.
@@ -296,6 +309,9 @@ public class NewBoardModel extends Observable implements BoardFacadeInterface {
 			rewards[0] = 1.0;				//...give player One 1 point.
 			rewards[1] = 0.0;
 		}
+		
+		rewards[0] += p1millcount;
+		rewards[1] += p2millcount;
 		
 		return rewards;
 	}
