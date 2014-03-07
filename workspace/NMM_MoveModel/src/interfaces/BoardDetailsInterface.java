@@ -10,14 +10,7 @@ import model.Phase;
  * @author Andrew White - 200939787, BSc software Engineering
  *
  */
-public interface BoardDetailsInterface {
-	
-	/**
-	 * Returns a String of 24 characters that represents the board.
-	 * 
-	 * @return - The state of the board.
-	 */
-	String getState();
+public interface BoardDetailsInterface extends BoardModelSharedMethodsInterface {
 	
 	/**
 	 * @return - The number of tokens player one has left to place on the board.
@@ -38,21 +31,6 @@ public interface BoardDetailsInterface {
 	 * @return - The number of tokens player two has left in the game.
 	 */
 	int getPlayerTwoRemaining();
-	
-	/**
-	 * @return - The current phase of the game.
-	 */
-	Phase getPhase();
-	
-	/**
-	 * @return - the player ID number of whose turn it currently is. 
-	 */
-	int getTurn();
-	
-	/**
-	 * @return - true if the game has been won, false otherwise.
-	 */
-	boolean gameWon();
 	
 	/**
 	 * @return - the next action that is to be executed on the board.

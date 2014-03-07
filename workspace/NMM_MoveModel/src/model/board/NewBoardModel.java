@@ -1,0 +1,287 @@
+package model.board;
+
+import java.util.Observable;
+import java.util.Stack;
+
+import utility.BoardManagement;
+import utility.MoveChecker;
+import model.Phase;
+import move.AbstractMove;
+import interfaces.BoardFacadeInterface;
+
+public class NewBoardModel extends Observable implements BoardFacadeInterface {
+	
+	private String state;
+	private Stack<AbstractMove> history;				//the history of the game, this allows for moves to be undone. 
+	private int playerOneToPlace, playerTwoToPlace;
+	private int playerOneRemaining, playerTwoRemaining;
+	private Phase phase;
+	private char turn;
+	private char nextAction;
+	private char trappedPlayer;
+	private boolean valid;
+	private boolean millMade;
+	
+	private BoardManagement manager;
+	
+	public NewBoardModel(){
+		state = "NNNNNNNNNNNNNNNNNNNNNNNN";
+		history = new Stack<AbstractMove>();
+		
+		playerOneToPlace = 9;
+		playerTwoToPlace = 9;
+		playerOneRemaining = 9;
+		playerTwoRemaining = 9;
+		
+		phase = Phase.ONE;
+		
+		turn = 'R';
+		nextAction = 'P';
+		valid = false;
+		millMade = false;
+		
+		manager = new BoardManagement(this);
+	}
+
+	@Override
+	public void executeMove(AbstractMove move) {
+		AbstractMove result = manager.resultOfMove(move);
+		if(result != null){
+			history.push(move);
+			valid = true;
+			state = move.getStatePostAction();
+			switch (move.getAction()) {
+			case 'P':
+				if(move.getPlayerID() == 1){
+					playerOneToPlace--;
+				}else{
+					playerTwoToPlace--;
+				}
+				break;
+			case 'R':
+				if(move.getPlayerID() == 1){
+					playerTwoRemaining--;
+				}else{
+					playerOneRemaining--;
+				}
+				break;
+			case 'M':
+				break;
+			default:
+				break;
+			}
+			if(result.getAction() == 'R'){
+				millMade = true;
+			}else{
+				millMade = false;
+				setTurn();
+			}
+			nextAction = result.getAction();
+		}else{
+			valid = false;
+		}
+		phase = manager.calculatePhase();
+		System.out.println("updating observers!");
+		setChanged();
+		notifyObservers();
+	}
+	
+	@Override
+	public boolean validMove() {
+		return valid;
+	}
+
+	@Override
+	public boolean millMade() {
+		return millMade;
+	}
+
+	@Override
+	public void undo() {
+		AbstractMove move = history.pop();		//pop the last executed move from the history stack. 
+		
+		state = move.getStateActedOn();
+		char action = move.getAction();
+		int playerID = move.getPlayerID();
+		
+		switch (action) {
+		case 'P':
+			if(playerID == 1){
+				playerOneToPlace++;
+				turn = move.getPlayerColour();
+			}else{
+				playerTwoToPlace++;
+				turn = move.getPlayerColour();
+			}
+			break;
+		case 'R':
+			if(playerID == 1){
+				playerTwoRemaining++;
+				turn = move.getPlayerColour();
+			}else{
+				playerOneRemaining++;
+				turn = move.getPlayerColour();
+			}
+			millMade = true;
+			break;
+		case 'M':
+			turn = move.getPlayerColour();
+			
+			break;
+		default:
+			break;
+		}
+		phase = manager.calculatePhase();
+		//notify observers
+		setChanged();
+		notifyObservers();
+	}
+
+	@Override
+	public void setTurn() {
+		if(turn == 'R'){
+			turn = 'B';
+		}else{
+			turn = 'R';
+		}
+		
+		//notify observers
+		setChanged();
+		notifyObservers();
+	}
+
+	@Override
+	public void setPhase(Phase phase) {
+		//TODO: Do we need this anymore?
+	}
+
+	@Override
+	public void setNextAction(char action) {
+		this.nextAction = action;
+	}
+
+	@Override
+	public void reset() {
+
+		state = "NNNNNNNNNNNNNNNNNNNNNNNN";
+		history = new Stack<AbstractMove>();
+		
+		playerOneToPlace = 9;
+		playerTwoToPlace = 9;
+		playerOneRemaining = 9;
+		playerTwoRemaining = 9;
+		
+		phase = Phase.ONE;
+		
+		turn = 'R';
+		nextAction = 'P';
+		valid = false;
+		millMade = false;
+		
+		setChanged();
+		notifyObservers();
+	}
+	
+	@Override
+	public void setTrappedPlayer(char trappedPlayer) {
+		this.trappedPlayer = trappedPlayer;
+	}
+	
+	@Override
+	public String getState() {
+		return state;
+	}
+
+	@Override
+	public int getPlayerOneToPlace() {
+		return playerOneToPlace;
+	}
+
+	@Override
+	public int getPlayerTwoToPlace() {
+		return playerTwoToPlace;
+	}
+
+	@Override
+	public int getPlayerOneRemaining() {
+		return playerOneRemaining;
+	}
+
+	@Override
+	public int getPlayerTwoRemaining() {
+		return playerTwoRemaining;
+	}
+
+	@Override
+	public Phase getPhase() {
+		return phase;
+	}
+
+	@Override
+	public int getTurn() {
+		if(turn == 'R'){
+			return 1;
+		}else{
+			return 2;
+		}
+	}
+
+	@Override
+	public boolean gameWon() {
+		if(playerOneRemaining == 2 || playerTwoRemaining == 2 || phase == Phase.FOUR){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	@Override
+	public char getNextAction() {
+		return nextAction;
+	}
+	
+	@Override
+	public double[] getRewards() {
+		double[] rewards = new double[2];
+		
+		if(playerOneRemaining < 3){			//if Player One has lost...
+			rewards[0] = 0.0;				
+			rewards[1] = 1.0;				//...give player 2 a point.
+		}else if(playerTwoRemaining < 3){	//if Player Two has lost...
+			rewards[0] = 1.0;				//...give player 1 a point.
+			rewards[1] = 0.0;
+		}else if(playerOneRemaining == playerTwoRemaining){		//if the game is currently a draw...
+			rewards[0] = 0.5;									//each player gets 0.5
+			rewards[1] = 0.5;
+		}else if((playerOneRemaining > playerTwoRemaining )){		//if player One has 3 more tokens than player 2. 
+			rewards[0] = 0.5;											//give them 0.5.
+			rewards[1] = 0.0;
+		}else if((playerTwoRemaining > playerOneRemaining)){		//if player Two has 3 more tokens than player 1
+			rewards[0] = 0.0;		
+			rewards[1] = 0.5;											//give them 0.5
+		}
+		
+		if(trappedPlayer == 'R'){			//if player 1 is trapped...
+			rewards[0] = 0.0;
+			rewards[1] = 1.0;				//...give player two 1 point.
+		}else if(trappedPlayer == 'B'){		//if player 2 is trapped...
+			rewards[0] = 1.0;				//...give player One 1 point.
+			rewards[1] = 0.0;
+		}
+		
+		return rewards;
+	}
+	
+	@Override
+	public void printDetails() {
+		System.out.println("-------------- Board Details ---------------------");
+		System.out.println("State: " + state);
+		System.out.println("P1 TP: " + playerOneToPlace);
+		System.out.println("P2 TP: " + playerTwoToPlace);
+		System.out.println("P1 TR: " + playerOneRemaining);
+		System.out.println("P2 TR: " + playerTwoRemaining);
+		System.out.println("Phase: " + phase);
+		System.out.println("--------------------------------------------------");
+	}
+	
+}

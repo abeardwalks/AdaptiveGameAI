@@ -10,7 +10,7 @@ import move.AbstractMove;
  * @author Andrew White - 200939787, BSc software Engineering
  *
  */
-public interface BoardControllerInterface {
+public interface BoardControllerInterface extends BoardModelSharedMethodsInterface {
 	
 	/**
 	 * Executes the passed in move.

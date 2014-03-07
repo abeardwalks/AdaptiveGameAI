@@ -428,6 +428,7 @@ public class PlayingView extends JPanel implements Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 		gs = model.getState();
+		System.out.println("Updated, new state: " + gs);
 //		result = bd.getResult();
 		playerOneTokens = model.getPlayerOneToPlace();
 		playerTwoTokens = model.getPlayerTwoToPlace();

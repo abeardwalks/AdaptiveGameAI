@@ -178,7 +178,6 @@ public class MoveChecker {
 	 * @return - True if there are mill free tokens, false otherwise.
 	 */
 	private boolean millFreeToken(char token, int position) {
-		
 		char[] stateArray = state.toCharArray();
 		for (int i = 0; i < stateArray.length; i++) {
 			if((stateArray[i] != token && stateArray[i] != 'N') && i != position){
