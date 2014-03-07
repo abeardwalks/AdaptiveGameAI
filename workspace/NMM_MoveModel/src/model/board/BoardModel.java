@@ -3,6 +3,8 @@ package model.board;
 import java.util.Observable;
 import java.util.Stack;
 
+import utility.MoveChecker;
+
 import model.Phase;
 import move.AbstractMove;
 import interfaces.BoardFacadeInterface;
@@ -23,12 +25,15 @@ public class BoardModel extends Observable implements BoardFacadeInterface {
 	private Phase phase;
 	private char turn;
 	private char nextAction;
+	private boolean valid;
+	private boolean millMade;
+	
+	private MoveChecker movecheck;
 	
 	/**
 	 * Constructs a new BoardModel with data representative of a new game.
 	 */
 	public BoardModel(){
-		
 		state = "NNNNNNNNNNNNNNNNNNNNNNNN";
 		history = new Stack<AbstractMove>();
 		
@@ -41,7 +46,10 @@ public class BoardModel extends Observable implements BoardFacadeInterface {
 		
 		turn = 'R';
 		nextAction = 'P';
+		valid = false;
+		millMade = false;
 		
+		movecheck = new MoveChecker(this);
 	}
 	
 	/**
@@ -82,6 +90,7 @@ public class BoardModel extends Observable implements BoardFacadeInterface {
 	 * @param move - executes the passed in move on the board, storing it in the stack. 
 	 */
 	public void executeMove(AbstractMove move) {
+		
 		history.push(move);
 		state = move.getStatePostAction();
 		char action = move.getAction();
@@ -111,7 +120,16 @@ public class BoardModel extends Observable implements BoardFacadeInterface {
 		setChanged();
 		notifyObservers();
 	}
-
+	
+	
+	public boolean validMove(){
+		return valid;
+	}
+	
+	public boolean millMade(){
+		return millMade;
+	}
+	
 	@Override
 	/**
 	 * Undoes the last executed move. 
@@ -186,6 +204,8 @@ public class BoardModel extends Observable implements BoardFacadeInterface {
 		phase = Phase.ONE;
 		
 		turn = 'R';
+		nextAction = 'P';
+		valid = false;
 		
 		setChanged();
 		notifyObservers();

@@ -10,7 +10,7 @@ import move.AbstractMove;
  * @author Andrew White - 200939787, BSc software Engineering
  *
  */
-public interface BoardMutatorInterface {
+public interface BoardControllerInterface {
 	
 	/**
 	 * Executes the passed in move.
@@ -43,5 +43,15 @@ public interface BoardMutatorInterface {
 	 * Resets the entire state of the game. 
 	 */
 	void reset();
+	
+	/**
+	 * @return True if the last move executed was valid, false otherwise.
+	 */
+	boolean validMove();
+	
+	/**
+	 * @return True if the last move executed created a mill, false otherwise.
+	 */
+	boolean millMade();
 
 }

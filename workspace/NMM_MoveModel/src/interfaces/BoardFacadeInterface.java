@@ -7,7 +7,7 @@ package interfaces;
  * @author Andrew White - BSc Software Engineering, 200939787
  *
  */
-public interface BoardFacadeInterface extends BoardDetailsInterface, BoardMutatorInterface {
+public interface BoardFacadeInterface extends BoardDetailsInterface, BoardControllerInterface {
 	
 	/**
 	 * Evaluates the current board state and returns the relevant scores.
@@ -24,4 +24,5 @@ public interface BoardFacadeInterface extends BoardDetailsInterface, BoardMutato
 	 * @param trappedPlayer - The Trapped Player. 
 	 */
 	void setTrappedPlayer(char trappedPlayer);
+
 }

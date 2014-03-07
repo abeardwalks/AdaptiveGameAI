@@ -59,5 +59,4 @@ public interface BoardDetailsInterface {
 	 */
 	char getNextAction();
 	
-
 }

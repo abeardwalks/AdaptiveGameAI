@@ -26,13 +26,13 @@ import move.MovementMove;
 import move.PlacementMove;
 import move.RemovalMove;
 import interfaces.BoardDetailsInterface;
-import interfaces.BoardMutatorInterface;
+import interfaces.BoardControllerInterface;
 import interfaces.IntPairInterface;
 import interfaces.Player;
 
 public class MoveModelController {
 	
-	private BoardMutatorInterface model;
+	private BoardControllerInterface model;
 	
 	private ApplicationView primaryView;
 	private SetupView setupView;
@@ -86,7 +86,7 @@ public class MoveModelController {
 		
 	}
 	
-	public MoveModelController(BoardMutatorInterface model){
+	public MoveModelController(BoardControllerInterface model){
 		
 		this.model = model;
 		

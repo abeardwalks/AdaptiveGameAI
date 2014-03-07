@@ -1,6 +1,7 @@
 package utility;
 
 import interfaces.BoardDetailsInterface;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -11,16 +12,8 @@ import move.MovementMove;
 import move.PlacementMove;
 import move.RemovalMove;
 
-/**
- * MoveChecker is a utility class used for checking the legality of moves before the model is 
- * updated. It provides methods for checking if mills have been made, whether players are trapped,
- * if placements/movements/removals are valid etc. 
- * 
- * @author Andrew White - BSc Software Engineering, 200939787.
- *
- */
-public class MoveChecker {
-	
+public class NewMoveChecker implements MoveUtilityInterface {
+
 	private String state;
 	private Stack<AbstractMove> moveHistory;
 	@SuppressWarnings("unused")
@@ -31,7 +24,7 @@ public class MoveChecker {
 	private char trappedPlayer;
 
 	
-	public MoveChecker(){
+	public NewMoveChecker(){
 	
 		state = "NNNNNNNNNNNNNNNNNNNNNNNN";
 		
@@ -53,7 +46,7 @@ public class MoveChecker {
 	 * 
 	 * @param game - the model to base the move checker details. 
 	 */
-	public MoveChecker(BoardDetailsInterface game){
+	public NewMoveChecker(BoardDetailsInterface game){
 		state = game.getState();
 		moveHistory = new Stack<AbstractMove>();
 		
@@ -69,6 +62,7 @@ public class MoveChecker {
 	/* (non-Javadoc)
 	 * @see utility.MoveUtilityInterface#placeToken(char, int)
 	 */
+	@Override
 	public int placeToken(char tokenColour, int position) {
 		Integer result = 0;  		//for MVC
 		char[] stateArray = state.toCharArray();
@@ -103,6 +97,7 @@ public class MoveChecker {
 	/* (non-Javadoc)
 	 * @see utility.MoveUtilityInterface#removeToken(char, int)
 	 */
+	@Override
 	public int removeToken(char token, int position) {
 		Integer result = 0;			//for MVC
 		char candidate = state.charAt(position);
@@ -137,6 +132,7 @@ public class MoveChecker {
 	/* (non-Javadoc)
 	 * @see utility.MoveUtilityInterface#moveToken(char, int, int)
 	 */
+	@Override
 	public int moveToken(char token, int from, int to) {
 		Integer result = 0;			//for MVC
 		char[] stateArray = state.toCharArray();
@@ -241,6 +237,7 @@ public class MoveChecker {
 	/* (non-Javadoc)
 	 * @see utility.MoveUtilityInterface#trappedPlayer()
 	 */
+	@Override
 	public char trappedPlayer(){
 		return trappedPlayer;
 	}
@@ -248,6 +245,7 @@ public class MoveChecker {
 	/* (non-Javadoc)
 	 * @see utility.MoveUtilityInterface#partOfMill(int)
 	 */
+	@Override
 	public boolean partOfMill(int position) {
 		char toMatch = state.charAt(position);
 
@@ -613,6 +611,7 @@ public class MoveChecker {
 	/* (non-Javadoc)
 	 * @see utility.MoveUtilityInterface#executeMove(move.AbstractMove)
 	 */
+	@Override
 	public AbstractMove executeMove(AbstractMove move){
 		moveHistory.push(move);
 		char action = move.getAction();
@@ -664,6 +663,7 @@ public class MoveChecker {
 	/* (non-Javadoc)
 	 * @see utility.MoveUtilityInterface#getNewAction()
 	 */
+	@Override
 	public char getNewAction(){
 		return newAction;
 	}
@@ -671,6 +671,7 @@ public class MoveChecker {
 	/* (non-Javadoc)
 	 * @see utility.MoveUtilityInterface#getNewPlayerTurn()
 	 */
+	@Override
 	public char getNewPlayerTurn(){
 		return newPlayerTurn;
 	}
@@ -707,6 +708,7 @@ public class MoveChecker {
 	/* (non-Javadoc)
 	 * @see utility.MoveUtilityInterface#getAllPossibleMoves(char, char)
 	 */
+	@Override
 	public List<AbstractMove> getAllPossibleMoves(char action, char tokenColour) {
 		
 		switch (action) {
