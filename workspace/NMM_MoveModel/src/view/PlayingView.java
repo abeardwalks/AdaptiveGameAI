@@ -463,7 +463,7 @@ public class PlayingView extends JPanel implements Observer {
 		if(model.gameWon()){
 			toolTip = "The Game has been won, hazzah!";
 		}
-		((BoardFacadeInterface)model).printDetails();
+//		((BoardFacadeInterface)model).printDetails();
 		repaint();
 	}
 	

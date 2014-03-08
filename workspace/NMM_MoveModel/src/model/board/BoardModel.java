@@ -29,7 +29,6 @@ public class BoardModel extends Observable implements BoardFacadeInterface {
 	private boolean valid;
 	private boolean millMade;
 	
-	private MoveChecker movecheck;
 	
 	/**
 	 * Constructs a new BoardModel with data representative of a new game.
@@ -50,7 +49,6 @@ public class BoardModel extends Observable implements BoardFacadeInterface {
 		valid = false;
 		millMade = false;
 		
-		movecheck = new MoveChecker(this);
 	}
 	
 	/**
@@ -68,6 +66,29 @@ public class BoardModel extends Observable implements BoardFacadeInterface {
 		
 		this.state = state;
 		history = new Stack<AbstractMove>();
+		
+		this.playerOneToPlace = playerOneToPlace;
+		this.playerTwoToPlace = playerTwoToPlace;
+		this.playerOneRemaining = playerOneRemianing;
+		this.playerTwoRemaining = playerTwoRemaining;
+		
+		this.phase = phase;
+		
+		if(turn == 1){
+			this.turn = 'R';
+		}else{
+			this.turn = 'B';
+		}
+		
+		this.nextAction = nextAction;
+		
+	}
+	
+	public BoardModel(String state, int playerOneToPlace, int playerTwoToPlace, int playerOneRemianing, int playerTwoRemaining, Phase phase, int turn, char nextAction, AbstractMove move){
+		
+		this.state = state;
+		history = new Stack<AbstractMove>();
+		history.push(move);
 		
 		this.playerOneToPlace = playerOneToPlace;
 		this.playerTwoToPlace = playerTwoToPlace;
@@ -328,5 +349,15 @@ public class BoardModel extends Observable implements BoardFacadeInterface {
 	public List<AbstractMove> getAllPossibleMoves() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public AbstractMove lastMovePlayed() {
+		return history.peek();
+	}
+
+	@Override
+	public Stack<AbstractMove> getHistory() {
+		return history;
 	}
 }

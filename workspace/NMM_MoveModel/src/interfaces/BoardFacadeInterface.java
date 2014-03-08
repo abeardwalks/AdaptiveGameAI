@@ -1,6 +1,7 @@
 package interfaces;
 
 import java.util.List;
+import java.util.Stack;
 
 import move.AbstractMove;
 
@@ -30,5 +31,9 @@ public interface BoardFacadeInterface extends BoardDetailsInterface, BoardContro
 	void setTrappedPlayer(char trappedPlayer);
 
 	List<AbstractMove> getAllPossibleMoves();
+	
+	AbstractMove lastMovePlayed();
+	
+	Stack<AbstractMove> getHistory();
 
 }

@@ -128,22 +128,38 @@ public class Controller {
 	private void executeMove(Player player){
 		
 		char playerColour = player.getTokenColour();
-
-		if(model.getPhase().equals(Phase.ONE) && !model.millMade()){
-			int placement = player.placeToken((BoardDetailsInterface) model);
-			model.executeMove(new PlacementMove(model.getState(), playerColour, placement));
-			return;
-		}
-		if((model.getPhase().equals(Phase.TWO) || model.getPhase().equals(Phase.THREE)) && !model.millMade()){
-			IntPairInterface movement = player.moveToken((BoardDetailsInterface) model);
-			model.executeMove(new MovementMove(model.getState(), playerColour, movement.getFirstInt(), movement.getSecondInt()));
-			return;
-		}
+		boolean played = false;
+		while(!played){
+			if(model.getPhase().equals(Phase.ONE) && !model.millMade()){
+				int placement = player.placeToken((BoardDetailsInterface) model);
+				model.executeMove(new PlacementMove(model.getState(), playerColour, placement));
+				if(model.validMove()){
+					played = true;
+				}
+			}
+			
+			if((model.getPhase().equals(Phase.TWO) || model.getPhase().equals(Phase.THREE)) && !model.millMade()){
+				IntPairInterface movement = player.moveToken((BoardDetailsInterface) model);
+				model.executeMove(new MovementMove(model.getState(), playerColour, movement.getFirstInt(), movement.getSecondInt()));
+				if(model.validMove()){
+					played = true;
+					break;
+				}
+			}
+			
 		
-		if(model.millMade()){
-			int removal = player.removeToken((BoardDetailsInterface) model);
-			model.executeMove(new RemovalMove(model.getState(), playerColour, removal));
-			return;
+			if(model.millMade()){
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				int removal = player.removeToken((BoardDetailsInterface) model);
+				model.executeMove(new RemovalMove(model.getState(), playerColour, removal));
+				if(model.validMove()){
+					played = true;
+				}
+			}
 		}
 
 	}
