@@ -36,8 +36,9 @@ public class TestView extends JPanel implements Observer {
 
 	public void paint(Graphics g){
 		g.drawString("   Number of Games Played: " + model.getGamesPlayed() + " / " + model.getGamesToPlay(), 25, 200);
-		g.drawString("          Player One Wins: " + model.getPlayerOneWins(), 25, 300);
-		g.drawString("          Player Two Wins: " + model.getPlayerTwoWins(), 25, 350);
+		g.drawString("          Player One Wins: " + model.getPlayerOneWins(), 25, 250);
+		g.drawString("          Player Two Wins: " + model.getPlayerTwoWins(), 25, 300);
+		g.drawString("                    Draws: " + model.getNumberOfDraws(), 25, 350);
 		g.drawString("            Current State: " + model.getState(), 25, 400);
 		g.drawString("      Player One To Place: " + ((BoardDetailsInterface) model).getPlayerOneToPlace(), 25, 450);
 		g.drawString("      Player Two To Place: " + ((BoardDetailsInterface) model).getPlayerTwoToPlace(), 25, 500);

@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+
 import model.Phase;
 import model.board.BoardModel;
 import move.AbstractMove;
@@ -15,7 +16,7 @@ import interfaces.BoardDetailsInterface;
 import interfaces.BoardFacadeInterface;
 import interfaces.IntPairInterface;
 
-public class GoodDadAI extends AbstractPlayer {
+public class GoodDadv2 extends AbstractPlayer {
 
 	private BoardFacadeInterface workingGame;
 	private MoveChecker mc;
@@ -24,6 +25,7 @@ public class GoodDadAI extends AbstractPlayer {
 	private double opponentFitness = 11.0;
 	private double fitness = 10.0;
 	private TreeNode opponentsPlay;
+	private double[] convertedScores;
 	
 	@Override
 	public int placeToken(BoardDetailsInterface game) {
@@ -100,7 +102,7 @@ public class GoodDadAI extends AbstractPlayer {
 			double opponentScore = opponentsPlay.rewards[opponentID - 1];
 			double ourScore = opponentsPlay.rewards[getPlayerID() - 1];
 				if(Math.max(opponentScore, ourScore) - Math.min(opponentScore, ourScore) > 15.0){
-				if(opponentsPlay.rewards[opponentID - 1] > opponentsPlay.rewards[getPlayerID() -1] && opponentFitness < 15.0){
+				if(opponentsPlay.rewards[opponentID - 1] > opponentsPlay.rewards[getPlayerID() -1] && opponentFitness < 20.0){
 					opponentFitness += 1.0;
 				}else if(opponentsPlay.rewards[opponentID - 1] < opponentsPlay.rewards[getPlayerID() -1] && opponentFitness > 5.0){
 					opponentFitness -= 1.0;
@@ -160,18 +162,11 @@ public class GoodDadAI extends AbstractPlayer {
 			count++;
 		}
 		
+		convertToRange();
+		
 		int index = selectAppropriatePlay();
-		if(index == -1 || opponentFitness > 15.0){
-			count = 0;
-			for(TreeNode child : root.children){
-				
-				double value = child.rewards[getPlayerID() - 1 ] / child.nVisits;
-				if(value > bestValue){
-					bestValue = value;
-					index = count;
-				}
-				count++;
-			}
+		if(index == -1 || (opponentFitness < 16.0 && opponentFitness > 9.0)){
+			index = secondBest();
 		}
 		if(root.children[index].children != null){
 			playedChildred = root.children[index].children.clone();
@@ -194,78 +189,86 @@ public class GoodDadAI extends AbstractPlayer {
 	}
 	
 	private int selectNearestHighMatch(){
-		int opponentID = 1;
-		if(getPlayerID() == 1){
-			opponentID = 2;
-		}
-		double difference = Double.POSITIVE_INFINITY;
-		int index = -1;
+		double bestValue = Double.NEGATIVE_INFINITY;
 		int count = 0;
-		if(opponentsPlay != null){
-			for (TreeNode child : root.children) {
-				if((opponentsPlay.rewards[getPlayerID() - 1] <= child.rewards[getPlayerID() - 1])){
-					if((child.rewards[getPlayerID() - 1] - opponentsPlay.rewards[getPlayerID() - 1]) < difference){
-						difference = child.rewards[getPlayerID() - 1] - opponentsPlay.rewards[getPlayerID() - 1];
-						index = count;
-					}
-				}
-				count++;
+		int index = 0;
+		for(TreeNode child : root.children){
+			System.out.println("Rewards: " + child.rewards[0] + " | " + child.rewards[1] + ", after " + child.nVisits + " visits.");
+			
+			double value = child.rewards[getPlayerID() - 1 ] / child.nVisits;
+			if(value > bestValue){
+				bestValue = value;
+				index = count;
 			}
+			count++;
 		}
 		return index;
 	}
 	
 	private int selectNearestLowMatch(){
-		int opponentID = 1;
-		if(getPlayerID() == 1){
-			opponentID = 2;
+		double goal = 0.6;
+		double closest = Math.abs(convertedScores[0] - goal);
+		int secondBest = 0;
+		for(int i = 1; i < convertedScores.length; i++){
+		    double distance = Math.abs(convertedScores[i] - goal);
+		    if(closest > distance){
+		        secondBest = i;
+		        closest = distance;
+		    }
 		}
-		double difference = Double.POSITIVE_INFINITY;
-		int index = -1;
-		int count = 0;
-		if(opponentsPlay != null){
-//			for (TreeNode child : root.children) {
-//				if((opponentsPlay.rewards[opponentID - 1] <= child.rewards[opponentID - 1])){
-//					if((opponentsPlay.rewards[opponentID - 1] - child.rewards[opponentID - 1]) < difference){
-//						difference = opponentsPlay.rewards[opponentID - 1] - child.rewards[opponentID - 1];
-//						index = count;
-//					}
-//				}
-//				count++;
-//			}
-			double worstValue = Double.POSITIVE_INFINITY;
-			for(TreeNode child : root.children){
-				
-				double value = child.rewards[getPlayerID() - 1 ] / child.nVisits;
-				if(value < worstValue){
-					worstValue = value;
-					index = count;
-				}
-				count++;
-			}
-		}else{
-			double worstValue = Double.POSITIVE_INFINITY;
-			for(TreeNode child : root.children){
-				
-				double value = child.rewards[getPlayerID() - 1 ] / child.nVisits;
-				if(value < worstValue){
-					worstValue = value;
-					index = count;
-				}
-				count++;
+		return secondBest;
+	}
+	
+	private int secondBest(){
+		double goal = 0.75;
+		double closest = Math.abs(convertedScores[0] - goal);
+		int secondBest = 0;
+		for(int i = 1; i < convertedScores.length; i++){
+		    double distance = Math.abs(convertedScores[i] - goal);
+		    if(closest > distance){
+		        secondBest = i;
+		        closest = distance;
+		    }
+		}
+		return secondBest;
+	}
+	
+
+	private void convertToRange() {
+		convertedScores = new double[root.children.length];
+		
+		double minValue = findMinScore();
+		double maxValue = findMaxScore();
+		
+		for (int i = 0; i < root.children.length; i++) {
+			convertedScores[i] = ((root.children[i].rewards[getPlayerID() - 1 ] / root.children[i].nVisits) - minValue)/(maxValue - minValue) * (1.0 - 0.0) + 0.0;
+		}
+	}
+	
+	private double findMaxScore(){
+		double maxScore = root.children[0].rewards[getPlayerID() - 1] / root.children[0].nVisits;
+		for (int i = 1; i < root.children.length; i++) {
+			if((root.children[i].rewards[getPlayerID() - 1] / root.children[i].nVisits)> maxScore){
+				maxScore = root.children[i].rewards[getPlayerID() - 1] / root.children[i].nVisits;
 			}
 		}
-		return index;
+		return maxScore;
+	}
+	
+	private double findMinScore(){
+		double minScore = root.children[0].rewards[getPlayerID() - 1] / root.children[0].nVisits;
+		for (int i = 1; i < root.children.length; i++) {
+			if((root.children[i].rewards[getPlayerID() - 1] / root.children[i].nVisits) < minScore){
+				minScore = root.children[i].rewards[getPlayerID() - 1] / root.children[i].nVisits;
+			}
+		}
+		return minScore;
 	}
 
-	private TreeNode selectNearestMatch() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public String getName() {
-		return "Good Dad";
+		return "Dad v2";
 	}
 	
 	/**

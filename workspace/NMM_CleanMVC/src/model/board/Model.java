@@ -22,6 +22,7 @@ public class Model extends Observable implements BoardFacadeInterface {
 	private char trappedPlayer;
 	private boolean valid;
 	private boolean millMade;
+	private int chasePhaseMoves;
 	
 	private Player playerOne, playerTwo;
 	
@@ -30,7 +31,7 @@ public class Model extends Observable implements BoardFacadeInterface {
 	private double p1millcount;
 	private double p2millcount;
 	
-	private int gamesToPlay, gamesPlayed, playerOneWins, playerTwoWins;
+	private int gamesToPlay, gamesPlayed, playerOneWins, playerTwoWins, draws;
 	
 	private boolean gameover;
 	
@@ -58,6 +59,8 @@ public class Model extends Observable implements BoardFacadeInterface {
 		gamesPlayed = 0;
 		playerOneWins = 0;
 		playerTwoWins = 0;
+		draws = 0;
+		chasePhaseMoves = 0;
 		
 		gameover = false;
 	}
@@ -114,6 +117,9 @@ public class Model extends Observable implements BoardFacadeInterface {
 				}
 				break;
 			case 'M':
+				if(phase == Phase.THREE){
+					chasePhaseMoves++;
+				}
 				break;
 			default:
 				break;
@@ -177,6 +183,9 @@ public class Model extends Observable implements BoardFacadeInterface {
 			break;
 		case 'M':
 			turn = move.getPlayerColour();
+			if(phase == Phase.THREE){
+				chasePhaseMoves--;
+			}
 			break;
 		default:
 			break;
@@ -224,6 +233,7 @@ public class Model extends Observable implements BoardFacadeInterface {
 		playerOneRemaining = 9;
 		playerTwoRemaining = 9;
 		
+		chasePhaseMoves = 0;
 		phase = Phase.ONE;
 		
 		turn = 'R';
@@ -290,11 +300,17 @@ public class Model extends Observable implements BoardFacadeInterface {
 		if(playerOneRemaining == 2 || playerTwoRemaining == 2 || phase == Phase.FOUR){
 			if(playerOneRemaining == 2 || trappedPlayer == 'R'){
 				playerTwoWins++;
-			}else{
+			}else if(playerTwoRemaining == 2 || trappedPlayer == 'B'){
 				playerOneWins++;
 			}
 			gameover = true;
 			gamesPlayed++;
+			
+			return true;
+		}else if(phase == Phase.THREE && chasePhaseMoves == 15){
+			gameover = true;
+			gamesPlayed++;
+			draws++;
 			return true;
 		}else{
 			return false;
@@ -409,6 +425,11 @@ public class Model extends Observable implements BoardFacadeInterface {
 	@Override
 	public void setGamesToPlay(int gamesToPlay) {
 		this.gamesToPlay = gamesToPlay;
+	}
+
+	@Override
+	public int getNumberOfDraws() {
+		return draws;
 	}
 	
 }

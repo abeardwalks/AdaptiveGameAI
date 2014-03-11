@@ -190,6 +190,7 @@ public class BoardModel extends Observable implements BoardFacadeInterface {
 			break;
 		}
 		
+		
 		//notify observers
 		setChanged();
 		notifyObservers();
@@ -403,5 +404,11 @@ public class BoardModel extends Observable implements BoardFacadeInterface {
 	public void setGamesToPlay(int gamesToPlay) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public int getNumberOfDraws() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }
