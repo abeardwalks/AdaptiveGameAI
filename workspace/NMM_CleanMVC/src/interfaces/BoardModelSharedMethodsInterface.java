@@ -35,4 +35,8 @@ public interface BoardModelSharedMethodsInterface {
 	void setGamesToPlay(int gamesToPlay);
 	
 	int getNumberOfDraws();
+	
+	boolean playerOneWin();
+	
+	boolean playerTwoWin();
 }

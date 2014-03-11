@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 
+import data.recorder.Writer;
+
 import players.Human;
 
 import model.Phase;
@@ -47,6 +49,8 @@ public class Controller {
 	
 	private boolean paused;
 	private boolean started;
+	
+	private Writer writer;
 	
 	public Controller(){
 		model = new Model();
@@ -146,6 +150,8 @@ public class Controller {
 	
 	private void testPlay() {
 		model.setGamesToPlay(10);
+		writer = new Writer((BoardDetailsInterface) model);
+		((Observable) model).addObserver(writer);
 		while(model.getGamesPlayed() < model.getGamesToPlay()){
 			while(!model.gameWon()){
 				if(!player1.getName().equals("Human")){
@@ -162,10 +168,13 @@ public class Controller {
 					}
 				}
 			}
+			writer.writeline();
+			
 			player1.reset();
 			player2.reset();
 			model.reset();
 		}
+		writer.closeBuffer();
 	}
 
 	private void executeMove(Player player, BoardFacadeInterface model){

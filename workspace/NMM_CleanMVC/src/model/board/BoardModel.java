@@ -411,4 +411,16 @@ public class BoardModel extends Observable implements BoardFacadeInterface {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+
+	@Override
+	public boolean playerOneWin() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean playerTwoWin() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

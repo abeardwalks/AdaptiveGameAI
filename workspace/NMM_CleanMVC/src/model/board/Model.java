@@ -32,6 +32,7 @@ public class Model extends Observable implements BoardFacadeInterface {
 	private double p2millcount;
 	
 	private int gamesToPlay, gamesPlayed, playerOneWins, playerTwoWins, draws;
+	private boolean playerOneWin, playerTwoWin;
 	
 	private boolean gameover;
 	
@@ -61,6 +62,9 @@ public class Model extends Observable implements BoardFacadeInterface {
 		playerTwoWins = 0;
 		draws = 0;
 		chasePhaseMoves = 0;
+		
+		playerOneWin = false;
+		playerTwoWin = false;
 		
 		gameover = false;
 	}
@@ -241,6 +245,8 @@ public class Model extends Observable implements BoardFacadeInterface {
 		valid = false;
 		millMade = false;
 		gameover = false;
+		playerOneWin = false;
+		playerTwoWin = false;
 		setChanged();
 		notifyObservers();
 	}
@@ -299,18 +305,23 @@ public class Model extends Observable implements BoardFacadeInterface {
 		}
 		if(playerOneRemaining == 2 || playerTwoRemaining == 2 || phase == Phase.FOUR){
 			if(playerOneRemaining == 2 || trappedPlayer == 'R'){
+				playerTwoWin = true;
 				playerTwoWins++;
 			}else if(playerTwoRemaining == 2 || trappedPlayer == 'B'){
+				playerOneWin = true;
 				playerOneWins++;
 			}
 			gameover = true;
 			gamesPlayed++;
-			
+			setChanged();
+			notifyObservers(new String("write"));
 			return true;
 		}else if(phase == Phase.THREE && chasePhaseMoves == 15){
 			gameover = true;
 			gamesPlayed++;
 			draws++;
+			setChanged();
+			notifyObservers(new String("write"));
 			return true;
 		}else{
 			return false;
@@ -430,6 +441,16 @@ public class Model extends Observable implements BoardFacadeInterface {
 	@Override
 	public int getNumberOfDraws() {
 		return draws;
+	}
+
+	@Override
+	public boolean playerOneWin() {
+		return playerOneWin;
+	}
+
+	@Override
+	public boolean playerTwoWin() {
+		return playerTwoWin;
 	}
 	
 }
