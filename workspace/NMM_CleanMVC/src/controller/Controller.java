@@ -173,7 +173,7 @@ public class Controller {
 		char playerColour = player.getTokenColour();
 		boolean played = false;
 		while(!played){
-			if(model.getPhase().equals(Phase.ONE) && !model.millMade()){
+			if(model.getPhase().equals(Phase.ONE) && !model.millMade() && !played){
 				int placement = player.placeToken((BoardDetailsInterface) model);
 				model.executeMove(new PlacementMove(model.getState(), playerColour, placement));
 				if(model.validMove()){
@@ -181,7 +181,7 @@ public class Controller {
 				}
 			}
 			
-			if((model.getPhase().equals(Phase.TWO) || model.getPhase().equals(Phase.THREE)) && !model.millMade()){
+			if((model.getPhase().equals(Phase.TWO) || model.getPhase().equals(Phase.THREE)) && !model.millMade() && !played){
 				IntPairInterface movement = player.moveToken((BoardDetailsInterface) model);
 				model.executeMove(new MovementMove(model.getState(), playerColour, movement.getFirstInt(), movement.getSecondInt()));
 				if(model.validMove()){
