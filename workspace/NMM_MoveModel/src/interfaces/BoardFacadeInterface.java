@@ -29,6 +29,8 @@ public interface BoardFacadeInterface extends BoardDetailsInterface, BoardContro
 	 * @param trappedPlayer - The Trapped Player. 
 	 */
 	void setTrappedPlayer(char trappedPlayer);
+	
+	char getTrappedPlayer();
 
 	List<AbstractMove> getAllPossibleMoves();
 	

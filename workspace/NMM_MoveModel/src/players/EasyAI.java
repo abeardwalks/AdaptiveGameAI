@@ -108,7 +108,6 @@ public class EasyAI extends AbstractPlayer {
 					m = movecheck.executeMove(new PlacementMove(game.getState(), opponent, j));
 					movecheck.undo();
 					if(m.getAction() == 'R'){
-						System.out.println("Returning Mill Blocking Move");
 						return new IntPair(i, j);
 					}
 				}
@@ -124,7 +123,6 @@ public class EasyAI extends AbstractPlayer {
 				movecheck.undo();
 				if(m != null){
 					if(m.getAction() == 'R'){
-						System.out.println("Returning Mill Making Move");
 						return new IntPair(i, j);
 					}
 				}

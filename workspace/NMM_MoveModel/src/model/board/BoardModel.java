@@ -332,6 +332,10 @@ public class BoardModel extends Observable implements BoardFacadeInterface {
 	public void setTrappedPlayer(char c) {
 		trappedPlayer = c;
 	}
+	
+	public char getTrappedPlayer(){
+		return trappedPlayer;
+	}
 
 	@Override
 	public void setNextAction(char action) {

@@ -20,8 +20,10 @@ import view.ApplicationView;
 import view.PlayingView;
 import view.SetupView;
 import view.PauseView;
+import view.TestView;
 import model.Phase;
 import model.board.BoardModel;
+import model.board.BoardModelTestRig;
 import move.MovementMove;
 import move.PlacementMove;
 import move.RemovalMove;
@@ -29,6 +31,7 @@ import interfaces.BoardDetailsInterface;
 import interfaces.BoardControllerInterface;
 import interfaces.IntPairInterface;
 import interfaces.Player;
+import interfaces.TestRigInterface;
 
 public class MoveModelController {
 	
@@ -52,8 +55,12 @@ public class MoveModelController {
 	private boolean paused;
 	private boolean started;
 	
+	private TestRigInterface testBoard;
+	private TestView testView;
+	
 	public MoveModelController() {
 		model = new BoardModel();
+		testBoard = new BoardModelTestRig();
 		
 		primaryView = new ApplicationView();
 		primaryView.addKeyListener(new HumanKeyListener());
@@ -74,6 +81,8 @@ public class MoveModelController {
 		paused = false;
 		started = false;
 		
+		testView = new TestView(testBoard);
+		
 		mc = new MoveChecker();
 		turn = 'R';
 		result = -2;
@@ -81,6 +90,7 @@ public class MoveModelController {
 		millMade = false;
 		
 		((Observable) model).addObserver(gameView);
+		((Observable) testBoard).addObserver(testView);
 		
 		primaryView.setVisible(true);
 		
@@ -133,20 +143,137 @@ public class MoveModelController {
 		player1.setTokenColour('R');
 		player2.setTokenColour('B');
 		
-		gameView.setEnabled(true);
-		
-		started = true;
-		thread = new Thread(new Runnable() {
+		if(!setupView.getTestRig()){
+			gameView.setEnabled(true);
 			
-			@Override
-			public void run() {
-				play();
-			}
-		});
+			started = true;
+			thread = new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					play();
+				}
+			});
+			
+			primaryView.add(gameView);
+			primaryView.repaint();
+			thread.start();
+		}else{
+			started = true;
+			thread = new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					playTest();
+				}
 
-		primaryView.add(gameView);
-		primaryView.repaint();
-		thread.start();
+			});
+			primaryView.add(testView);
+			primaryView.repaint();
+			thread.start();
+		}
+	}
+	
+	private void playTest() {
+		mc = new MoveChecker((BoardDetailsInterface) testBoard);
+		testBoard.setNumberOfGamesToPlay(100);
+		while(testBoard.getNumberOfGamesToPlay() > 0){
+		
+			while(!testBoard.gameWon()){
+//				try {
+//					Thread.sleep(1500);
+//				} catch (InterruptedException e) {
+//					e.printStackTrace();
+//				}
+				if(!player1.getName().equals("Human")){
+					if(turn == 'R'){
+						executeMoveTest(player1);
+					}
+				}
+				if(testBoard.gameWon()){
+					break;
+				}
+				if(!player2.getName().equals("Human")){
+					if(turn == 'B'){
+						executeMoveTest(player2);
+					}
+				}
+				if(testBoard.gameWon()){
+					break;
+				}
+				System.out.println("Spinning in play loop");
+			}
+			mc = new MoveChecker((BoardDetailsInterface) testBoard);
+			System.out.println("Game Played: " + testBoard.getNumberOfGamesPlayed());
+			System.out.println("Games to Play: " + testBoard.getNumberOfGamesToPlay());
+			testBoard.reset();
+			result = -2;
+			phase = testBoard.getPhase();
+			millMade = false;
+			System.out.println("Game is: " + testBoard.gameWon());
+		}
+	}
+	
+	private void executeMoveTest(Player player){
+		boolean notPlayed = true;
+		String state = ((BoardDetailsInterface) testBoard).getState();
+		char playerColour = player.getTokenColour();
+		while(notPlayed){
+			System.out.println("Spinning in execute loop");
+
+			if(phase.equals(Phase.ONE) && (result == -2 || result == 0 || result == -1)){
+				int placement = player.placeToken((BoardDetailsInterface) testBoard);
+				result = mc.placeToken(playerColour, placement);
+				if(result != -1){
+					testBoard.executeMove(new PlacementMove(state, playerColour, placement));
+				}
+				if(result == 1){
+					millMade = true;
+					testBoard.setNextAction('R');
+				}
+			}
+
+			if(phase.equals(Phase.TWO) || phase.equals(Phase.THREE) && (result == 0 || result == -1)){
+				IntPairInterface movement = player.moveToken((BoardDetailsInterface) testBoard);
+				result = mc.moveToken(playerColour, movement.getFirstInt(), movement.getSecondInt());
+				if(result != -1){
+					testBoard.executeMove(new MovementMove(state, playerColour, movement.getFirstInt(), movement.getSecondInt()));
+				}
+				if(result == 1){
+					millMade = true;
+					testBoard.setNextAction('R');
+				}
+			}
+	
+			if(millMade && (result == -1 || result == 1)){
+				state = ((BoardDetailsInterface) testBoard).getState();
+				int removal = player.removeToken((BoardDetailsInterface) testBoard);
+				result = mc.removeToken(playerColour, removal);
+				if(result != -1){
+					testBoard.executeMove(new RemovalMove(state, playerColour, removal));
+				}
+			}
+		
+			if(result == 0){
+				notPlayed = false;
+				phase = mc.getPhase();
+				if(!phase.equals(Phase.ONE)){
+					testBoard.setNextAction('M');
+				}else{
+					testBoard.setNextAction('P');
+				}
+				testBoard.setPhase(phase);
+				if(turn == 'R'){
+					turn = 'B';
+					playerColour = 'B';
+				}else{
+					turn = 'R';
+					playerColour = 'R';
+				}
+				millMade = false;
+				testBoard.setTurn();
+			}
+		}
 	}
 	
 	private void play() {

@@ -24,8 +24,10 @@ import view.ApplicationView;
 import view.PauseView;
 import view.PlayingView;
 import view.SetupView;
+import view.TestView;
 import interfaces.BoardControllerInterface;
 import interfaces.BoardDetailsInterface;
+import interfaces.BoardFacadeInterface;
 import interfaces.IntPairInterface;
 import interfaces.Player;
 
@@ -37,6 +39,7 @@ public class Controller {
 	private SetupView setupView;
 	private PlayingView gameView;
 	private PauseView pauseView;
+	private TestView testView;
 	
 	private Thread thread;
 	
@@ -67,7 +70,10 @@ public class Controller {
 		paused = false;
 		started = false;
 		
+		testView = new TestView((BoardDetailsInterface) model);
+		
 		((Observable) model).addObserver(gameView);
+		((Observable) model).addObserver(testView);
 		
 		primaryView.setVisible(true);
 	}
@@ -84,16 +90,29 @@ public class Controller {
 		gameView.setEnabled(true);
 		
 		started = true;
-		thread = new Thread(new Runnable() {
-			
-			@Override
-			public void run() {
-				play();
-			}
-		});
+		if(!setupView.getTestRig()){
+			thread = new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					play();
+				}
+			});
+	
+			primaryView.add(gameView);
+			primaryView.repaint();
+		}else{
+			thread = new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					testPlay();
+				}
+			});
 
-		primaryView.add(gameView);
-		primaryView.repaint();
+			primaryView.add(testView);
+			primaryView.repaint();
+		}
 		thread.start();
 	}
 	
@@ -106,7 +125,7 @@ public class Controller {
 					e.printStackTrace();
 				}
 				if(model.getTurn() == 1 && !model.gameWon()){
-					executeMove(player1);
+					executeMove(player1, (BoardFacadeInterface) model);
 				}
 			}
 			if(model.gameWon()){
@@ -119,13 +138,37 @@ public class Controller {
 					e.printStackTrace();
 				}
 				if(model.getTurn() == 2 && !model.gameWon()){
-					executeMove(player2);
+					executeMove(player2, (BoardFacadeInterface) model);
 				}
 			}
 		}
 	}
+	
+	private void testPlay() {
+		model.setGamesToPlay(10);
+		while(model.getGamesPlayed() < model.getGamesToPlay()){
+			while(!model.gameWon()){
+				if(!player1.getName().equals("Human")){
+					if(model.getTurn() == 1 && !model.gameWon()){
+						executeMove(player1, (BoardFacadeInterface) model);
+					}
+				}
+				if(model.gameWon()){
+					break;
+				}
+				if(!player2.getName().equals("Human")){
+					if(model.getTurn() == 2 && !model.gameWon()){
+						executeMove(player2, (BoardFacadeInterface) model);
+					}
+				}
+			}
+			player1.reset();
+			player2.reset();
+			model.reset();
+		}
+	}
 
-	private void executeMove(Player player){
+	private void executeMove(Player player, BoardFacadeInterface model){
 		
 		char playerColour = player.getTokenColour();
 		boolean played = false;
@@ -143,17 +186,11 @@ public class Controller {
 				model.executeMove(new MovementMove(model.getState(), playerColour, movement.getFirstInt(), movement.getSecondInt()));
 				if(model.validMove()){
 					played = true;
-					break;
 				}
 			}
 			
 		
-			if(model.millMade()){
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+			if(model.millMade() && !played){
 				int removal = player.removeToken((BoardDetailsInterface) model);
 				model.executeMove(new RemovalMove(model.getState(), playerColour, removal));
 				if(model.validMove()){

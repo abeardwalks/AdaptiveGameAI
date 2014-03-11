@@ -58,5 +58,7 @@ public interface Player {
 	 * @return- The player ID. 
 	 */
 	public int getPlayerID();
+	
+	public void reset();
 
 }

@@ -23,5 +23,15 @@ public interface BoardModelSharedMethodsInterface {
 	 * @return - The state of the board.
 	 */
 	String getState();
+	
+	int getGamesPlayed();
+	
+	int getGamesToPlay();
+	
+	int getPlayerOneWins();
+	
+	int getPlayerTwoWins();
+	
+	void setGamesToPlay(int gamesToPlay);
 
 }

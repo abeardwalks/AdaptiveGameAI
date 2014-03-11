@@ -55,6 +55,8 @@ public class RandomAI extends AbstractPlayer {
 		return "Random AI";
 	}
 
+	public void reset(){
+	}
 	
 
 }

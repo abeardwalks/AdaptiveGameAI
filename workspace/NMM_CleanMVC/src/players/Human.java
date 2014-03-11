@@ -25,5 +25,8 @@ public class Human extends AbstractPlayer {
 	public String getName() {
 		return "Human";
 	}
+	
+	public void reset(){
+	}
 
 }

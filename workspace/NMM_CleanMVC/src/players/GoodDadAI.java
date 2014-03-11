@@ -4,34 +4,26 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-import utility.MoveChecker;
-
 import model.Phase;
 import model.board.BoardModel;
 import move.AbstractMove;
 import move.MovementMove;
 import move.PlacementMove;
 import move.RemovalMove;
+import utility.MoveChecker;
 import interfaces.BoardDetailsInterface;
 import interfaces.BoardFacadeInterface;
 import interfaces.IntPairInterface;
 
-
-/**
- * MCTS Player (Monte-Carlo Treesearch Player). This AI makes use the Monte-Carlo search technique.
- * It carries out numerous rollouts to ascertain which move is the best. This AI is the hardest to have 
- * been produced and has been successful in beating me. 
- * 
- * TODO: Adjust the AI to improve its play style during the chase phase of the game. 
- * 
- * @author Andrew White - BSc Software Engineering, 200939787
- *
- */
-public class MCTSPlayer extends AbstractPlayer {
+public class GoodDadAI extends AbstractPlayer {
 
 	private BoardFacadeInterface workingGame;
 	private MoveChecker mc;
 	private TreeNode root;
+	private TreeNode[] playedChildred;
+	private double opponentFitness = 9.0;
+	private double fitness = 10.0;
+	private TreeNode opponentsPlay;
 	
 	@Override
 	public int placeToken(BoardDetailsInterface game) {
@@ -39,7 +31,8 @@ public class MCTSPlayer extends AbstractPlayer {
 									 game.getPlayerOneToPlace(), game.getPlayerTwoToPlace(), 
 									 game.getPlayerOneRemaining(), game.getPlayerTwoRemaining(), 
 									 game.getPhase(), game.getTurn(), game.getNextAction());
-		
+		setPlayedChilded();
+		recalculatePlayerFitness();
 		AbstractMove m = getMove('P');
 		return ((PlacementMove)m).getPlacementIndex();
 	}
@@ -50,6 +43,8 @@ public class MCTSPlayer extends AbstractPlayer {
 				 game.getPlayerOneToPlace(), game.getPlayerTwoToPlace(), 
 				 game.getPlayerOneRemaining(), game.getPlayerTwoRemaining(), 
 				 game.getPhase(), game.getTurn(), game.getNextAction());
+		setPlayedChilded();
+		recalculatePlayerFitness();
 		AbstractMove m = getMove('R');
 		return ((RemovalMove)m).getRemovalIndex();
 	}
@@ -60,9 +55,62 @@ public class MCTSPlayer extends AbstractPlayer {
 				 game.getPlayerOneToPlace(), game.getPlayerTwoToPlace(), 
 				 game.getPlayerOneRemaining(), game.getPlayerTwoRemaining(), 
 				 game.getPhase(), game.getTurn(), game.getNextAction());
+	
+		setPlayedChilded();
+		recalculatePlayerFitness();
 		AbstractMove m = getMove('M');
 		IntPairInterface pair = new IntPair(((MovementMove)m).getFrom(),((MovementMove)m).getTo());
 		return pair;
+	}
+	
+	private void setPlayedChilded() {
+		if(playedChildred != null){
+			boolean found = false;
+			int i = 0;
+			while(!found && i < playedChildred.length){
+				if(playedChildred[i].move.getStatePostAction().equals(workingGame.getState())){
+					found = true;
+					opponentsPlay = playedChildred[i];
+				}
+				i++;
+			}
+			if(opponentsPlay != null && found){
+				System.out.println( "Opponent Played: " + "Rewards: " + opponentsPlay.rewards[0] + " | " + opponentsPlay.rewards[1] + ", after " + opponentsPlay.nVisits + " visits.");
+				
+				long stop = System.currentTimeMillis() + 1000;
+				
+				while(System.currentTimeMillis() < stop){		//while stop time not reached
+					mc = new MoveChecker(workingGame);
+					opponentsPlay.selectAction();						//begin searching.
+				}
+
+				
+				System.out.println( "AFTER SEARCH: Opponent Played: " + "Rewards: " + opponentsPlay.rewards[0] + " | " + opponentsPlay.rewards[1] + ", after " + opponentsPlay.nVisits + " visits.");
+			}
+		}
+	}
+	
+	private void recalculatePlayerFitness(){
+		int opponentID = 1;
+		if(getPlayerID() == 1){
+			opponentID = 2;
+		}
+		
+		if(opponentsPlay != null){
+			double opponentScore = opponentsPlay.rewards[opponentID - 1];
+			double ourScore = opponentsPlay.rewards[getPlayerID() - 1];
+				if(Math.max(opponentScore, ourScore) - Math.min(opponentScore, ourScore) > 15.0){
+				if(opponentsPlay.rewards[opponentID - 1] > opponentsPlay.rewards[getPlayerID() -1] && opponentFitness < 15.0){
+					opponentFitness += 1.0;
+				}else if(opponentsPlay.rewards[opponentID - 1] < opponentsPlay.rewards[getPlayerID() -1] && opponentFitness > 5.0){
+					opponentFitness -= 1.0;
+				}
+			}
+		}else if(opponentFitness < 15.0){
+			opponentFitness += 1.0;
+		}
+		System.out.println("Opponent Fitness: " + opponentFitness);
+		System.out.println("     Our Fitness: " + fitness);
 	}
 	
 	/**
@@ -94,7 +142,7 @@ public class MCTSPlayer extends AbstractPlayer {
 		}
 		root = new TreeNode(m, 0);
 		
-		long stop = System.currentTimeMillis() + 2000;		//Search for a set period of time. 
+		long stop = System.currentTimeMillis() + 5000;		//Search for a set period of time. 
 		
 		while(System.currentTimeMillis() < stop){		//while stop time not reached
 			mc = new MoveChecker(workingGame);
@@ -103,22 +151,123 @@ public class MCTSPlayer extends AbstractPlayer {
 		
 		//Determine the best move from the executed search. 
 		double bestValue = Double.NEGATIVE_INFINITY;
-		AbstractMove bestMove = null;
+		int count = 0;
+		System.out.println("SHOULD BE PRINTING CHILDREN");
+		workingGame.printDetails();
+		System.out.println("Children: " + root.children.length);
 		for(TreeNode child : root.children){
-			System.out.println("Rewards: " + child.rewards[0] + " | " + child.rewards[1] + ", after " + child.nVisits + " visits.");
-			
-			double value = child.rewards[getPlayerID() - 1 ] / child.nVisits;
-			if(value > bestValue){
-				bestValue = value;
-				bestMove = child.move;
+			System.out.println( "[" + count + "]" + "Rewards: " + child.rewards[0] + " | " + child.rewards[1] + ", after " + child.nVisits + " visits.");
+			count++;
+		}
+		
+		TreeNode bestNode = null;
+		int index = selectAppropriatePlay();
+		if(index == -1){
+			count = 0;
+			for(TreeNode child : root.children){
+				
+				double value = child.rewards[getPlayerID() - 1 ] / child.nVisits;
+				if(value > bestValue){
+					bestValue = value;
+					bestNode = child;
+					index = count;
+				}
+				count++;
 			}
 		}
-		return bestMove;
+		if(root.children[index].children != null){
+			playedChildred = root.children[index].children.clone();
+		}
+		System.out.println("Selected Child: " + index + " rewards: " + root.children[index].rewards[0] + " | " + root.children[index].rewards[1] + ", after " + root.children[index].nVisits + " visits.");
+//		fitness = opponentFitness;
+		return root.children[index].move;
+		
+	}
+	
+	private int selectAppropriatePlay(){
+		if(playedChildred != null){
+			if(fitness <= opponentFitness){
+				return selectNearestHighMatch();
+			}else{
+				return selectNearestLowMatch();
+			}
+		}
+		return -1;
+	}
+	
+	private int selectNearestHighMatch(){
+		int opponentID = 1;
+		if(getPlayerID() == 1){
+			opponentID = 2;
+		}
+		double difference = Double.POSITIVE_INFINITY;
+		int index = -1;
+		int count = 0;
+		if(opponentsPlay != null){
+			for (TreeNode child : root.children) {
+				if((opponentsPlay.rewards[getPlayerID() - 1] <= child.rewards[getPlayerID() - 1])){
+					if((child.rewards[getPlayerID() - 1] - opponentsPlay.rewards[getPlayerID() - 1]) < difference){
+						difference = child.rewards[getPlayerID() - 1] - opponentsPlay.rewards[getPlayerID() - 1];
+						index = count;
+					}
+				}
+				count++;
+			}
+		}
+		return index;
+	}
+	
+	private int selectNearestLowMatch(){
+		int opponentID = 1;
+		if(getPlayerID() == 1){
+			opponentID = 2;
+		}
+		double difference = Double.POSITIVE_INFINITY;
+		int index = -1;
+		int count = 0;
+		if(opponentsPlay != null){
+//			for (TreeNode child : root.children) {
+//				if((opponentsPlay.rewards[opponentID - 1] <= child.rewards[opponentID - 1])){
+//					if((opponentsPlay.rewards[opponentID - 1] - child.rewards[opponentID - 1]) < difference){
+//						difference = opponentsPlay.rewards[opponentID - 1] - child.rewards[opponentID - 1];
+//						index = count;
+//					}
+//				}
+//				count++;
+//			}
+			double worstValue = Double.POSITIVE_INFINITY;
+			for(TreeNode child : root.children){
+				
+				double value = child.rewards[getPlayerID() - 1 ] / child.nVisits;
+				if(value < worstValue){
+					worstValue = value;
+					index = count;
+				}
+				count++;
+			}
+		}else{
+			double worstValue = Double.POSITIVE_INFINITY;
+			for(TreeNode child : root.children){
+				
+				double value = child.rewards[getPlayerID() - 1 ] / child.nVisits;
+				if(value < worstValue){
+					worstValue = value;
+					index = count;
+				}
+				count++;
+			}
+		}
+		return index;
+	}
+
+	private TreeNode selectNearestMatch() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public String getName() {
-		return "MCTS (Working)";
+		return "Good Dad";
 	}
 	
 	/**
@@ -224,6 +373,7 @@ public class MCTSPlayer extends AbstractPlayer {
 				children[i] = new TreeNode(m, depth + 1);	//create a Tree Node.
 				i++;
 			}
+			
 		}
 
 		/**
@@ -327,6 +477,10 @@ public class MCTSPlayer extends AbstractPlayer {
 	@Override
 	public void reset() {
 		root = null;
+		playedChildred = null;
+		opponentFitness = 9.0;
+		fitness = 10.0;
+		opponentsPlay = null;
 	}
-	
+
 }

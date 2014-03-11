@@ -46,5 +46,7 @@ public abstract class AbstractPlayer implements Player {
 		}
 	}
 	
+	public abstract void reset();
+	
 	
 }

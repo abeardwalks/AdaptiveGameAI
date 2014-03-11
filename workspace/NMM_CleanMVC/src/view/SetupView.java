@@ -31,7 +31,7 @@ public class SetupView extends JPanel implements ActionListener{
 	private JLabel playerOneLabel, playerTwoLabel;
 	private JComboBox<String> playerOneSelect, playerTwoSelect;
 	private JButton start;
-	private JCheckBox toolTip;
+	private JCheckBox toolTip, testRig;
 	private Player playerOne, playerTwo;
 	private Image background;
 
@@ -66,6 +66,8 @@ public class SetupView extends JPanel implements ActionListener{
 		
 		toolTip = new JCheckBox("Tooltips");
 		toolTip.setBackground(Color.white);
+		testRig = new JCheckBox("Test Rig");
+		testRig.setBackground(Color.white);
 		
 		
 		fillView();
@@ -116,6 +118,10 @@ public class SetupView extends JPanel implements ActionListener{
 		toolTip.setBounds(360 + insets.left, 340 + insets.top, size.width, size.height);
 		this.add(toolTip);
 		
+		size = testRig.getPreferredSize();
+		testRig.setBounds(360 + insets.left, 370 + insets.top, size.width, size.height);
+		this.add(testRig);
+		
 	}
 
 
@@ -141,6 +147,10 @@ public class SetupView extends JPanel implements ActionListener{
 	
 	public boolean getShowToolTip(){
 		return toolTip.isSelected();
+	}
+	
+	public boolean getTestRig(){
+		return testRig.isSelected();
 	}
 
 

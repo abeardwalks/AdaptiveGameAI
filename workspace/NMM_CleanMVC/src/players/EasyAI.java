@@ -185,4 +185,7 @@ public class EasyAI extends AbstractPlayer {
 		return index;
 	}
 	
+	public void reset(){
+	}
+	
 }

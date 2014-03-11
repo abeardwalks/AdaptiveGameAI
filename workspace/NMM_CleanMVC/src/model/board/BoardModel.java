@@ -4,13 +4,21 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Stack;
 
-import utility.BoardManagement;
+import utility.MoveChecker;
+
 import model.Phase;
 import move.AbstractMove;
 import interfaces.BoardFacadeInterface;
 import interfaces.Player;
 
-public class Model extends Observable implements BoardFacadeInterface {
+/**
+ * The Concrete class that represents the board, i.e. the model. This class extends
+ * the Observable class and implements the BoardFacadeInterface.
+ * 
+ * @author Andrew White - BSc Software Engineering, 200939787
+ *
+ */
+public class BoardModel extends Observable implements BoardFacadeInterface {
 	
 	private String state;
 	private Stack<AbstractMove> history;				//the history of the game, this allows for moves to be undone. 
@@ -19,22 +27,14 @@ public class Model extends Observable implements BoardFacadeInterface {
 	private Phase phase;
 	private char turn;
 	private char nextAction;
-	private char trappedPlayer;
 	private boolean valid;
 	private boolean millMade;
 	
-	private Player playerOne, playerTwo;
 	
-	private BoardManagement manager;
-	
-	private double p1millcount;
-	private double p2millcount;
-	
-	private int gamesToPlay, gamesPlayed, playerOneWins, playerTwoWins;
-	
-	private boolean gameover;
-	
-	public Model(){
+	/**
+	 * Constructs a new BoardModel with data representative of a new game.
+	 */
+	public BoardModel(){
 		state = "NNNNNNNNNNNNNNNNNNNNNNNN";
 		history = new Stack<AbstractMove>();
 		
@@ -43,8 +43,6 @@ public class Model extends Observable implements BoardFacadeInterface {
 		playerOneRemaining = 9;
 		playerTwoRemaining = 9;
 		
-		p1millcount = 0;
-		p2millcount = 0;
 		phase = Phase.ONE;
 		
 		turn = 'R';
@@ -52,27 +50,29 @@ public class Model extends Observable implements BoardFacadeInterface {
 		valid = false;
 		millMade = false;
 		
-		manager = new BoardManagement(this);
-		
-		gamesToPlay = 0;
-		gamesPlayed = 0;
-		playerOneWins = 0;
-		playerTwoWins = 0;
-		
-		gameover = false;
 	}
 	
-	public Model(String state, int playerOneToPlace, int playerTwoToPlace, int playerOneRemaining, int playerTwoRemaining, Phase phase, int turn, boolean millMade, char nextAction){
+	/**
+	 * Constructs a new board model with passed in values, this is primarily used for test purposes and the MCTS. 
+	 * 
+	 * @param              state - The 24 character state string made up of the letters N | R | B.
+	 * @param   playerOneToPlace - The number of tokens player one has left to place.
+	 * @param   playerTwoToPlace - The number of tokens player two has left to place.
+	 * @param playerOneRemianing - The number of tokens player one has left in the game.
+	 * @param playerTwoRemaining - The number of tokens player two has left in the game.
+	 * @param              phase - The phase of the game. 
+	 * @param               turn - Whos turn it is. 
+	 */
+	public BoardModel(String state, int playerOneToPlace, int playerTwoToPlace, int playerOneRemianing, int playerTwoRemaining, Phase phase, int turn, char nextAction){
+		
 		this.state = state;
 		history = new Stack<AbstractMove>();
 		
 		this.playerOneToPlace = playerOneToPlace;
 		this.playerTwoToPlace = playerTwoToPlace;
-		this.playerOneRemaining = playerOneRemaining;
+		this.playerOneRemaining = playerOneRemianing;
 		this.playerTwoRemaining = playerTwoRemaining;
 		
-		p1millcount = 0;
-		p2millcount = 0;
 		this.phase = phase;
 		
 		if(turn == 1){
@@ -81,71 +81,82 @@ public class Model extends Observable implements BoardFacadeInterface {
 			this.turn = 'B';
 		}
 		
-		valid = false;
-		this.millMade = millMade;
 		this.nextAction = nextAction;
-		manager = new BoardManagement(this);
 		
-		gameover = false;
+	}
+	
+	public BoardModel(String state, int playerOneToPlace, int playerTwoToPlace, int playerOneRemianing, int playerTwoRemaining, Phase phase, int turn, char nextAction, AbstractMove move){
+		
+		this.state = state;
+		history = new Stack<AbstractMove>();
+		history.push(move);
+		
+		this.playerOneToPlace = playerOneToPlace;
+		this.playerTwoToPlace = playerTwoToPlace;
+		this.playerOneRemaining = playerOneRemianing;
+		this.playerTwoRemaining = playerTwoRemaining;
+		
+		this.phase = phase;
+		
+		if(turn == 1){
+			this.turn = 'R';
+		}else{
+			this.turn = 'B';
+		}
+		
+		this.nextAction = nextAction;
+		
 	}
 
 	@Override
+	/**
+	 * @param move - executes the passed in move on the board, storing it in the stack. 
+	 */
 	public void executeMove(AbstractMove move) {
-		int result = manager.resultOfMove(move);
-		if(result > -1){
-			history.push(move);
-			valid = true;
-			state = move.getStatePostAction();
-			switch (move.getAction()) {
-			case 'P':
-				if(move.getPlayerID() == 1){
-					playerOneToPlace--;
-				}else{
-					playerTwoToPlace--;
-				}
-				break;
-			case 'R':
-				if(move.getPlayerID() == 1){
-					playerTwoRemaining--;
-					p1millcount++;
-				}else{
-					playerOneRemaining--;
-					p2millcount++;
-				}
-				break;
-			case 'M':
-				break;
-			default:
-				break;
-			}
-			phase = manager.calculatePhase();
-			AbstractMove nextmove = manager.nextMove(move, result);
-			if(nextmove.getAction() == 'R'){
-				millMade = true;
+		
+		history.push(move);
+		state = move.getStatePostAction();
+		char action = move.getAction();
+		
+		switch (action) {
+		case 'P':
+			if(turn == 'R'){			//if player one placed a token...
+				playerOneToPlace--;		//...lower their placement count.
 			}else{
-				millMade = false;
-				setTurn();
+				playerTwoToPlace--;		//otherwise lower player twos account. 
 			}
-			nextAction = nextmove.getAction();
-		}else{
-			valid = false;
+			break;
+		case 'R':
+			if(turn == 'R'){			//if player one removed a token...
+				playerTwoRemaining--;	//...lower the number of tokens player two has remaining. 
+			}else{
+				playerOneRemaining--;	//otherwise lower player one tokens remaining.
+			}
+			break;
+		case 'M':
+			break;
+		default:
+			break;
 		}
 		
+		//Notify Observers. 
 		setChanged();
 		notifyObservers();
 	}
 	
-	@Override
-	public boolean validMove() {
+	
+	public boolean validMove(){
 		return valid;
 	}
-
-	@Override
-	public boolean millMade() {
+	
+	public boolean millMade(){
 		return millMade;
 	}
-
+	
 	@Override
+	/**
+	 * Undoes the last executed move. 
+	 */
 	public void undo() {
 		AbstractMove move = history.pop();		//pop the last executed move from the history stack. 
 		
@@ -166,14 +177,11 @@ public class Model extends Observable implements BoardFacadeInterface {
 		case 'R':
 			if(playerID == 1){
 				playerTwoRemaining++;
-				p1millcount--;
 				turn = move.getPlayerColour();
 			}else{
 				playerOneRemaining++;
-				p2millcount--;
 				turn = move.getPlayerColour();
 			}
-			millMade = true;
 			break;
 		case 'M':
 			turn = move.getPlayerColour();
@@ -181,13 +189,12 @@ public class Model extends Observable implements BoardFacadeInterface {
 		default:
 			break;
 		}
-		nextAction = move.getAction();
-		phase = manager.calculatePhase();
+		
 		//notify observers
 		setChanged();
 		notifyObservers();
 	}
-
+	
 	@Override
 	public void setTurn() {
 		if(turn == 'R'){
@@ -196,26 +203,19 @@ public class Model extends Observable implements BoardFacadeInterface {
 			turn = 'R';
 		}
 		
-//		//notify observers
-//		setChanged();
-//		notifyObservers();
+		//notify observers
+		setChanged();
+		notifyObservers();
 	}
 	
-	
-
 	@Override
 	public void setPhase(Phase phase) {
-		//TODO: Do we need this anymore?
-	}
-
-	@Override
-	public void setNextAction(char action) {
-		this.nextAction = action;
+		this.phase = phase;
 	}
 
 	@Override
 	public void reset() {
-
+		
 		state = "NNNNNNNNNNNNNNNNNNNNNNNN";
 		history = new Stack<AbstractMove>();
 		
@@ -229,17 +229,11 @@ public class Model extends Observable implements BoardFacadeInterface {
 		turn = 'R';
 		nextAction = 'P';
 		valid = false;
-		millMade = false;
-		gameover = false;
+		
 		setChanged();
 		notifyObservers();
 	}
-	
-	@Override
-	public void setTrappedPlayer(char trappedPlayer) {
-		this.trappedPlayer = trappedPlayer;
-	}
-	
+
 	@Override
 	public String getState() {
 		return state;
@@ -267,9 +261,6 @@ public class Model extends Observable implements BoardFacadeInterface {
 
 	@Override
 	public Phase getPhase() {
-		if(!manager.playersCanMove()){
-			phase = Phase.FOUR;
-		}
 		return phase;
 	}
 
@@ -284,33 +275,18 @@ public class Model extends Observable implements BoardFacadeInterface {
 
 	@Override
 	public boolean gameWon() {
-		if(gameover){
-			return true;
-		}
 		if(playerOneRemaining == 2 || playerTwoRemaining == 2 || phase == Phase.FOUR){
-			if(playerOneRemaining == 2 || trappedPlayer == 'R'){
-				playerTwoWins++;
-			}else{
-				playerOneWins++;
-			}
-			gameover = true;
-			gamesPlayed++;
 			return true;
 		}else{
 			return false;
 		}
 	}
-	
-	@Override
-	public char getNextAction() {
-		return nextAction;
-	}
-	
+
 	@Override
 	public double[] getRewards() {
 		
 		double[] rewards = new double[2];
-		
+	
 		if(playerOneRemaining < 3){			//if Player One has lost...
 			rewards[0] = 0.0;				
 			rewards[1] = 1.0;				//...give player 2 a point.
@@ -327,8 +303,7 @@ public class Model extends Observable implements BoardFacadeInterface {
 			rewards[0] = 0.0;		
 			rewards[1] = 0.5;											//give them 0.5
 		}
-		rewards[0] += p1millcount;
-		rewards[0] += p2millcount;
+		
 		if(trappedPlayer == 'R'){			//if player 1 is trapped...
 			rewards[0] = 0.0;
 			rewards[1] = 1.0;				//...give player two 1 point.
@@ -339,7 +314,7 @@ public class Model extends Observable implements BoardFacadeInterface {
 		
 		return rewards;
 	}
-	
+
 	@Override
 	public void printDetails() {
 		System.out.println("-------------- Board Details ---------------------");
@@ -349,66 +324,84 @@ public class Model extends Observable implements BoardFacadeInterface {
 		System.out.println("P1 TR: " + playerOneRemaining);
 		System.out.println("P2 TR: " + playerTwoRemaining);
 		System.out.println("Phase: " + phase);
-		System.out.println("Turn: " + turn);
-		System.out.println("Mill Made? " + millMade);
-		System.out.println("Next Action: " + nextAction);
-		System.out.println("Players can Move: " + manager.playersCanMove());
 		System.out.println("--------------------------------------------------");
 	}
-	
-	public List<AbstractMove> getAllPossibleMoves(){
-		
-		switch (nextAction) {
-		case 'P':
-			return manager.getAllPossiblePlacements(turn);
-		case 'R':
-			return manager.getAllPossibleRemovals(turn);
-		case 'M':
-			return manager.getAllPossibleMovements(turn);
-		default:
-			break;
-		}
-		
-		return null;
-	}
+
+	private char trappedPlayer;
 	
 	@Override
+	public void setTrappedPlayer(char c) {
+		trappedPlayer = c;
+	}
+	
+	public char getTrappedPlayer(){
+		return trappedPlayer;
+	}
+
+	@Override
+	public void setNextAction(char action) {
+		this.nextAction = action;
+		setChanged();
+		notifyObservers();
+	}
+
+	@Override
+	public char getNextAction() {
+		return nextAction;
+	}
+
+
+	@Override
+	public Player getPlayerOne() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Player getPlayerTwo() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
 	public void setPlayers(Player playerOne, Player playerTwo) {
-		this.playerOne = playerOne;
-		this.playerTwo = playerTwo;
+		// TODO Auto-generated method stub
+		
 	}
-	
-	public Player getPlayerOne(){
-		return playerOne;
-	}
-	
-	public Player getPlayerTwo(){
-		return playerTwo;
+
+	@Override
+	public List<AbstractMove> getAllPossibleMoves() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public int getGamesPlayed() {
-		return gamesPlayed;
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 	@Override
 	public int getGamesToPlay() {
-		return gamesToPlay;
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 	@Override
 	public int getPlayerOneWins() {
-		return playerOneWins;
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 	@Override
 	public int getPlayerTwoWins() {
-		return playerTwoWins;
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 	@Override
 	public void setGamesToPlay(int gamesToPlay) {
-		this.gamesToPlay = gamesToPlay;
+		// TODO Auto-generated method stub
+		
 	}
-	
 }
