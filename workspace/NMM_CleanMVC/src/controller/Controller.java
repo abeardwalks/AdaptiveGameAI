@@ -145,7 +145,7 @@ public class Controller {
 	}
 	
 	private void testPlay() {
-		model.setGamesToPlay(10);
+		model.setGamesToPlay(100);
 		while(model.getGamesPlayed() < model.getGamesToPlay()){
 			while(!model.gameWon()){
 				if(!player1.getName().equals("Human")){
