@@ -149,9 +149,11 @@ public class Controller {
 	}
 	
 	private void testPlay() {
+
 		model.setGamesToPlay(10);
 		writer = new Writer((BoardDetailsInterface) model);
 		((Observable) model).addObserver(writer);
+
 		while(model.getGamesPlayed() < model.getGamesToPlay()){
 			while(!model.gameWon()){
 				if(!player1.getName().equals("Human")){
