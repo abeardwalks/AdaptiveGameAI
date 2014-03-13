@@ -1,6 +1,6 @@
 package data.recorder;
 
-import interfaces.BoardDetailsInterface;
+import interfaces.BoardViewInterface;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -15,7 +15,7 @@ import java.util.Observer;
 public class Writer implements Observer{
 	
 	private int lineNumber;
-	private BoardDetailsInterface model;
+	private BoardViewInterface model;
 	private BufferedWriter bufferwriter;
 	
 	private BufferedReader reader;
@@ -26,7 +26,7 @@ public class Writer implements Observer{
 	private String HEADER = "src/header.txt";
 	
 	
-	public Writer(BoardDetailsInterface model){
+	public Writer(BoardViewInterface model){
 		this.model = model;
 		lineNumber = 0;
 		

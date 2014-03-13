@@ -1,6 +1,6 @@
 package view;
 
-import interfaces.BoardDetailsInterface;
+import interfaces.BoardViewInterface;
 import interfaces.BoardFacadeInterface;
 
 import java.awt.Color;
@@ -21,6 +21,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 import players.Human;
+import players.IntPair;
 
 import utility.NodeFinder;
 
@@ -57,11 +58,13 @@ public class PlayingView extends JPanel implements Observer {
 	private boolean showToolTip;
 	private String toolTip;
 	
-	private BoardDetailsInterface model;
+	private BoardViewInterface model;
 	
 	private boolean playerOneHuman, playerTwoHuman;
+
+	private int dragCandidate;
 	
-	public PlayingView(BoardDetailsInterface model){
+	public PlayingView(BoardViewInterface model){
 		super();
 		setOpaque(false);
 		setSize(800,650);
@@ -84,10 +87,9 @@ public class PlayingView extends JPanel implements Observer {
 			playerTwoHuman = true;
 		}
 		
-		intializeCordinates();
-		initializeBeingDragged();
-		
 		toolTip = "Player One (Orange) to place, click an empty node to play...";
+		
+		finder = new NodeFinder();
 		
 		try {
 			board = ImageIO.read(new File("src/NineMensMorris.jpg"));
@@ -135,273 +137,42 @@ public class PlayingView extends JPanel implements Observer {
 		
 		char[] nodes = gs.toCharArray();
 		
-		if(nodes[0] == 'R' && !bd0){
-			g2.setColor(p1.darker());
-			g2.fillOval(x0, y0, tokenWidth, tokenWidth);
-			g2.setColor(p1);
-			g2.fillOval(x0 + 5, y0 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[0] == 'B' && !bd0){
-			g2.setColor(p2.darker());
-			g2.fillOval(x0, y0, tokenWidth, tokenWidth);
-			g2.setColor(p2);
-			g2.fillOval(x0 + 5, y0 + 5, tokenWidth - 10, tokenWidth - 10);
+		int node = 0;
+		for (char n : model.getState().toCharArray()) {
+			IntPair cords = finder.getCordinates(node);
+			int x = cords.getFirstInt();
+			int y = cords.getSecondInt();
+			if(n == 'R' && (dragCandidate != node)){
+				g.setColor(p1.darker());
+				g.fillOval(x, y, tokenWidth, tokenWidth);
+				g.setColor(p1);
+				g.fillOval(x + 5, y + 5, tokenWidth - 10, tokenWidth - 10);
+			} else if(n == 'B' && dragCandidate != node){
+				g.setColor(p2.darker());
+				g.fillOval(x, y, tokenWidth, tokenWidth);
+				g.setColor(p2);
+				g.fillOval(x + 5, y + 5, tokenWidth - 10, tokenWidth - 10);
+			}
+			node++;
 		}
 		
-		if(nodes[1] == 'R' && !bd1){
-			g2.setColor(p1.darker());
-			g2.fillOval(x1, y0, tokenWidth, tokenWidth);
-			g2.setColor(p1);
-			g2.fillOval(x1 + 5, y0 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[1] == 'B' && !bd1){
-			g2.setColor(p2.darker());
-			g2.fillOval(x1, y0, tokenWidth, tokenWidth);
-			g2.setColor(p2);
-			g2.fillOval(x1 + 5, y0 + 5, tokenWidth - 10, tokenWidth - 10);
-		}
-		if(nodes[2] == 'R' && !bd2){
-			g2.setColor(p1.darker());
-			g2.fillOval(x2, y0, tokenWidth, tokenWidth);
-			g2.setColor(p1);
-			g2.fillOval(x2 + 5, y0 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[2] == 'B' && !bd2){
-			g2.setColor(p2.darker());
-			g2.fillOval(x2, y0, tokenWidth, tokenWidth);
-			g2.setColor(p2);
-			g2.fillOval(x2 + 5, y0 + 5, tokenWidth - 10, tokenWidth - 10);
-		}
-		if(nodes[3] == 'R' && !bd3){
-			g2.setColor(p1.darker());
-			g2.fillOval(x3, y1, tokenWidth, tokenWidth);
-			g2.setColor(p1);
-			g2.fillOval(x3 + 5, y1 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[3] == 'B' && !bd3){
-			g2.setColor(p2.darker());
-			g2.fillOval(x3, y1, tokenWidth, tokenWidth);
-			g2.setColor(p2);
-			g2.fillOval(x3 + 5, y1 + 5, tokenWidth - 10, tokenWidth - 10);
-		}
-		if(nodes[4] == 'R' && !bd4){
-			g2.setColor(p1.darker());
-			g2.fillOval(x1, y1, tokenWidth, tokenWidth);
-			g2.setColor(p1);
-			g2.fillOval(x1 + 5, y1 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[4] == 'B' && !bd4){
-			g2.setColor(p2.darker());
-			g2.fillOval(x1, y1, tokenWidth, tokenWidth);
-			g2.setColor(p2);
-			g2.fillOval(x1 + 5, y1 + 5, tokenWidth - 10, tokenWidth - 10);
-		}
-		if(nodes[5] == 'R' && !bd5){
-			g2.setColor(p1.darker());
-			g2.fillOval(x4, y1, tokenWidth, tokenWidth);
-			g2.setColor(p1);
-			g2.fillOval(x4 + 5, y1 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[5] == 'B' && !bd5){
-			g2.setColor(p2.darker());
-			g2.fillOval(x4, y1, tokenWidth, tokenWidth);
-			g2.setColor(p2);
-			g2.fillOval(x4 + 5, y1 + 5, tokenWidth - 10, tokenWidth - 10);
-		}
-		if(nodes[6] == 'R' && !bd6){
-			g2.setColor(p1.darker());
-			g2.fillOval(x5, y2, tokenWidth, tokenWidth);
-			g2.setColor(p1);
-			g2.fillOval(x5 + 5, y2 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[6] == 'B' && !bd6){
-			g2.setColor(p2.darker());
-			g2.fillOval(x5, y2, tokenWidth, tokenWidth);
-			g2.setColor(p2);
-			g2.fillOval(x5 + 5, y2 + 5, tokenWidth - 10, tokenWidth - 10);
-		}
-		if(nodes[7] == 'R' && !bd7){
-			g2.setColor(p1.darker());
-			g2.fillOval(x1, y2, tokenWidth, tokenWidth);
-			g2.setColor(p1);
-			g2.fillOval(x1 + 5, y2 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[7] == 'B' && !bd7){
-			g2.setColor(p2.darker());
-			g2.fillOval(x1, y2, tokenWidth, tokenWidth);
-			g2.setColor(p2);
-			g2.fillOval(x1 + 5, y2 + 5, tokenWidth - 10, tokenWidth - 10);
-		}
-		if(nodes[8] == 'R' && !bd8){
-			g2.setColor(p1.darker());
-			g2.fillOval(x6, y2, tokenWidth, tokenWidth);
-			g2.setColor(p1);
-			g2.fillOval(x6 + 5, y2 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[8] == 'B' && !bd8){
-			g2.setColor(p2.darker());
-			g2.fillOval(x6, y2, tokenWidth, tokenWidth);
-			g2.setColor(p2);
-			g2.fillOval(x6 + 5, y2 + 5, tokenWidth - 10, tokenWidth - 10);
-		}
-		if(nodes[9] == 'R' && !bd9){
-			g2.setColor(p1.darker());
-			g2.fillOval(x0, y3, tokenWidth, tokenWidth);
-			g2.setColor(p1);
-			g2.fillOval(x0 + 5, y3 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[9] == 'B' && !bd9){
-			g2.setColor(p2.darker());
-			g2.fillOval(x0, y3, tokenWidth, tokenWidth);
-			g2.setColor(p2);
-			g2.fillOval(x0 + 5, y3 + 5, tokenWidth - 10, tokenWidth - 10);
-		}
-		if(nodes[10] == 'R' && !bd10){
-			g2.setColor(p1.darker());
-			g2.fillOval(x3, y3, tokenWidth, tokenWidth);
-			g2.setColor(p1);
-			g2.fillOval(x3 + 5, y3 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[10] == 'B' && !bd10){
-			g2.setColor(p2.darker());
-			g2.fillOval(x3, y3, tokenWidth, tokenWidth);
-			g2.setColor(p2);
-			g2.fillOval(x3 + 5, y3 + 5, tokenWidth - 10, tokenWidth - 10);
-		}
-		if(nodes[11] == 'R' && !bd11){
-			g2.setColor(p1.darker());
-			g2.fillOval(x5, y3, tokenWidth, tokenWidth);
-			g2.setColor(p1);
-			g2.fillOval(x5 + 5, y3 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[11] == 'B' && !bd11){
-			g2.setColor(p2.darker());
-			g2.fillOval(x5, y3, tokenWidth, tokenWidth);
-			g2.setColor(p2);
-			g2.fillOval(x5 + 5, y3 + 5, tokenWidth - 10, tokenWidth - 10);
-		}
-		if(nodes[12] == 'R' && !bd12){
-			g2.setColor(p1.darker());
-			g2.fillOval(x6, y3, tokenWidth, tokenWidth);
-			g2.setColor(p1);
-			g2.fillOval(x6 + 5, y3 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[12] == 'B' && !bd12){
-			g2.setColor(p2.darker());
-			g2.fillOval(x6, y3, tokenWidth, tokenWidth);
-			g2.setColor(p2);
-			g2.fillOval(x6 + 5, y3 + 5, tokenWidth - 10, tokenWidth - 10);
-		}
-		if(nodes[13] == 'R' && !bd13){
-			g2.setColor(p1.darker());
-			g2.fillOval(x4, y3, tokenWidth, tokenWidth);
-			g2.setColor(p1);
-			g2.fillOval(x4 + 5, y3 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[13] == 'B' && !bd13){
-			g2.setColor(p2.darker());
-			g2.fillOval(x4, y3, tokenWidth, tokenWidth);
-			g2.setColor(p2);
-			g2.fillOval(x4 + 5, y3 + 5, tokenWidth - 10, tokenWidth - 10);
-		}
-		if(nodes[14] == 'R' && !bd14){
-			g2.setColor(p1.darker());
-			g2.fillOval(x2, y3, tokenWidth, tokenWidth);
-			g2.setColor(p1);
-			g2.fillOval(x2 + 5, y3 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[14] == 'B' && !bd14){
-			g2.setColor(p2.darker());
-			g2.fillOval(x2, y3, tokenWidth, tokenWidth);
-			g2.setColor(p2);
-			g2.fillOval(x2 + 5, y3 + 5, tokenWidth - 10, tokenWidth - 10);
-		}
-		if(nodes[15] == 'R' && !bd15){
-			g2.setColor(p1.darker());
-			g2.fillOval(x5, y4, tokenWidth, tokenWidth);
-			g2.setColor(p1);
-			g2.fillOval(x5 + 5, y4 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[15] == 'B' && !bd15){
-			g2.setColor(p2.darker());
-			g2.fillOval(x5, y4, tokenWidth, tokenWidth);
-			g2.setColor(p2);
-			g2.fillOval(x5 + 5, y4 + 5, tokenWidth - 10, tokenWidth - 10);
-		}
-		if(nodes[16] == 'R' && !bd16){
-			g2.setColor(p1.darker());
-			g2.fillOval(x1, y4, tokenWidth, tokenWidth);
-			g2.setColor(p1);
-			g2.fillOval(x1 + 5, y4 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[16] == 'B' && !bd16){
-			g2.setColor(p2.darker());
-			g2.fillOval(x1, y4, tokenWidth, tokenWidth);
-			g2.setColor(p2);
-			g2.fillOval(x1 + 5, y4 + 5, tokenWidth - 10, tokenWidth - 10);
-		}
-		if(nodes[17] == 'R' && !bd17){
-			g2.setColor(p1.darker());
-			g2.fillOval(x6, y4, tokenWidth, tokenWidth);
-			g2.setColor(p1);
-			g2.fillOval(x6 + 5, y4 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[17] == 'B' && !bd17){
-			g2.setColor(p2.darker());
-			g2.fillOval(x6, y4, tokenWidth, tokenWidth);
-			g2.setColor(p2);
-			g2.fillOval(x6 + 5, y4 + 5, tokenWidth - 10, tokenWidth - 10);
-		}
-		if(nodes[18] == 'R' && !bd18){
-			g2.setColor(p1.darker());
-			g2.fillOval(x3, y5, tokenWidth, tokenWidth);
-			g2.setColor(p1);
-			g2.fillOval(x3 + 5, y5 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[18] == 'B' && !bd18){
-			g2.setColor(p2.darker());
-			g2.fillOval(x3, y5, tokenWidth, tokenWidth);
-			g2.setColor(p2);
-			g2.fillOval(x3 + 5, y5 + 5, tokenWidth - 10, tokenWidth - 10);
-		}
-		if(nodes[19] == 'R' && !bd19){
-			g2.setColor(p1.darker());
-			g2.fillOval(x1, y5, tokenWidth, tokenWidth);
-			g2.setColor(p1);
-			g2.fillOval(x1 + 5, y5 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[19] == 'B' && !bd19){
-			g2.setColor(p2.darker());
-			g2.fillOval(x1, y5, tokenWidth, tokenWidth);
-			g2.setColor(p2);
-			g2.fillOval(x1 + 5, y5 + 5, tokenWidth - 10, tokenWidth - 10);
-		}
-		if(nodes[20] == 'R' && !bd20){
-			g2.setColor(p1.darker());
-			g2.fillOval(x4, y5, tokenWidth, tokenWidth);
-			g2.setColor(p1);
-			g2.fillOval(x4 + 5, y5 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[20] == 'B' && !bd20){
-			g2.setColor(p2.darker());
-			g2.fillOval(x4, y5, tokenWidth, tokenWidth);
-			g2.setColor(p2);
-			g2.fillOval(x4 + 5, y5 + 5, tokenWidth - 10, tokenWidth - 10);
-		}
-		if(nodes[21] == 'R' && !bd21){
-			g2.setColor(p1.darker());
-			g2.fillOval(x0, y6, tokenWidth, tokenWidth);
-			g2.setColor(p1);
-			g2.fillOval(x0 + 5, y6 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[21] == 'B' && !bd21){
-			g2.setColor(p2.darker());
-			g2.fillOval(x0, y6, tokenWidth, tokenWidth);
-			g2.setColor(p2);
-			g2.fillOval(x0 + 5, y6 + 5, tokenWidth - 10, tokenWidth - 10);
-		}
-		if(nodes[22] == 'R' && !bd22){
-			g2.setColor(p1.darker());
-			g2.fillOval(x1, y6, tokenWidth, tokenWidth);
-			g2.setColor(p1);
-			g2.fillOval(x1 + 5, y6 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[22] == 'B' && !bd22){
-			g2.setColor(p2.darker());
-			g2.fillOval(x1, y6, tokenWidth, tokenWidth);
-			g2.setColor(p2);
-			g2.fillOval(x1 + 5, y6 + 5, tokenWidth - 10, tokenWidth - 10);
-		}
-		if(nodes[23] == 'R' && !bd23){
-			g2.setColor(p1.darker());
-			g2.fillOval(x2, y6, tokenWidth, tokenWidth);
-			g2.setColor(p1);
-			g2.fillOval(x2 + 5, y6 + 5, tokenWidth - 10, tokenWidth - 10);
-		} else if(nodes[23] == 'B' && !bd23){
-			g2.setColor(p2.darker());
-			g2.fillOval(x2, y6, tokenWidth, tokenWidth);
-			g2.setColor(p2);
-			g2.fillOval(x2 + 5, y6 + 5, tokenWidth - 10, tokenWidth - 10);
+		if(dragging && model.getNextAction() == 'M'){
+			System.out.println("DRAGGING: " + x + ", " + y);
+			if(model.getTurn() == 1){
+				g.setColor(p1.darker());
+				g.fillOval(x - (tokenWidth/2), y - (tokenWidth/2), tokenWidth, tokenWidth);
+				g.setColor(p1);
+				g.fillOval(x + 5 - (tokenWidth/2), y + 5 - (tokenWidth/2), tokenWidth - 10, tokenWidth - 10);
+			}else if(model.getTurn() == 2){
+				g.setColor(p2.darker());
+				g.fillOval(x - (tokenWidth/2), y - (tokenWidth/2), tokenWidth, tokenWidth);
+				g.setColor(p2);
+				g.fillOval(x + 5 - (tokenWidth/2), y + 5 - (tokenWidth/2), tokenWidth - 10, tokenWidth - 10);
+			}
+			
 		}
 		
-			g2.setColor(Color.black);
+		g2.setColor(Color.black);
 		if(model.getTurn() == 1){
 			g2.fillOval(35, 540, tokenWidth, tokenWidth);
 			g2.setColor(Color.gray);
@@ -416,23 +187,13 @@ public class PlayingView extends JPanel implements Observer {
 			g2.drawString(toolTip, 25, 630);
 		}
 		
-		if(dragging && model.getNextAction() == 'M'){
-			if(token == 'R'){
-				g2.setColor(p1.darker());
-				g2.fillOval(x - (tokenWidth/2), y - (tokenWidth/2), tokenWidth, tokenWidth);
-				g2.setColor(p1);
-				g2.fillOval(x + 5 - (tokenWidth/2), y + 5 - (tokenWidth/2), tokenWidth - 10, tokenWidth - 10);
-			}else if(token == 'B'){
-				g2.setColor(p2.darker());
-				g2.fillOval(x - (tokenWidth/2), y - (tokenWidth/2), tokenWidth, tokenWidth);
-				g2.setColor(p2);
-				g2.fillOval(x + 5 - (tokenWidth/2), y + 5 - (tokenWidth/2), tokenWidth - 10, tokenWidth - 10);
-			}
-			
-		}
-		
 		super.paint(g2);
 		
+	}
+	
+	public Graphics2D paintTokens(Graphics2D g){
+		
+		return g;
 	}
 
 	@Override
@@ -484,71 +245,21 @@ public class PlayingView extends JPanel implements Observer {
 		repaint();
 	}
 	
-	private void intializeCordinates() {
-		x0 = 102;
-		x1 = 375;
-		x2 = 647;
-		x3 = 193;
-		x4 = 557;
-		x5 = 285;
-		x6 = 465;
-		
-		y0 = 7;
-		y1 = 97;
-		y2 = 188;
-		y3 = 281;
-		y4 = 371;
-		y5 = 462;
-		y6 = 552;
-	}
 	
-	private void initializeBeingDragged() {
-		 bd0 = false;
-		 bd1 = false;
-		 bd2 = false;
-		 bd3 = false;
-		 bd4 = false;
-		 bd5 = false;
-		 bd6 = false;
-		 bd7 = false;
-		 bd8 = false; 
-		 bd9 = false;
-		bd10 = false; 
-		bd11 = false;
-		bd12 = false;
-		bd13 = false;
-		bd14 = false;
-		bd15 = false;
-		bd16 = false;
-		bd17 = false;
-		bd18 = false;
-		bd19 = false;
-		bd20 = false;
-		bd21 = false;
-		bd22 = false;
-		bd23 = false;
-	}
 
 	private boolean dragging;
 	private int x, y;
 	private char token;
+	private NodeFinder finder;
 	
 	private class PlayerViewMouseListener implements  MouseMotionListener, MouseListener {
-		
-		
-		private NodeFinder finder;
-		private int node;
-		
+				
 		public PlayerViewMouseListener(){
-			finder = new NodeFinder();
 			dragging = false;
 		}
 		
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			if((playerOneHuman && (model.getTurn() == 1)) || (playerTwoHuman && (model.getTurn() == 2))){
-				dragging = true;
-			}
 			if(model.getNextAction() == 'M'){
 				x = e.getX();
 				y = e.getY();
@@ -575,82 +286,7 @@ public class PlayingView extends JPanel implements Observer {
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			dragging = false;
-			switch (node) {
-			case 0:
-				bd0 = false;
-				break;
-			case 1:
-				bd1 = false;
-				break;
-			case 2:
-				bd2 = false;
-				break;
-			case 3:
-				bd3 = false;
-				break;
-			case 4:
-				bd4 = false;
-				break;
-			case 5:
-				bd5 = false;
-				break;
-			case 6:
-				bd6 = false;
-				break;
-			case 7:
-				bd7 = false;
-				break;
-			case 8:
-				bd8 = false;
-				break;
-			case 9:
-				bd9 = false;
-				break;
-			case 10:
-				bd10 = false;
-				break;
-			case 11:
-				bd11 = false;
-				break;
-			case 12:
-				bd12 = false;
-				break;
-			case 13:
-				bd13 = false;
-				break;
-			case 14:
-				bd14 = false;
-				break;
-			case 15:
-				bd15 = false;
-				break;
-			case 16:
-				bd16 = false;
-				break;
-			case 17:
-				bd17 = false;
-				break;
-			case 18:
-				bd18 = false;
-				break;
-			case 19:
-				bd19 = false;
-				break;
-			case 20:
-				bd20 = false;
-				break;
-			case 21:
-				bd21 = false;
-				break;
-			case 22:
-				bd22 = false;
-				break;
-			case 23:
-				bd23 = false;
-				break;
-			default:
-				break;
-			}
+			dragCandidate = -1;
 			repaint();
 		}
 
@@ -658,87 +294,20 @@ public class PlayingView extends JPanel implements Observer {
 		public void mousePressed(MouseEvent e) {
 			x = e.getX();
 			y = e.getY();
-			node = finder.getNode(x, y);
-			if(node != -1){
-				token = model.getState().charAt(node);
-				dragging = true;
+			char dragTokens = 'R';
+			if(model.getTurn() == 2){
+				dragTokens = 'B';
 			}
 			
-			switch (node) {
-			case 0:
-				bd0 = true;
-				break;
-			case 1:
-				bd1 = true;
-				break;
-			case 2:
-				bd2 = true;
-				break;
-			case 3:
-				bd3 = true;
-				break;
-			case 4:
-				bd4 = true;
-				break;
-			case 5:
-				bd5 = true;
-				break;
-			case 6:
-				bd6 = true;
-				break;
-			case 7:
-				bd7 = true;
-				break;
-			case 8:
-				bd8 = true;
-				break;
-			case 9:
-				bd9 = true;
-				break;
-			case 10:
-				bd10 = true;
-				break;
-			case 11:
-				bd11 = true;
-				break;
-			case 12:
-				bd12 = true;
-				break;
-			case 13:
-				bd13 = true;
-				break;
-			case 14:
-				bd14 = true;
-				break;
-			case 15:
-				bd15 = true;
-				break;
-			case 16:
-				bd16 = true;
-				break;
-			case 17:
-				bd17 = true;
-				break;
-			case 18:
-				bd18 = true;
-				break;
-			case 19:
-				bd19 = true;
-				break;
-			case 20:
-				bd20 = true;
-				break;
-			case 21:
-				bd21 = true;
-				break;
-			case 22:
-				bd22 = true;
-				break;
-			case 23:
-				bd23 = true;
-				break;
-			default:
-				break;
+			dragCandidate = finder.getNode(x, y);
+			if(dragCandidate != -1){
+				token = model.getState().charAt(dragCandidate);
+				if(token == dragTokens){
+					dragging = true;
+				}else{
+					dragging = false;
+					dragCandidate = -1;
+				}
 			}
 		}
 	}

@@ -6,9 +6,16 @@ public interface BoardModelSharedMethodsInterface {
 	
 	boolean gameWon();
 	
+	/**
+	 * @return True if the last move executed was valid, false otherwise.
+	 */
+	boolean validMove();
+	
+	/**
+	 * @return True if the last move executed created a mill, false otherwise.
+	 */
 	boolean millMade();
 	
-	boolean validMove();
 	
 	int getTurn();
 	
@@ -17,12 +24,6 @@ public interface BoardModelSharedMethodsInterface {
 	 */
 	Phase getPhase();
 	
-	/**
-	 * Returns a String of 24 characters that represents the board.
-	 * 
-	 * @return - The state of the board.
-	 */
-	String getState();
 	
 	int getGamesPlayed();
 	

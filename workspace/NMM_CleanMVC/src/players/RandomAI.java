@@ -2,7 +2,7 @@ package players;
 
 import java.util.Random;
 
-import interfaces.BoardDetailsInterface;
+import interfaces.BoardViewInterface;
 import interfaces.IntPairInterface;
 
 public class RandomAI extends AbstractPlayer {
@@ -10,7 +10,7 @@ public class RandomAI extends AbstractPlayer {
 	private Random rdm = new Random();
 	
 	@Override
-	public int placeToken(BoardDetailsInterface game) {
+	public int placeToken(BoardViewInterface game) {
 		char[] stateArray = game.getState().toCharArray();
 		boolean found = false;
 		int index = 0;
@@ -23,7 +23,7 @@ public class RandomAI extends AbstractPlayer {
 		return index;
 	}
 	@Override
-	public int removeToken(BoardDetailsInterface game) {
+	public int removeToken(BoardViewInterface game) {
 		char[] stateArray = game.getState().toCharArray();
 		boolean found = false;
 		int index = 0;
@@ -36,7 +36,7 @@ public class RandomAI extends AbstractPlayer {
 		return index;
 	}
 	@Override
-	public IntPairInterface moveToken(BoardDetailsInterface game) {
+	public IntPairInterface moveToken(BoardViewInterface game) {
 		char[] stateArray = game.getState().toCharArray();
 		boolean found = false;
 		int positionFrom = 0;

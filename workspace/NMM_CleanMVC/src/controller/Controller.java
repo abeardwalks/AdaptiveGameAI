@@ -28,7 +28,7 @@ import view.PlayingView;
 import view.SetupView;
 import view.TestView;
 import interfaces.BoardControllerInterface;
-import interfaces.BoardDetailsInterface;
+import interfaces.BoardViewInterface;
 import interfaces.BoardFacadeInterface;
 import interfaces.IntPairInterface;
 import interfaces.Player;
@@ -65,7 +65,7 @@ public class Controller {
 		setupView = new SetupView(new SetupActionListener(), players1, players2);
 		primaryView.add(setupView);
 		
-		gameView = new PlayingView((BoardDetailsInterface) model);
+		gameView = new PlayingView((BoardViewInterface) model);
 		gameView.addMouseListener(new HumanMouseListener());
 		gameView.addKeyListener(new HumanKeyListener());
 		gameView.setFocusable(true);
@@ -74,7 +74,7 @@ public class Controller {
 		paused = false;
 		started = false;
 		
-		testView = new TestView((BoardDetailsInterface) model);
+		testView = new TestView((BoardViewInterface) model);
 		
 		((Observable) model).addObserver(gameView);
 		((Observable) model).addObserver(testView);
@@ -122,56 +122,42 @@ public class Controller {
 	
 	private void play() {
 		while(!model.gameWon()){
-			if(!player1.getName().equals("Human")){
-				try {
-					Thread.sleep(2000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+			try {
+				Thread.sleep(2000);
 				if(model.getTurn() == 1 && !model.gameWon()){
-					executeMove(player1, (BoardFacadeInterface) model);
+					if(!player1.getName().equals("Human")){
+						executeMove(player1, (BoardFacadeInterface) model);
+					}
+				}else if(model.getTurn() == 2 && !model.gameWon()){
+					if(!player2.getName().equals("Human")){
+						executeMove(player2, (BoardFacadeInterface) model);
+					}
 				}
-			}
-			if(model.gameWon()){
-				break;
-			}
-			if(!player2.getName().equals("Human")){
-				try {
-					Thread.sleep(2000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				if(model.getTurn() == 2 && !model.gameWon()){
-					executeMove(player2, (BoardFacadeInterface) model);
-				}
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 		}
 	}
 	
 	private void testPlay() {
 
-		model.setGamesToPlay(10);
-		writer = new Writer((BoardDetailsInterface) model);
+		model.setGamesToPlay(100);
+		writer = new Writer((BoardViewInterface) model);
 		((Observable) model).addObserver(writer);
 
 		while(model.getGamesPlayed() < model.getGamesToPlay()){
 			while(!model.gameWon()){
-				if(!player1.getName().equals("Human")){
-					if(model.getTurn() == 1 && !model.gameWon()){
+				if(model.getTurn() == 1 && !model.gameWon()){
+					if(!player1.getName().equals("Human")){
 						executeMove(player1, (BoardFacadeInterface) model);
 					}
-				}
-				if(model.gameWon()){
-					break;
-				}
-				if(!player2.getName().equals("Human")){
-					if(model.getTurn() == 2 && !model.gameWon()){
+				}else if(model.getTurn() == 2 && !model.gameWon()){
+					if(!player2.getName().equals("Human")){
 						executeMove(player2, (BoardFacadeInterface) model);
 					}
 				}
 			}
 			writer.writeline();
-			
 			player1.reset();
 			player2.reset();
 			model.reset();
@@ -185,31 +171,27 @@ public class Controller {
 		boolean played = false;
 		while(!played){
 			if(model.getPhase().equals(Phase.ONE) && !model.millMade() && !played){
-				int placement = player.placeToken((BoardDetailsInterface) model);
+				int placement = player.placeToken((BoardViewInterface) model);
 				model.executeMove(new PlacementMove(model.getState(), playerColour, placement));
 				if(model.validMove()){
 					played = true;
 				}
 			}
-			
 			if((model.getPhase().equals(Phase.TWO) || model.getPhase().equals(Phase.THREE)) && !model.millMade() && !played){
-				IntPairInterface movement = player.moveToken((BoardDetailsInterface) model);
+				IntPairInterface movement = player.moveToken((BoardViewInterface) model);
 				model.executeMove(new MovementMove(model.getState(), playerColour, movement.getFirstInt(), movement.getSecondInt()));
 				if(model.validMove()){
 					played = true;
 				}
 			}
-			
-		
 			if(model.millMade() && !played){
-				int removal = player.removeToken((BoardDetailsInterface) model);
+				int removal = player.removeToken((BoardViewInterface) model);
 				model.executeMove(new RemovalMove(model.getState(), playerColour, removal));
 				if(model.validMove()){
 					played = true;
 				}
 			}
 		}
-
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -399,7 +381,7 @@ public class Controller {
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			String state = ((BoardDetailsInterface) model).getState();
+			String state = ((BoardViewInterface) model).getState();
 			if(!paused){
 					if((model.getPhase().equals(Phase.TWO) || model.getPhase().equals(Phase.THREE)) && !model.millMade()){
 						int x2 = e.getX();
@@ -423,7 +405,7 @@ public class Controller {
 		}
 
 		private void humanClick(int position, Player player){
-			String state = ((BoardDetailsInterface) model).getState();
+			String state = ((BoardViewInterface) model).getState();
 			if(model.getPhase().equals(Phase.ONE) && !model.millMade()){
 				model.executeMove(new PlacementMove(state, player.getTokenColour(), position));
 			}else if(model.millMade()){

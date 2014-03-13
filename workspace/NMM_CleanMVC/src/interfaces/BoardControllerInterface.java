@@ -44,15 +44,7 @@ public interface BoardControllerInterface extends BoardModelSharedMethodsInterfa
 	 */
 	void reset();
 	
-	/**
-	 * @return True if the last move executed was valid, false otherwise.
-	 */
-	boolean validMove();
-	
-	/**
-	 * @return True if the last move executed created a mill, false otherwise.
-	 */
-	boolean millMade();
+
 	
 	
 	void setPlayers(Player playerOne, Player playerTwo);

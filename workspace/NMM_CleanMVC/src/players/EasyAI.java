@@ -5,7 +5,7 @@ import java.util.Random;
 import model.board.Model;
 import move.MovementMove;
 import move.PlacementMove;
-import interfaces.BoardDetailsInterface;
+import interfaces.BoardViewInterface;
 import interfaces.BoardFacadeInterface;
 import interfaces.IntPairInterface;
 
@@ -15,7 +15,7 @@ public class EasyAI extends AbstractPlayer {
 	private Random rdm = new Random();	
 	
 	@Override
-	public int placeToken(BoardDetailsInterface game) {
+	public int placeToken(BoardViewInterface game) {
 		workingGame = new Model(game.getState(), game.getPlayerOneToPlace() + 1, game.getPlayerTwoToPlace() + 1, 
 				 game.getPlayerOneRemaining(), game.getPlayerTwoRemaining(), 
 				 game.getPhase(), game.getTurn(), 
@@ -41,7 +41,7 @@ public class EasyAI extends AbstractPlayer {
 	}
 
 	@Override
-	public int removeToken(BoardDetailsInterface game) {
+	public int removeToken(BoardViewInterface game) {
 		char[] stateArray = game.getState().toCharArray();
 		boolean found = false;
 		int index = 0;
@@ -55,7 +55,7 @@ public class EasyAI extends AbstractPlayer {
 	}
 
 	@Override
-	public IntPairInterface moveToken(BoardDetailsInterface game) {
+	public IntPairInterface moveToken(BoardViewInterface game) {
 		workingGame = new Model(game.getState(), game.getPlayerOneToPlace() + 1, game.getPlayerTwoToPlace() + 1, 
 				 game.getPlayerOneRemaining(), game.getPlayerTwoRemaining(), 
 				 game.getPhase(), game.getTurn(), 

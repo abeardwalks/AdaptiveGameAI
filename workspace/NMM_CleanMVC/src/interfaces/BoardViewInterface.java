@@ -8,7 +8,7 @@ package interfaces;
  * @author Andrew White - 200939787, BSc software Engineering
  *
  */
-public interface BoardDetailsInterface extends BoardModelSharedMethodsInterface {
+public interface BoardViewInterface extends BoardModelSharedMethodsInterface {
 	
 	/**
 	 * @return - The number of tokens player one has left to place on the board.
@@ -38,5 +38,12 @@ public interface BoardDetailsInterface extends BoardModelSharedMethodsInterface 
 	Player getPlayerOne();
 	
 	Player getPlayerTwo();
+	
+	/**
+	 * Returns a String of 24 characters that represents the board.
+	 * 
+	 * @return - The state of the board.
+	 */
+	String getState();
 	
 }

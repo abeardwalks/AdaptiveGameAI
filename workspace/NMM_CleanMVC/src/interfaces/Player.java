@@ -15,7 +15,7 @@ public interface Player {
 	 * @param game - The current model of the game. 
 	 * @return - The position (0-23) that the token should be placed on.
 	 */
-	public int placeToken(BoardDetailsInterface game);
+	public int placeToken(BoardViewInterface game);
 
 	/**
 	 * Calculates which opponents token to remove.
@@ -23,7 +23,7 @@ public interface Player {
 	 * @param game - The current model of the game.
 	 * @return - The position (0-23) that the token should be removed from.
 	 */
-	public int removeToken(BoardDetailsInterface game);
+	public int removeToken(BoardViewInterface game);
 
 	/**
 	 * Calculates the movement indexes of the token that should be moved.
@@ -32,7 +32,7 @@ public interface Player {
 	 * @return - The Integer Pair that holds the indexes that it should be moved 
 	 * 	         from and to. 
 	 */
-	public IntPairInterface moveToken(BoardDetailsInterface game);
+	public IntPairInterface moveToken(BoardViewInterface game);
 
 	/**
 	 * Returns the name of the player e.g. Human or Simple AI. 

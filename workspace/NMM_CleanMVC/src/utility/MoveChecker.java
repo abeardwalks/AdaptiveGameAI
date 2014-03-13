@@ -1,6 +1,6 @@
 package utility;
 
-import interfaces.BoardDetailsInterface;
+import interfaces.BoardViewInterface;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -53,7 +53,7 @@ public class MoveChecker {
 	 * 
 	 * @param game - the model to base the move checker details. 
 	 */
-	public MoveChecker(BoardDetailsInterface game){
+	public MoveChecker(BoardViewInterface game){
 		state = game.getState();
 		moveHistory = new Stack<AbstractMove>();
 		

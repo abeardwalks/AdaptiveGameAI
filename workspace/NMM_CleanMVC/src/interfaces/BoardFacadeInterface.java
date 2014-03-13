@@ -11,7 +11,7 @@ import move.AbstractMove;
  * @author Andrew White - BSc Software Engineering, 200939787
  *
  */
-public interface BoardFacadeInterface extends BoardDetailsInterface, BoardControllerInterface {
+public interface BoardFacadeInterface extends BoardViewInterface, BoardControllerInterface {
 	
 	/**
 	 * Evaluates the current board state and returns the relevant scores.

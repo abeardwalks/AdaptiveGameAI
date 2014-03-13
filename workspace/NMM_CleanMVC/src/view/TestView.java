@@ -1,6 +1,6 @@
 package view;
 
-import interfaces.BoardDetailsInterface;
+import interfaces.BoardViewInterface;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -19,11 +19,11 @@ public class TestView extends JPanel implements Observer {
 	private Image board;
 	private Font toolTipFont;
 	
-	private BoardDetailsInterface model;
+	private BoardViewInterface model;
 
 	
 	
-	public TestView(BoardDetailsInterface model){
+	public TestView(BoardViewInterface model){
 		super();
 		setOpaque(false);
 		setSize(800,650);
@@ -40,10 +40,10 @@ public class TestView extends JPanel implements Observer {
 		g.drawString("          Player Two Wins: " + model.getPlayerTwoWins(), 25, 300);
 		g.drawString("                    Draws: " + model.getNumberOfDraws(), 25, 350);
 		g.drawString("            Current State: " + model.getState(), 25, 400);
-		g.drawString("      Player One To Place: " + ((BoardDetailsInterface) model).getPlayerOneToPlace(), 25, 450);
-		g.drawString("      Player Two To Place: " + ((BoardDetailsInterface) model).getPlayerTwoToPlace(), 25, 500);
-		g.drawString("     Player One Remaining: " + ((BoardDetailsInterface) model).getPlayerOneRemaining(), 25, 550);
-		g.drawString("     Player Two Remaining: " + ((BoardDetailsInterface) model).getPlayerTwoRemaining(), 25, 600);
+		g.drawString("      Player One To Place: " + ((BoardViewInterface) model).getPlayerOneToPlace(), 25, 450);
+		g.drawString("      Player Two To Place: " + ((BoardViewInterface) model).getPlayerTwoToPlace(), 25, 500);
+		g.drawString("     Player One Remaining: " + ((BoardViewInterface) model).getPlayerOneRemaining(), 25, 550);
+		g.drawString("     Player Two Remaining: " + ((BoardViewInterface) model).getPlayerTwoRemaining(), 25, 600);
 		
 		
 		super.paint(g);

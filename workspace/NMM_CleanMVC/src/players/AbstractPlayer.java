@@ -1,6 +1,6 @@
 package players;
 
-import interfaces.BoardDetailsInterface;
+import interfaces.BoardViewInterface;
 import interfaces.IntPairInterface;
 import interfaces.Player;
 
@@ -16,13 +16,13 @@ public abstract class AbstractPlayer implements Player {
 	private char tokenColour;
 
 	@Override
-	public abstract int placeToken(BoardDetailsInterface game);
+	public abstract int placeToken(BoardViewInterface game);
 
 	@Override
-	public abstract int removeToken(BoardDetailsInterface game);
+	public abstract int removeToken(BoardViewInterface game);
 
 	@Override
-	public abstract IntPairInterface moveToken(BoardDetailsInterface state);
+	public abstract IntPairInterface moveToken(BoardViewInterface state);
 
 	@Override
 	public abstract String getName();

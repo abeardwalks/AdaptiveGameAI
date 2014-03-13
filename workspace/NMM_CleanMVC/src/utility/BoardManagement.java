@@ -546,7 +546,8 @@ public class BoardManagement {
 	public List<AbstractMove> getAllPossiblePlacements(char tokenColour) {
 		char[] stateArray = board.getState().toCharArray();
 		List<AbstractMove> moves = new ArrayList<AbstractMove>();
-		if((tokenColour == 'R' && board.getPlayerOneToPlace() > 0) || (tokenColour == 'B' && board.getPlayerTwoToPlace() > 0)){
+		if((tokenColour == 'R' && board.getPlayerOneToPlace() > 0) 
+							   || (tokenColour == 'B' && board.getPlayerTwoToPlace() > 0)){
 			for (int i = 0; i < stateArray.length; i++) {
 				if(stateArray[i] == 'N'){
 					moves.add(new PlacementMove(board.getState(), tokenColour, i));
@@ -565,9 +566,11 @@ public class BoardManagement {
 	public List<AbstractMove> getAllPossibleRemovals(char tokenColour) {
 		char[] stateArray = board.getState().toCharArray();
 		List<AbstractMove> moves = new ArrayList<AbstractMove>();
-		if((tokenColour == 'R' && board.getPlayerTwoRemaining() > 2) || (tokenColour == 'B' && board.getPlayerOneRemaining() > 2)){
+		if((tokenColour == 'R' && board.getPlayerTwoRemaining() > 2) 
+				|| (tokenColour == 'B' && board.getPlayerOneRemaining() > 2)){
 			for (int i = 0; i < stateArray.length; i++) {
-				if(stateArray[i] != 'N' && stateArray[i] != tokenColour && (!partOfMill(i, board.getState()) || millFreeToken(tokenColour, i)) ){
+				if(stateArray[i] != 'N' && stateArray[i] != tokenColour && 
+					  (!partOfMill(i, board.getState()) || millFreeToken(tokenColour, i))){
 					moves.add(new RemovalMove(board.getState(), tokenColour, i));
 				}
 			}

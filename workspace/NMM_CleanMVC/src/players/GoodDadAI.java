@@ -11,7 +11,7 @@ import move.MovementMove;
 import move.PlacementMove;
 import move.RemovalMove;
 import utility.MoveChecker;
-import interfaces.BoardDetailsInterface;
+import interfaces.BoardViewInterface;
 import interfaces.BoardFacadeInterface;
 import interfaces.IntPairInterface;
 
@@ -26,7 +26,7 @@ public class GoodDadAI extends AbstractPlayer {
 	private TreeNode opponentsPlay;
 	
 	@Override
-	public int placeToken(BoardDetailsInterface game) {
+	public int placeToken(BoardViewInterface game) {
 		workingGame = new BoardModel(game.getState(), 
 									 game.getPlayerOneToPlace(), game.getPlayerTwoToPlace(), 
 									 game.getPlayerOneRemaining(), game.getPlayerTwoRemaining(), 
@@ -38,7 +38,7 @@ public class GoodDadAI extends AbstractPlayer {
 	}
 
 	@Override
-	public int removeToken(BoardDetailsInterface game) {
+	public int removeToken(BoardViewInterface game) {
 		workingGame = new BoardModel(game.getState(), 
 				 game.getPlayerOneToPlace(), game.getPlayerTwoToPlace(), 
 				 game.getPlayerOneRemaining(), game.getPlayerTwoRemaining(), 
@@ -50,7 +50,7 @@ public class GoodDadAI extends AbstractPlayer {
 	}
 
 	@Override
-	public IntPairInterface moveToken(BoardDetailsInterface game) {
+	public IntPairInterface moveToken(BoardViewInterface game) {
 		workingGame = new BoardModel(game.getState(), 
 				 game.getPlayerOneToPlace(), game.getPlayerTwoToPlace(), 
 				 game.getPlayerOneRemaining(), game.getPlayerTwoRemaining(), 
