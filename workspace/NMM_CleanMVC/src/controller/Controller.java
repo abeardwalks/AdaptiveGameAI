@@ -84,9 +84,8 @@ public class Controller {
 	
 	private void start() {
 		primaryView.remove(setupView);
-		//TODO - fix this so setupView uses new player interface
-		player1 = (Player) setupView.getPlayerOne();
-		player2 = (Player) setupView.getPlayerTwo();
+		player1 = setupView.getPlayerOne();
+		player2 = setupView.getPlayerTwo();
 		
 		player1.setTokenColour('R');
 		player2.setTokenColour('B');
@@ -143,7 +142,6 @@ public class Controller {
 
 		model.setGamesToPlay(100);
 		writer = new Writer((BoardViewInterface) model);
-		((Observable) model).addObserver(writer);
 
 		while(model.getGamesPlayed() < model.getGamesToPlay()){
 			while(!model.gameWon()){
@@ -197,7 +195,7 @@ public class Controller {
 	@SuppressWarnings("deprecation")
 	private void showPauseMenu() {
 		if(paused){
-			if(thread.isAlive()){
+			if(thread.isAlive() || model.gameWon()){
 				thread.suspend();
 				gameView.setEnabled(false);
 				pauseView.setEnabled(true);
@@ -210,7 +208,7 @@ public class Controller {
 			}
 			pauseView.repaint();
 		}else{
-			if(thread.isAlive()){
+			if(thread.isAlive() || model.gameWon()){
 				thread.resume();
 				pauseView.setEnabled(false);
 				pauseView.setVisible(false);
@@ -227,7 +225,7 @@ public class Controller {
 			Player player = null;
 			if(!file.contains("$")){
 				try {
-					player = loadPlyaer("players." + file.substring(0, file.length() - 6));
+					player = loadPlayer("players." + file.substring(0, file.length() - 6));
 				} catch (Throwable e) {}
 			}
 			
@@ -238,7 +236,7 @@ public class Controller {
 		return players;
 	}
 
-	private Player loadPlyaer(String playerClass) {
+	private Player loadPlayer(String playerClass) {
 		Player player = null;
 		try {
 			Class<?> theClass = Class.forName(playerClass);
@@ -271,7 +269,6 @@ public class Controller {
 				}
 			}
 		}
-
 
 		@Override
 		public void keyTyped(KeyEvent e) {

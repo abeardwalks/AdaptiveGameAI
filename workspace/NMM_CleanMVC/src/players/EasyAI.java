@@ -29,7 +29,6 @@ public class EasyAI extends AbstractPlayer {
 		}
 		
 		if(decision == 1){
-			System.err.println("Finding Mill Blocking");
 			placement = findMillBlockingPlacement();
 		}
 		if(placement != -1){

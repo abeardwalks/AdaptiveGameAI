@@ -20,15 +20,13 @@ import java.util.Observer;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
-import players.Human;
 import players.IntPair;
 
 import utility.NodeFinder;
 
 public class PlayingView extends JPanel implements Observer {
-
-	private static final long serialVersionUID = -68209173743986677L;
 	
+	private static final long serialVersionUID = -5435569886930663623L;
 	private Image board;
 	private Font toolTipFont;
 	
@@ -41,28 +39,17 @@ public class PlayingView extends JPanel implements Observer {
 	private final int p2StartX = 730;
 	private final int p2StartY = 15;
 	
-	private String gs;
-	private int playerOneTokens;
-	private int playerTwoTokens;
-	
-	private int x0,x1,x2,x3,x4,x5,x6;
-	private int y0,y1,y2,y3,y4,y5,y6;
-	
-	private boolean  bd0, bd1, bd2, bd3, bd4, 
-					 bd5, bd6, bd7, bd8, bd9, 
-					bd10, bd11, bd12, bd13, 
-					bd14, bd15, bd16, bd17, 
-					bd18, bd19, bd20, bd21, 
-					bd22, bd23;
-	
 	private boolean showToolTip;
 	private String toolTip;
 	
 	private BoardViewInterface model;
 	
-	private boolean playerOneHuman, playerTwoHuman;
-
 	private int dragCandidate;
+	private boolean dragging;
+	private int dragX, dragY;
+	private char dragToken;
+	
+	private NodeFinder finder;
 	
 	public PlayingView(BoardViewInterface model){
 		super();
@@ -75,17 +62,6 @@ public class PlayingView extends JPanel implements Observer {
 		this.model = model;
 		addMouseMotionListener(new PlayerViewMouseListener());
 		addMouseListener(new PlayerViewMouseListener());
-		gs = model.getState();
-		playerOneTokens = model.getPlayerOneToPlace();
-		playerTwoTokens = model.getPlayerTwoToPlace();
-		
-		if(model.getPlayerOne() instanceof Human){
-			playerOneHuman = true;
-		}
-		
-		if(model.getPlayerTwo() instanceof Human){
-			playerTwoHuman = true;
-		}
 		
 		toolTip = "Player One (Orange) to place, click an empty node to play...";
 		
@@ -94,7 +70,6 @@ public class PlayingView extends JPanel implements Observer {
 		try {
 			board = ImageIO.read(new File("src/NineMensMorris.jpg"));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -106,16 +81,19 @@ public class PlayingView extends JPanel implements Observer {
 
 
 	public void paint(Graphics g){
+		
 		Graphics2D g2 = (Graphics2D)g;
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-			    RenderingHints.VALUE_ANTIALIAS_ON);
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 		g2.setColor(Color.white);
 		g2.fillRect(0, 0, 800, 650);
+		
+		//draw the board.
 		g2.drawImage(board, 95, 0, null);
 		
 		int incrementY = 0;
 		
-		for (int i = 0; i < playerOneTokens; i++) {
+		//Draw player Ones tokens to place.
+		for (int i = 0; i < model.getPlayerOneToPlace(); i++) {
 			g2.setColor(p1.darker());
 			g2.fillOval(p1StartX, p1StartY + incrementY, tokenWidth, tokenWidth);
 			g2.setColor(p1);
@@ -126,7 +104,8 @@ public class PlayingView extends JPanel implements Observer {
 		
 		incrementY = 0;
 		
-		for (int i = 0; i < playerTwoTokens; i++) {
+		//Draw player Twos tokens to place.
+		for (int i = 0; i < model.getPlayerTwoToPlace(); i++) {
 			g2.setColor(p2.darker());
 			g2.fillOval(p2StartX, p2StartY + incrementY, tokenWidth, tokenWidth);
 			g2.setColor(p2);
@@ -135,8 +114,8 @@ public class PlayingView extends JPanel implements Observer {
 			incrementY += tokenWidth + 10;
 		}
 		
-		char[] nodes = gs.toCharArray();
 		
+		//Draw the state string onto the board.
 		int node = 0;
 		for (char n : model.getState().toCharArray()) {
 			IntPair cords = finder.getCordinates(node);
@@ -156,22 +135,23 @@ public class PlayingView extends JPanel implements Observer {
 			node++;
 		}
 		
+		//If players are dragging a token, draw it to follow the mouse.
 		if(dragging && model.getNextAction() == 'M'){
-			System.out.println("DRAGGING: " + x + ", " + y);
 			if(model.getTurn() == 1){
 				g.setColor(p1.darker());
-				g.fillOval(x - (tokenWidth/2), y - (tokenWidth/2), tokenWidth, tokenWidth);
+				g.fillOval(dragX - (tokenWidth/2), dragY - (tokenWidth/2), tokenWidth, tokenWidth);
 				g.setColor(p1);
-				g.fillOval(x + 5 - (tokenWidth/2), y + 5 - (tokenWidth/2), tokenWidth - 10, tokenWidth - 10);
+				g.fillOval(dragX + 5 - (tokenWidth/2), dragY + 5 - (tokenWidth/2), tokenWidth - 10, tokenWidth - 10);
 			}else if(model.getTurn() == 2){
 				g.setColor(p2.darker());
-				g.fillOval(x - (tokenWidth/2), y - (tokenWidth/2), tokenWidth, tokenWidth);
+				g.fillOval(dragX - (tokenWidth/2), dragY - (tokenWidth/2), tokenWidth, tokenWidth);
 				g.setColor(p2);
-				g.fillOval(x + 5 - (tokenWidth/2), y + 5 - (tokenWidth/2), tokenWidth - 10, tokenWidth - 10);
+				g.fillOval(dragX + 5 - (tokenWidth/2), dragY + 5 - (tokenWidth/2), tokenWidth - 10, tokenWidth - 10);
 			}
 			
 		}
 		
+		//draw the Turn indication token
 		g2.setColor(Color.black);
 		if(model.getTurn() == 1){
 			g2.fillOval(35, 540, tokenWidth, tokenWidth);
@@ -183,34 +163,17 @@ public class PlayingView extends JPanel implements Observer {
 			g2.fillOval(715, 545, tokenWidth - 10, tokenWidth - 10);
 		}
 		
-		if(showToolTip){				//change to Show Tool Tip
+		//draw the tool tip.
+		if(showToolTip){				
 			g2.drawString(toolTip, 25, 630);
 		}
 		
 		super.paint(g2);
 		
 	}
-	
-	public Graphics2D paintTokens(Graphics2D g){
-		
-		return g;
-	}
 
 	@Override
 	public void update(Observable o, Object arg) {
-		gs = model.getState();
-		System.out.println("Updated, new state: " + gs);
-//		result = bd.getResult();
-		playerOneTokens = model.getPlayerOneToPlace();
-		playerTwoTokens = model.getPlayerTwoToPlace();
-		
-		if(model.getPlayerOne() instanceof Human){
-			playerOneHuman = true;
-		}
-		
-		if(model.getPlayerTwo() instanceof Human){
-			playerTwoHuman = true;
-		}
 		
 		switch (model.getNextAction()) {
 		case 'P':
@@ -245,13 +208,6 @@ public class PlayingView extends JPanel implements Observer {
 		repaint();
 	}
 	
-	
-
-	private boolean dragging;
-	private int x, y;
-	private char token;
-	private NodeFinder finder;
-	
 	private class PlayerViewMouseListener implements  MouseMotionListener, MouseListener {
 				
 		public PlayerViewMouseListener(){
@@ -261,8 +217,8 @@ public class PlayingView extends JPanel implements Observer {
 		@Override
 		public void mouseDragged(MouseEvent e) {
 			if(model.getNextAction() == 'M'){
-				x = e.getX();
-				y = e.getY();
+				dragX = e.getX();
+				dragY = e.getY();
 				repaint();
 			}
 		}
@@ -292,17 +248,17 @@ public class PlayingView extends JPanel implements Observer {
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			x = e.getX();
-			y = e.getY();
+			dragX = e.getX();
+			dragY = e.getY();
 			char dragTokens = 'R';
 			if(model.getTurn() == 2){
 				dragTokens = 'B';
 			}
 			
-			dragCandidate = finder.getNode(x, y);
+			dragCandidate = finder.getNode(dragX, dragY);
 			if(dragCandidate != -1){
-				token = model.getState().charAt(dragCandidate);
-				if(token == dragTokens){
+				dragToken = model.getState().charAt(dragCandidate);
+				if(dragToken == dragTokens){
 					dragging = true;
 				}else{
 					dragging = false;

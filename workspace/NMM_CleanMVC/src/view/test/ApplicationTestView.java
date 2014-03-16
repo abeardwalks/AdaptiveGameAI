@@ -1,23 +1,24 @@
-package view;
+package view.test;
 
 import java.awt.Color;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-public class ApplicationView extends JFrame {
-	
-	private static final long serialVersionUID = -1892187361371589841L;
+public class ApplicationTestView extends JFrame{
 
-	public ApplicationView(){
-		setTitle("Nine Mens Morris");
-		setSize(800, 670);
+	private static final long serialVersionUID = 2206472383834051420L;
+	
+	public ApplicationTestView(){
+		setTitle("Test Rig - Nine Mens Morris");
+		setSize(500, 500);
 		setBackground(Color.WHITE);
 		setResizable(false);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
-
+	
 	public void addPane(JPanel panel){
 		this.getContentPane().add(panel);
 	}
-
+	
 }

@@ -12,7 +12,7 @@ import java.sql.Date;
 import java.util.Observable;
 import java.util.Observer;
 
-public class Writer implements Observer{
+public class Writer extends Observable{
 	
 	private int lineNumber;
 	private BoardViewInterface model;
@@ -57,6 +57,36 @@ public class Writer implements Observer{
 	
 //	Game Number,Player One Win,Player Two Win,Player One Remaining,Player Two Remaining
 	
+	public Writer(BoardViewInterface model, String path, int runNumber,
+			String p1, String p2) {
+		this.model = model;
+		lineNumber = 0;
+		
+		
+		try {
+			reader = new BufferedReader(new FileReader(HEADER));
+			filenumber = reader.readLine();
+			
+			reader.close();
+			filewriter = new FileWriter(path + "\\" + p1 + "-vs-" + p2 + "-" + runNumber + ".csv");
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		bufferwriter = new BufferedWriter(filewriter);
+		
+		PrintWriter pw = new PrintWriter(bufferwriter);
+		
+		
+		String newline = "Game Number,Player One Win,Player Two Win,Player One Remaining,Player Two Remaining";
+		pw.println(newline);
+		lineNumber++;
+		
+	}
+
+
 	public void writeline(){
 		
 		PrintWriter pw = new PrintWriter(bufferwriter);
@@ -64,9 +94,11 @@ public class Writer implements Observer{
 										 + "," + model.playerTwoWin()
 										 + "," + model.getPlayerOneRemaining()
 										 + "," + model.getPlayerTwoRemaining();
-		System.err.println("new line: " + newline);
 		pw.println(newline);
+		
 		lineNumber++;
+		setChanged();
+		notifyObservers();
 		
 	}
 	
@@ -89,13 +121,4 @@ public class Writer implements Observer{
 		}
 	}
 	
-
-	@Override
-	public void update(Observable o, Object arg) {
-	
-				
-//				writeline();
-	
-	}
-
 }
