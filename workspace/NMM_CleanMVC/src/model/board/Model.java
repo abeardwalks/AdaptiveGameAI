@@ -140,7 +140,7 @@ public class Model extends Observable implements BoardFacadeInterface {
 		}else{
 			valid = false;
 		}
-		
+		phase = manager.calculatePhase();
 		setChanged();
 		notifyObservers();
 	}
@@ -256,6 +256,7 @@ public class Model extends Observable implements BoardFacadeInterface {
 		this.trappedPlayer = trappedPlayer;
 		if(trappedPlayer != 'N'){
 			System.out.println("Trapped Player Set: " + trappedPlayer + ", " +  gamesPlayed + ", " + phase);
+			
 		}
 		
 	}
@@ -287,9 +288,9 @@ public class Model extends Observable implements BoardFacadeInterface {
 
 	@Override
 	public Phase getPhase() {
-		if(!manager.playersCanMove()){
-			phase = Phase.FOUR;
-		}
+//		if(!manager.playersCanMove()){
+//			phase = Phase.FOUR;
+//		}
 		return phase;
 	}
 
@@ -325,7 +326,7 @@ public class Model extends Observable implements BoardFacadeInterface {
 			setChanged();
 			notifyObservers(new String("write"));
 			return true;
-		}else if(phase == Phase.FOUR || !manager.playersCanMove()){
+		}else if(phase == Phase.FOUR){
 			if(trappedPlayer == 'B'){
 				playerOneWin = true;
 				playerOneWins++;

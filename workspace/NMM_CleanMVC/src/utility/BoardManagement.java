@@ -525,14 +525,13 @@ public class BoardManagement {
 
 	public Phase calculatePhase() {
 
-		if(!playersCanMove()){
+		if(!playersCanMove() && (board.getPlayerOneRemaining() > 3 && board.getPlayerTwoRemaining() > 3)){
 			return Phase.FOUR;
 		}else if(board.getPlayerOneToPlace() == 0 && board.getPlayerTwoToPlace() == 0){
 			return Phase.TWO;
 		}else if(board.getPlayerOneRemaining() <= 3 && board.getPlayerTwoRemaining() <= 3){
 			return Phase.THREE;
 		}
-		
 		return Phase.ONE;
 	}
 	

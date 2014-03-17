@@ -141,9 +141,9 @@ public class TestRigController {
 			writer.addObserver(progessView);
 			
 			while(model.getGamesPlayed() < model.getGamesToPlay()){
-				while(!model.gameWon()){
+				while(!model.gameWon() && model.getPhase() != Phase.FOUR){
 					
-					if(model.getTurn() == 1 && !model.gameWon()){
+					if(model.getTurn() == 1 && !model.gameWon() && model.getPhase() != Phase.FOUR){
 //						System.out.println(((BoardViewInterface) model).getPlayerOneRemaining() + " | " + ((BoardViewInterface) model).getPlayerTwoRemaining() + " Phase: " + model.getPhase() + " Game OveR? " + model.gameOver() + " " + ((BoardViewInterface) model).getState());
 						if(!player1.getName().equals("Human")){
 							executeMove(player1, (BoardFacadeInterface) model);
@@ -151,7 +151,7 @@ public class TestRigController {
 						
 					}
 					
-					if(model.getTurn() == 2 && !model.gameWon()){
+					if(model.getTurn() == 2 && !model.gameWon() && model.getPhase() != Phase.FOUR){
 //						System.out.println(((BoardViewInterface) model).getPlayerOneRemaining() + " | " + ((BoardViewInterface) model).getPlayerTwoRemaining() + " Phase: " + model.getPhase() + " Game OveR? " + model.gameOver() + " " + ((BoardViewInterface) model).getState());
 						if(!player2.getName().equals("Human")){
 							executeMove(player2, (BoardFacadeInterface) model);
@@ -173,7 +173,7 @@ public class TestRigController {
 			
 			char playerColour = player.getTokenColour();
 			boolean played = false;
-			while(!played && !model.gameWon()){
+			while(!played && !model.gameWon() && model.getPhase() != Phase.FOUR){
 				if(model.getPhase().equals(Phase.ONE) && !model.millMade() && !played){
 					int placement = player.placeToken((BoardViewInterface) model);
 					model.executeMove(new PlacementMove(model.getState(), playerColour, placement));
