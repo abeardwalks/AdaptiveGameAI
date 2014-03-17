@@ -429,4 +429,10 @@ public class BoardModel extends Observable implements BoardFacadeInterface {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public boolean gameOver() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

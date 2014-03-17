@@ -139,22 +139,32 @@ public class TestRigController {
 			Writer writer = new Writer((BoardViewInterface) model, path, number, playerOne, playerTwo);
 			writer.addObserver(bar);
 			writer.addObserver(progessView);
+			
 			while(model.getGamesPlayed() < model.getGamesToPlay()){
 				while(!model.gameWon()){
+					
 					if(model.getTurn() == 1 && !model.gameWon()){
+//						System.out.println(((BoardViewInterface) model).getPlayerOneRemaining() + " | " + ((BoardViewInterface) model).getPlayerTwoRemaining() + " Phase: " + model.getPhase() + " Game OveR? " + model.gameOver() + " " + ((BoardViewInterface) model).getState());
 						if(!player1.getName().equals("Human")){
 							executeMove(player1, (BoardFacadeInterface) model);
 						}
-					}else if(model.getTurn() == 2 && !model.gameWon()){
+						
+					}
+					
+					if(model.getTurn() == 2 && !model.gameWon()){
+//						System.out.println(((BoardViewInterface) model).getPlayerOneRemaining() + " | " + ((BoardViewInterface) model).getPlayerTwoRemaining() + " Phase: " + model.getPhase() + " Game OveR? " + model.gameOver() + " " + ((BoardViewInterface) model).getState());
 						if(!player2.getName().equals("Human")){
 							executeMove(player2, (BoardFacadeInterface) model);
 						}
 					}
 				}
-				writer.writeline();
+				
+				boolean writeComplete = writer.writeline();
 				player1.reset();
 				player2.reset();
-				model.reset();
+				if(writeComplete){
+					model.reset();
+				}
 			}
 			writer.closeBuffer();
 		}
@@ -163,7 +173,7 @@ public class TestRigController {
 			
 			char playerColour = player.getTokenColour();
 			boolean played = false;
-			while(!played){
+			while(!played && !model.gameWon()){
 				if(model.getPhase().equals(Phase.ONE) && !model.millMade() && !played){
 					int placement = player.placeToken((BoardViewInterface) model);
 					model.executeMove(new PlacementMove(model.getState(), playerColour, placement));

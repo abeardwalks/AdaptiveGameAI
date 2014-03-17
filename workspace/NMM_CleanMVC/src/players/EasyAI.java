@@ -49,6 +49,7 @@ public class EasyAI extends AbstractPlayer {
 			if(stateArray[index] != this.getTokenColour() && stateArray[index] != 'N'){
 				found = true; 
 			}
+//			System.out.println("Spinning in Remove");
 		}
 		return index;
 	}
@@ -66,10 +67,18 @@ public class EasyAI extends AbstractPlayer {
 		if(decision == 0 || decision == 1){
 			movement = findMillMakingMovement();
 		}
+		workingGame = new Model(game.getState(), game.getPlayerOneToPlace() + 1, game.getPlayerTwoToPlace() + 1, 
+				 game.getPlayerOneRemaining(), game.getPlayerTwoRemaining(), 
+				 game.getPhase(), game.getTurn(), 
+				 game.millMade(), game.getNextAction());
 		
 		if(decision == 2){
 			movement = findMillBlockingMovement();
 		}
+		workingGame = new Model(game.getState(), game.getPlayerOneToPlace() + 1, game.getPlayerTwoToPlace() + 1, 
+				 game.getPlayerOneRemaining(), game.getPlayerTwoRemaining(), 
+				 game.getPhase(), game.getTurn(), 
+				 game.millMade(), game.getNextAction());
 		
 		if(decision == 3 || movement == null){
 			movement = findRandomMovement();
@@ -81,6 +90,7 @@ public class EasyAI extends AbstractPlayer {
 		boolean found = false;
 		int positionFrom = 0;
 		int positionToo = 0;
+//		System.out.println("My Colour is: " + this.getTokenColour() + " " + workingGame.getPlayerOneRemaining() + " | " + workingGame.getPlayerTwoRemaining() + " Phase: " + workingGame.getPhase() + " Game OveR? " + workingGame.gameOver() + " " + workingGame.getState());
 		while (!found) {
 			positionFrom = rdm.nextInt(24);
 			positionToo = rdm.nextInt(24);
@@ -88,6 +98,7 @@ public class EasyAI extends AbstractPlayer {
 			if(workingGame.validMove()){
 				found = true;
 			}
+			
 		}
 		return new IntPair(positionFrom, positionToo);
 	}

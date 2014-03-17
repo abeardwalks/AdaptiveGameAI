@@ -218,7 +218,7 @@ public class Model extends Observable implements BoardFacadeInterface {
 
 	@Override
 	public void setPhase(Phase phase) {
-		//TODO: Do we need this anymore?
+		this.phase = phase;
 	}
 
 	@Override
@@ -254,6 +254,10 @@ public class Model extends Observable implements BoardFacadeInterface {
 	@Override
 	public void setTrappedPlayer(char trappedPlayer) {
 		this.trappedPlayer = trappedPlayer;
+		if(trappedPlayer != 'N'){
+			System.out.println("Trapped Player Set: " + trappedPlayer + ", " +  gamesPlayed + ", " + phase);
+		}
+		
 	}
 	
 	@Override
@@ -300,16 +304,36 @@ public class Model extends Observable implements BoardFacadeInterface {
 
 	@Override
 	public boolean gameWon() {
+		phase = manager.calculatePhase();
 		if(gameover){
 			return true;
 		}
-		if(playerOneRemaining == 2 || playerTwoRemaining == 2 || phase == Phase.FOUR){
-			if(playerOneRemaining == 2 || trappedPlayer == 'R'){
+		if(playerOneRemaining == 2 || playerTwoRemaining == 2){
+			if(playerOneRemaining == 2){
 				playerTwoWin = true;
 				playerTwoWins++;
-			}else if(playerTwoRemaining == 2 || trappedPlayer == 'B'){
+//				System.err.println("PLAYER TWO WIN");
+			}
+			
+			if(playerTwoRemaining == 2){
 				playerOneWin = true;
 				playerOneWins++;
+//				System.err.println("PLAYER ONE WIN");
+			}
+			gameover = true;
+			gamesPlayed++;
+			setChanged();
+			notifyObservers(new String("write"));
+			return true;
+		}else if(phase == Phase.FOUR || !manager.playersCanMove()){
+			if(trappedPlayer == 'B'){
+				playerOneWin = true;
+				playerOneWins++;
+				System.err.println("PLAYER ONE WIN" + gamesPlayed);
+			}else if(trappedPlayer == 'R'){
+				playerTwoWin = true;
+				playerTwoWins++;
+				System.err.println("PLAYER TWO WIN" + gamesPlayed);
 			}
 			gameover = true;
 			gamesPlayed++;
@@ -317,11 +341,13 @@ public class Model extends Observable implements BoardFacadeInterface {
 			notifyObservers(new String("write"));
 			return true;
 		}else if(phase == Phase.THREE && chasePhaseMoves == 15){
+		
 			gameover = true;
 			gamesPlayed++;
 			draws++;
 			setChanged();
 			notifyObservers(new String("write"));
+			System.err.println("GAME DRAW");
 			return true;
 		}else{
 			return false;
@@ -456,6 +482,11 @@ public class Model extends Observable implements BoardFacadeInterface {
 	@Override
 	public Stack<AbstractMove> getHistory() {
 		return history;
+	}
+
+	@Override
+	public boolean gameOver() {
+		return gameover;
 	}
 	
 }

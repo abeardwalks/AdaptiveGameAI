@@ -491,8 +491,8 @@ public class BoardManagement {
 		int limit = 24;
 		boolean playerOne = false;
 		boolean playerTwo = false;
-		
-		while(index < limit || (playerOne == false && playerTwo == false)){
+
+		while(index < limit){
 			char token = board.getState().charAt(index);
 			int i = 0; 
 			while(i < limit){
@@ -508,11 +508,14 @@ public class BoardManagement {
 			index++;
 		}
 		
-		if(playerOne && playerTwo){
+		
+		
+		if((playerOne || board.getPlayerOneRemaining() == 3) && (playerTwo || board.getPlayerTwoRemaining() == 3)){
+			board.setTrappedPlayer('N');
 			return true;
-		}else if(!playerOne){			//if player one cannot move...
+		}else if(!playerOne && board.getPlayerOneRemaining() > 3){			//if player one cannot move...
 			board.setTrappedPlayer('R');		//...set it as the trapped player. 
-		}else if(!playerTwo){			//if player two cannot move...
+		}else if(!playerTwo && board.getPlayerTwoRemaining() > 3){			//if player two cannot move...
 			board.setTrappedPlayer('B');		//...set it as the trapped player. 
 		}
 		return false;
@@ -521,17 +524,13 @@ public class BoardManagement {
 	
 
 	public Phase calculatePhase() {
-		
-		if(board.getPlayerOneToPlace() == 0 && board.getPlayerTwoToPlace() == 0){
-			return Phase.TWO;
-		}
-		
-		if(board.getPlayerOneRemaining() <= 3 && board.getPlayerTwoRemaining() <= 3){
-			return Phase.THREE;
-		}
-		
+
 		if(!playersCanMove()){
 			return Phase.FOUR;
+		}else if(board.getPlayerOneToPlace() == 0 && board.getPlayerTwoToPlace() == 0){
+			return Phase.TWO;
+		}else if(board.getPlayerOneRemaining() <= 3 && board.getPlayerTwoRemaining() <= 3){
+			return Phase.THREE;
 		}
 		
 		return Phase.ONE;

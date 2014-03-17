@@ -90,11 +90,8 @@ public class Writer extends Observable{
 	}
 
 
-	public void writeline(){
-		String line = "" + lineNumber + "," + model.playerOneWin()
-				 + "," + model.playerTwoWin()
-				 + "," + model.getPlayerOneRemaining()
-				 + "," + model.getPlayerTwoRemaining();
+	public boolean writeline(){
+		String line = "" + lineNumber + "," + model.playerOneWin() + "," + model.playerTwoWin() + "," + model.getPlayerOneRemaining() + "," + model.getPlayerTwoRemaining();
 		Stack<AbstractMove> history = model.getHistory();
 		
 		String removeHistory = "";
@@ -104,7 +101,7 @@ public class Writer extends Observable{
 				removeHistory = m.getPlayerColour() + removeHistory;
 			}
 		}
-		line = line + "," + removeHistory;
+		line = line + "," + removeHistory + ", " + model.getPhase() + ", " + model.getState();
 		PrintWriter pw = new PrintWriter(bufferwriter);
 		
 		pw.println(line);
@@ -116,7 +113,7 @@ public class Writer extends Observable{
 		}else{
 			notifyObservers(new Boolean(false));
 		}
-		
+		return true;
 	}
 	
 	public void closeBuffer(){

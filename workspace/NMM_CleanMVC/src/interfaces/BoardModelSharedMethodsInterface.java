@@ -45,4 +45,6 @@ public interface BoardModelSharedMethodsInterface {
 	boolean playerTwoWin();
 	
 	Stack<AbstractMove> getHistory();
+	
+	boolean gameOver();
 }
