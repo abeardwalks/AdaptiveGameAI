@@ -1,6 +1,9 @@
 package interfaces;
 
+import java.util.Stack;
+
 import model.Phase;
+import move.AbstractMove;
 
 public interface BoardModelSharedMethodsInterface {
 	
@@ -40,4 +43,6 @@ public interface BoardModelSharedMethodsInterface {
 	boolean playerOneWin();
 	
 	boolean playerTwoWin();
+	
+	Stack<AbstractMove> getHistory();
 }

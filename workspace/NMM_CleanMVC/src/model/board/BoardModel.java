@@ -423,4 +423,10 @@ public class BoardModel extends Observable implements BoardFacadeInterface {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+	@Override
+	public Stack<AbstractMove> getHistory() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

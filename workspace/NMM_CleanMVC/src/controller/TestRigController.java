@@ -64,7 +64,7 @@ public class TestRigController {
 		g4 = new GameProgressBar();
 		g5 = new GameProgressBar();
 		
-		progessView = new ProgressView(g1, g2, g3, g4, g5);
+		
 		
 		List<Player> players1 = getPlayers();
 		List<Player> players2 = getPlayers();
@@ -81,6 +81,8 @@ public class TestRigController {
 		primaryView.remove(setupView);
 		player1 = setupView.getPlayerOne();
 		player2 = setupView.getPlayerTwo();
+		
+		progessView = new ProgressView(g1, g2, g3, g4, g5, player1.getName(), player2.getName());
 		
 		player1.setTokenColour('R');
 		player2.setTokenColour('B');
@@ -136,6 +138,7 @@ public class TestRigController {
 			
 			Writer writer = new Writer((BoardViewInterface) model, path, number, playerOne, playerTwo);
 			writer.addObserver(bar);
+			writer.addObserver(progessView);
 			while(model.getGamesPlayed() < model.getGamesToPlay()){
 				while(!model.gameWon()){
 					if(model.getTurn() == 1 && !model.gameWon()){

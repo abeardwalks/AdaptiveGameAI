@@ -11,6 +11,9 @@ import java.io.PrintWriter;
 import java.sql.Date;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Stack;
+
+import move.AbstractMove;
 
 public class Writer extends Observable{
 	
@@ -88,17 +91,31 @@ public class Writer extends Observable{
 
 
 	public void writeline(){
+		String line = "" + lineNumber + "," + model.playerOneWin()
+				 + "," + model.playerTwoWin()
+				 + "," + model.getPlayerOneRemaining()
+				 + "," + model.getPlayerTwoRemaining();
+		Stack<AbstractMove> history = model.getHistory();
 		
+		String removeHistory = "";
+		while(!history.isEmpty()){
+			AbstractMove m = history.pop();
+			if(m.getAction() == 'R'){
+				removeHistory = m.getPlayerColour() + removeHistory;
+			}
+		}
+		line = line + "," + removeHistory;
 		PrintWriter pw = new PrintWriter(bufferwriter);
-		String newline = "" + lineNumber + "," + model.playerOneWin()
-										 + "," + model.playerTwoWin()
-										 + "," + model.getPlayerOneRemaining()
-										 + "," + model.getPlayerTwoRemaining();
-		pw.println(newline);
+		
+		pw.println(line);
 		
 		lineNumber++;
 		setChanged();
-		notifyObservers();
+		if(model.playerOneWin()){
+			notifyObservers(new Boolean(true));
+		}else{
+			notifyObservers(new Boolean(false));
+		}
 		
 	}
 	

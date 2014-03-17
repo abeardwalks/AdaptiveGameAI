@@ -19,6 +19,7 @@ public class GameProgressBar extends JProgressBar implements Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 		setValue(getValue() + 1);
+	    setString("" + getValue() + "/100 Games Played");
 	}
 
 }

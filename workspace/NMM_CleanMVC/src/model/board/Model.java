@@ -452,5 +452,10 @@ public class Model extends Observable implements BoardFacadeInterface {
 	public boolean playerTwoWin() {
 		return playerTwoWin;
 	}
+
+	@Override
+	public Stack<AbstractMove> getHistory() {
+		return history;
+	}
 	
 }
