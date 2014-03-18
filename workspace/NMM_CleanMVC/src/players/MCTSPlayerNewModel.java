@@ -104,7 +104,7 @@ public class MCTSPlayerNewModel extends AbstractPlayer {
 
 	@Override
 	public String getName() {
-		return "MCTS";
+		return "MCTS (New Model)";
 	}
 	
 	/**

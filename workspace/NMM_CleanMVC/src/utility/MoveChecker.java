@@ -211,7 +211,7 @@ public class MoveChecker {
 		boolean playerOne = false;
 		boolean playerTwo = false;
 		
-		while(index < limit || (playerOne == false && playerTwo == false)){
+		while(index < limit){
 			char token = state.charAt(index);
 			int i = 0; 
 			while(i < limit){
@@ -227,11 +227,12 @@ public class MoveChecker {
 			index++;
 		}
 		
-		if(playerOne && playerTwo){
+		if((playerOne || playerOneTokensRemaining == 3) && (playerTwo || playerTwoTokensRemaining == 3)){
+			trappedPlayer = 'N';
 			return true;
-		}else if(!playerOne){			//if player one cannot move...
+		}else if(!playerOne && playerOneTokensRemaining > 3){			//if player one cannot move...
 			trappedPlayer = 'R';		//...set it as the trapped player. 
-		}else if(!playerTwo){			//if player two cannot move...
+		}else if(!playerTwo && playerTwoTokensRemaining > 3){			//if player two cannot move...
 			trappedPlayer = 'B';		//...set it as the trapped player. 
 		}
 		return false;
@@ -416,7 +417,7 @@ public class MoveChecker {
 			return false;
 		}
 		
-		if(moveAnywhere){
+		if(moveAnywhere || (stateArray[from] == 'B' && playerTwoTokensRemaining == 3) || (stateArray[from] == 'R' && playerOneTokensRemaining == 3)){
 			return true;
 		}
 
