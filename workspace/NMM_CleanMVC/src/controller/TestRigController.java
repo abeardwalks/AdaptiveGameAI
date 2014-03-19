@@ -100,7 +100,7 @@ public class TestRigController {
 		thread3.start();
 		thread4.start();
 		thread5.start();
-		
+
 		progessView.setVisible(true);
 		primaryView.add(progessView);
 		primaryView.repaint();
@@ -142,17 +142,13 @@ public class TestRigController {
 			
 			while(model.getGamesPlayed() < model.getGamesToPlay()){
 				while(!model.gameWon() && model.getPhase() != Phase.FOUR){
-					
 					if(model.getTurn() == 1 && !model.gameWon() && model.getPhase() != Phase.FOUR){
-//						System.out.println(((BoardViewInterface) model).getPlayerOneRemaining() + " | " + ((BoardViewInterface) model).getPlayerTwoRemaining() + " Phase: " + model.getPhase() + " Game OveR? " + model.gameOver() + " " + ((BoardViewInterface) model).getState());
 						if(!player1.getName().equals("Human")){
 							executeMove(player1, (BoardFacadeInterface) model);
 						}
 						
 					}
-					
 					if(model.getTurn() == 2 && !model.gameWon() && model.getPhase() != Phase.FOUR){
-//						System.out.println(((BoardViewInterface) model).getPlayerOneRemaining() + " | " + ((BoardViewInterface) model).getPlayerTwoRemaining() + " Phase: " + model.getPhase() + " Game OveR? " + model.gameOver() + " " + ((BoardViewInterface) model).getState());
 						if(!player2.getName().equals("Human")){
 							executeMove(player2, (BoardFacadeInterface) model);
 						}
