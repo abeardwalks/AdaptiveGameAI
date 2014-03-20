@@ -23,18 +23,20 @@ public class BoardManagement {
 		char action = move.getAction();
 		char turn = move.getPlayerColour();
 		int result = -1;
-		switch (action) {
-		case 'P':
-			result = placeToken(turn, ((PlacementMove) move).getPlacementIndex());
-			break;
-		case 'R':
-			result = removeToken(turn, ((RemovalMove) move).getRemovalIndex());
-			break;
-		case 'M':
-			result = moveToken(turn, ((MovementMove) move).getFrom(), ((MovementMove) move).getTo());
-			break;
-		default:
-			break;
+		if((turn == 'R' && board.getTurn() == 1) || (turn == 'B' && board.getTurn() == 2)){
+			switch (action) {
+			case 'P':
+				result = placeToken(turn, ((PlacementMove) move).getPlacementIndex());
+				break;
+			case 'R':
+				result = removeToken(turn, ((RemovalMove) move).getRemovalIndex());
+				break;
+			case 'M':
+				result = moveToken(turn, ((MovementMove) move).getFrom(), ((MovementMove) move).getTo());
+				break;
+			default:
+				break;
+			}
 		}
 		return result;
 	}
@@ -342,7 +344,7 @@ public class BoardManagement {
 			return false;
 		}
 		
-		if(moveAnywhere){
+		if(moveAnywhere || (stateArray[from] == 'B' && board.getPlayerTwoRemaining() == 3) || (stateArray[from] == 'R' && board.getPlayerOneRemaining() == 3)){
 			return true;
 		}
 

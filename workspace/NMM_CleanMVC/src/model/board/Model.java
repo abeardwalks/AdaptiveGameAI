@@ -381,8 +381,7 @@ public class Model extends Observable implements BoardFacadeInterface {
 			rewards[0] = 0.0;		
 			rewards[1] = 0.5;											//give them 0.5
 		}
-		rewards[0] += p1millcount;
-		rewards[0] += p2millcount;
+		
 		if(trappedPlayer == 'R'){			//if player 1 is trapped...
 			rewards[0] = 0.0;
 			rewards[1] = 1.0;				//...give player two 1 point.

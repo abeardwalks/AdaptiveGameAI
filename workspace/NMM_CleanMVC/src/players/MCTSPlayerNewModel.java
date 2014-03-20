@@ -91,7 +91,7 @@ public class MCTSPlayerNewModel extends AbstractPlayer {
 		double bestValue = Double.NEGATIVE_INFINITY;
 		AbstractMove bestMove = null;
 		for(TreeNode child : root.children){
-			System.out.println("Rewards: " + child.rewards[0] + " | " + child.rewards[1] + ", after " + child.nVisits + " visits.");
+//			System.out.println("Rewards: " + child.rewards[0] + " | " + child.rewards[1] + ", after " + child.nVisits + " visits.");
 			
 			double value = child.rewards[getPlayerID() - 1 ] / child.nVisits;
 			if(value > bestValue){
@@ -139,7 +139,7 @@ public class MCTSPlayerNewModel extends AbstractPlayer {
 			List<TreeNode> visited = new LinkedList<TreeNode>();				//The list of nodes already visited.
 			TreeNode current = this;
 			
-			while(!current.isLeaf() && !workingGame.gameWon()){					
+			while(!current.isLeaf()){					
 				current = current.select();
 				try{
 					workingGame.executeMove(current.move);
@@ -207,13 +207,10 @@ public class MCTSPlayerNewModel extends AbstractPlayer {
 			TreeNode selected = children[0];
 			double bestValue = Double.NEGATIVE_INFINITY;
 			if (children.length == 0) {
-				System.out.println("NO children to select.");
+				System.out.println("NO children to select daniel son");
 			}
 			
 			for (TreeNode c : children) {
-//				if(c.nVisits >= 200){
-//					continue;
-//				}
 				double uctValue = c.rewards[getPlayerID()-1]
 						/ (c.nVisits + epsilon)
 						+ Math.sqrt(Math.log(nVisits + 1)
@@ -224,8 +221,6 @@ public class MCTSPlayerNewModel extends AbstractPlayer {
 					bestValue = uctValue;
 				}
 			}
-		
-			
 			return selected;
 		}
 
