@@ -96,16 +96,25 @@ public class Writer extends Observable{
 		
 		String plotPoints = "";
 		String removeHistory = "";
+		int count = 0;
+		int value = 0;
 		while(!history.isEmpty()){
 			AbstractMove m = history.pop();
 			if(m.getAction() == 'R'){
 				removeHistory = m.getPlayerColour() + removeHistory;
 				if(m.getPlayerColour() == 'R'){
-					plotPoints += ",1";
+					value++;
 				}else{
-					plotPoints += ",-1";
+					value--;
 				}
+				plotPoints += "," + value;
+				count++;
 			}
+			
+		}
+		while(count < 13){
+			plotPoints += "," + value;
+			count++;
 		}
 		line = line + "," + removeHistory + plotPoints;
 		PrintWriter pw = new PrintWriter(bufferwriter);

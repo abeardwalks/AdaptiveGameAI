@@ -80,7 +80,7 @@ public class MCTSPlayerNewModel extends AbstractPlayer {
 		
 		root = new TreeNode(null, 0);
 		
-		long stop = System.currentTimeMillis() + 2000;		//Search for a set period of time. 
+		long stop = System.currentTimeMillis() + 5000;		//Search for a set period of time. 
 		
 		while(System.currentTimeMillis() < stop){		//while stop time not reached
 			root.selectAction();						//begin searching.
