@@ -57,7 +57,6 @@ public class MCTSPlayerNewModel extends AbstractPlayer {
 				 										 game.getPhase(), game.getTurn(), 
 				 										 game.millMade(), game.getNextAction());
 		AbstractMove m = getMove('M');
-		System.out.println(root.children[0].move.getAction());
 		IntPairInterface pair = new IntPair(((MovementMove)m).getFrom(),((MovementMove)m).getTo());
 		
 		return pair;
@@ -81,7 +80,7 @@ public class MCTSPlayerNewModel extends AbstractPlayer {
 		
 		root = new TreeNode(null, 0);
 		
-		long stop = System.currentTimeMillis() + 5000;		//Search for a set period of time. 
+		long stop = System.currentTimeMillis() + 2000;		//Search for a set period of time. 
 		
 		while(System.currentTimeMillis() < stop){		//while stop time not reached
 			root.selectAction();						//begin searching.

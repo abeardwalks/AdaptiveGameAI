@@ -87,7 +87,7 @@ public class GoodDadv2 extends AbstractPlayer {
 				}
 
 				
-//				System.out.println( "AFTER SEARCH: Opponent Played: " + "Rewards: " + opponentsPlay.rewards[0] + " | " + opponentsPlay.rewards[1] + ", after " + opponentsPlay.nVisits + " visits.");
+				System.out.println( "AFTER SEARCH: Opponent Played: " + "Rewards: " + opponentsPlay.rewards[0] + " | " + opponentsPlay.rewards[1] + ", after " + opponentsPlay.nVisits + " visits.");
 			}
 		}
 	}
@@ -101,19 +101,20 @@ public class GoodDadv2 extends AbstractPlayer {
 		if(opponentsPlay != null){
 			double opponentScore = opponentsPlay.rewards[opponentID - 1];
 			double ourScore = opponentsPlay.rewards[getPlayerID() - 1];
-				if(Math.max(opponentScore, ourScore) - Math.min(opponentScore, ourScore) > 15.0){
+//			if(Math.max(opponentScore, ourScore) - Math.min(opponentScore, ourScore) > 15.0){
 				if(opponentsPlay.rewards[opponentID - 1] > opponentsPlay.rewards[getPlayerID() -1] && opponentFitness < 20.0){
 					opponentFitness += 1.0;
 				}else if(opponentsPlay.rewards[opponentID - 1] < opponentsPlay.rewards[getPlayerID() -1] && opponentFitness > 5.0){
 					opponentFitness -= 1.0;
 				}
-			}
+//			}
 		}else if(opponentFitness < 15.0){
 			opponentFitness += 1.0;
 		}
-//		System.out.println("Opponent Fitness: " + opponentFitness);
+		System.out.println("Opponent Fitness: " + opponentFitness);
 //		System.out.println("     Our Fitness: " + fitness);
 	}
+
 	
 	/**
 	 * This method setups up the tree and move checker to begin the MCTS. It also calculates

@@ -94,14 +94,20 @@ public class Writer extends Observable{
 		String line = "" + lineNumber + "," + model.playerOneWin() + "," + model.playerTwoWin() + "," + model.getPlayerOneRemaining() + "," + model.getPlayerTwoRemaining() +  ", " + model.getPhase() + ", " + model.getState();
 		Stack<AbstractMove> history = model.getHistory();
 		
+		String plotPoints = "";
 		String removeHistory = "";
 		while(!history.isEmpty()){
 			AbstractMove m = history.pop();
 			if(m.getAction() == 'R'){
 				removeHistory = m.getPlayerColour() + removeHistory;
+				if(m.getPlayerColour() == 'R'){
+					plotPoints += ",1";
+				}else{
+					plotPoints += ",-1";
+				}
 			}
 		}
-		line = line + "," + removeHistory;
+		line = line + "," + removeHistory + plotPoints;
 		PrintWriter pw = new PrintWriter(bufferwriter);
 		
 		pw.println(line);

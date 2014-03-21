@@ -98,51 +98,55 @@ public class Model extends Observable implements BoardFacadeInterface {
 
 	@Override
 	public void executeMove(AbstractMove move) {
-		int result = manager.resultOfMove(move);
-		if(result > -1){
-			history.push(move);
-			valid = true;
-			state = move.getStatePostAction();
-			switch (move.getAction()) {
-			case 'P':
-				if(move.getPlayerID() == 1){
-					playerOneToPlace--;
+		if(move.getAction() == nextAction){
+			int result = manager.resultOfMove(move);
+			if(result > -1){
+				history.push(move);
+				valid = true;
+				state = move.getStatePostAction();
+				switch (move.getAction()) {
+				case 'P':
+					if(move.getPlayerID() == 1){
+						playerOneToPlace--;
+					}else{
+						playerTwoToPlace--;
+					}
+					break;
+				case 'R':
+					if(move.getPlayerID() == 1){
+						playerTwoRemaining--;
+						p1millcount++;
+					}else{
+						playerOneRemaining--;
+						p2millcount++;
+					}
+					break;
+				case 'M':
+					if(phase == Phase.THREE){
+						chasePhaseMoves++;
+					}
+					break;
+				default:
+					break;
+				}
+				phase = manager.calculatePhase();
+				AbstractMove nextmove = manager.nextMove(move, result);
+				if(nextmove.getAction() == 'R'){
+					millMade = true;
 				}else{
-					playerTwoToPlace--;
+					millMade = false;
+					setTurn();
 				}
-				break;
-			case 'R':
-				if(move.getPlayerID() == 1){
-					playerTwoRemaining--;
-					p1millcount++;
-				}else{
-					playerOneRemaining--;
-					p2millcount++;
-				}
-				break;
-			case 'M':
-				if(phase == Phase.THREE){
-					chasePhaseMoves++;
-				}
-				break;
-			default:
-				break;
-			}
-			phase = manager.calculatePhase();
-			AbstractMove nextmove = manager.nextMove(move, result);
-			if(nextmove.getAction() == 'R'){
-				millMade = true;
+				nextAction = nextmove.getAction();
+				setChanged();
+				notifyObservers();
 			}else{
-				millMade = false;
-				setTurn();
+				valid = false;
 			}
-			nextAction = nextmove.getAction();
 		}else{
 			valid = false;
 		}
 		phase = manager.calculatePhase();
-		setChanged();
-		notifyObservers();
 	}
 	
 	@Override
@@ -208,10 +212,6 @@ public class Model extends Observable implements BoardFacadeInterface {
 		}else{
 			turn = 'R';
 		}
-		
-//		//notify observers
-//		setChanged();
-//		notifyObservers();
 	}
 	
 	
@@ -256,7 +256,6 @@ public class Model extends Observable implements BoardFacadeInterface {
 		this.trappedPlayer = trappedPlayer;
 		if(trappedPlayer != 'N'){
 			System.out.println("Trapped Player Set: " + trappedPlayer + ", " +  gamesPlayed + ", " + phase);
-			
 		}
 		
 	}

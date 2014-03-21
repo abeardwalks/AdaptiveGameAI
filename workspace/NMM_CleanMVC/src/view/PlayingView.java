@@ -66,6 +66,7 @@ public class PlayingView extends JPanel implements Observer {
 		toolTip = "Player One (Orange) to place, click an empty node to play...";
 		
 		finder = new NodeFinder();
+		dragCandidate = -1;
 		
 		try {
 			board = ImageIO.read(new File("src/NineMensMorris.jpg"));
@@ -126,7 +127,7 @@ public class PlayingView extends JPanel implements Observer {
 				g.fillOval(x, y, tokenWidth, tokenWidth);
 				g.setColor(p1);
 				g.fillOval(x + 5, y + 5, tokenWidth - 10, tokenWidth - 10);
-			} else if(n == 'B' && dragCandidate != node){
+			} else if(n == 'B' && (dragCandidate != node)){
 				g.setColor(p2.darker());
 				g.fillOval(x, y, tokenWidth, tokenWidth);
 				g.setColor(p2);

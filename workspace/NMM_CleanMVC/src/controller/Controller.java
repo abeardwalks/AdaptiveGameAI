@@ -168,21 +168,21 @@ public class Controller {
 		char playerColour = player.getTokenColour();
 		boolean played = false;
 		while(!played){
-			if(model.getPhase().equals(Phase.ONE) && !model.millMade() && !played){
+			if(model.getNextAction() == 'P' && !played){
 				int placement = player.placeToken((BoardViewInterface) model);
 				model.executeMove(new PlacementMove(model.getState(), playerColour, placement));
 				if(model.validMove()){
 					played = true;
 				}
 			}
-			if((model.getPhase().equals(Phase.TWO) || model.getPhase().equals(Phase.THREE)) && !model.millMade() && !played){
+			if(model.getNextAction() == 'M' && !played){
 				IntPairInterface movement = player.moveToken((BoardViewInterface) model);
 				model.executeMove(new MovementMove(model.getState(), playerColour, movement.getFirstInt(), movement.getSecondInt()));
 				if(model.validMove()){
 					played = true;
 				}
 			}
-			if(model.millMade() && !played){
+			if(model.getNextAction() == 'R' && !played){
 				int removal = player.removeToken((BoardViewInterface) model);
 				model.executeMove(new RemovalMove(model.getState(), playerColour, removal));
 				if(model.validMove()){
