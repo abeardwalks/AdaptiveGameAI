@@ -100,14 +100,14 @@ public class SecondBestAI extends AbstractPlayer{
 
 		int secondBest = secondBest();
 		int count = 0;
-		System.out.println("SHOULD BE PRINTING CHILDREN");
-		workingGame.printDetails();
-		System.out.println("Children: " + root.children.length);
+//		System.out.println("SHOULD BE PRINTING CHILDREN");
+//		workingGame.printDetails();
+//		System.out.println("Children: " + root.children.length);
 		for(TreeNode child : root.children){
-			System.out.println( "[" + count + "]" + "Rewards: " + child.rewards[0] + " | " + child.rewards[1] + ", after " + child.nVisits + " visits. (Converted: " + convertedScores[count] + ")");
+//			System.out.println( "[" + count + "]" + "Rewards: " + child.rewards[0] + " | " + child.rewards[1] + ", after " + child.nVisits + " visits. (Converted: " + convertedScores[count] + ")");
 			count++;
 		}
-		System.out.println("Selected [" + secondBest + "]" + "Rewards: " + root.children[secondBest].rewards[0] + " | " + root.children[secondBest].rewards[1] + ", after " + root.children[secondBest].nVisits + " visits. (Converted: " + convertedScores[secondBest] + ")");
+//		System.out.println("Selected [" + secondBest + "]" + "Rewards: " + root.children[secondBest].rewards[0] + " | " + root.children[secondBest].rewards[1] + ", after " + root.children[secondBest].nVisits + " visits. (Converted: " + convertedScores[secondBest] + ")");
 		return root.children[secondBest].move;
 	}
 	

@@ -254,10 +254,6 @@ public class Model extends Observable implements BoardFacadeInterface {
 	@Override
 	public void setTrappedPlayer(char trappedPlayer) {
 		this.trappedPlayer = trappedPlayer;
-		if(trappedPlayer != 'N'){
-			System.out.println("Trapped Player Set: " + trappedPlayer + ", " +  gamesPlayed + ", " + phase);
-		}
-		
 	}
 	
 	@Override

@@ -87,7 +87,7 @@ public class GoodDadv2 extends AbstractPlayer {
 				}
 
 				
-				System.out.println( "AFTER SEARCH: Opponent Played: " + "Rewards: " + opponentsPlay.rewards[0] + " | " + opponentsPlay.rewards[1] + ", after " + opponentsPlay.nVisits + " visits.");
+//				System.out.println( "AFTER SEARCH: Opponent Played: " + "Rewards: " + opponentsPlay.rewards[0] + " | " + opponentsPlay.rewards[1] + ", after " + opponentsPlay.nVisits + " visits.");
 			}
 		}
 	}
@@ -111,7 +111,7 @@ public class GoodDadv2 extends AbstractPlayer {
 		}else if(opponentFitness < 15.0){
 			opponentFitness += 1.0;
 		}
-		System.out.println("Opponent Fitness: " + opponentFitness);
+//		System.out.println("Opponent Fitness: " + opponentFitness);
 //		System.out.println("     Our Fitness: " + fitness);
 	}
 
@@ -145,7 +145,7 @@ public class GoodDadv2 extends AbstractPlayer {
 		}
 		root = new TreeNode(m, 0);
 		
-		long stop = System.currentTimeMillis() + 6000;		//Search for a set period of time. 
+		long stop = System.currentTimeMillis() + 5000;		//Search for a set period of time. 
 		
 		while(System.currentTimeMillis() < stop){		//while stop time not reached
 			mc = new MoveChecker(workingGame);
