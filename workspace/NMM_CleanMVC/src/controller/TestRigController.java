@@ -134,7 +134,7 @@ public class TestRigController {
 		
 		public void run() {
 		    model = new Model(); 
-			model.setGamesToPlay(100);
+			model.setGamesToPlay(20);
 			
 			Writer writer = new Writer((BoardViewInterface) model, path, number, playerOne, playerTwo);
 			writer.addObserver(bar);

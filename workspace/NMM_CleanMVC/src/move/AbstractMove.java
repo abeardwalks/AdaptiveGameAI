@@ -29,7 +29,7 @@ public abstract class AbstractMove  {
 	 * Implemented by the subclasses, this calculates the new state
 	 * after the action is carried out. 
 	 * 
-	 * @return
+	 * @return - The state post the action.
 	 */
 	public abstract String getStatePostAction();
 

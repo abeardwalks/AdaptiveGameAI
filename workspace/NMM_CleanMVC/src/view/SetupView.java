@@ -118,9 +118,9 @@ public class SetupView extends JPanel implements ActionListener{
 		toolTip.setBounds(360 + insets.left, 340 + insets.top, size.width, size.height);
 		this.add(toolTip);
 		
-		size = testRig.getPreferredSize();
-		testRig.setBounds(360 + insets.left, 370 + insets.top, size.width, size.height);
-		this.add(testRig);
+//		size = testRig.getPreferredSize();
+//		testRig.setBounds(360 + insets.left, 370 + insets.top, size.width, size.height);
+//		this.add(testRig);
 		
 	}
 
