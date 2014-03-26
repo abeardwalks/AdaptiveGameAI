@@ -6,17 +6,12 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
-import javax.imageio.ImageIO;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -31,13 +26,12 @@ public class SetupTestView extends JPanel implements ActionListener {
 	private List<Player> players1;
 	private List<Player> players2;
 	
-	private JLabel playerOneLabel, playerTwoLabel, gameNumber, path;
+	private JLabel playerOneLabel, playerTwoLabel, path;
 	private JComboBox<String> playerOneSelect, playerTwoSelect;
 	private JSpinner numberOfGames;
 	private SpinnerNumberModel gamesRange;
 	private JTextField filePath;
 	private Player playerOne, playerTwo;
-	private Image background;
 	private JButton start;
 	
 	public SetupTestView(ActionListener a, List<Player> players1, List<Player> players2){
@@ -48,7 +42,6 @@ public class SetupTestView extends JPanel implements ActionListener {
 		
 		playerOneLabel = new JLabel("Player  1");
 		playerTwoLabel = new JLabel("Player  2");
-		gameNumber = new JLabel("# of Games");
 		path = new JLabel("File Path");
 		path.setToolTipText("Path to save results to.");
 		
@@ -81,19 +74,12 @@ public class SetupTestView extends JPanel implements ActionListener {
 		this.players1 = players1;
 		this.players2 = players2;
 		
-		try {
-			background = ImageIO.read(new File("src/NineMensMorris.jpg"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 	
 	public void paint(Graphics g){
 		Graphics2D g2 = (Graphics2D)g;
 		g2.setColor(Color.white);
 		g2.fillRect(0, 0, 500, 500);
-//		g2.drawImage(background, 95, 0, null);
 		
 		super.paint(g2);
 	}
