@@ -77,7 +77,6 @@ public class SetupView extends JPanel implements ActionListener{
 		try {
 			background = ImageIO.read(new File("src/NineMensMorris.jpg"));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -117,11 +116,7 @@ public class SetupView extends JPanel implements ActionListener{
 		size = toolTip.getPreferredSize();
 		toolTip.setBounds(360 + insets.left, 340 + insets.top, size.width, size.height);
 		this.add(toolTip);
-		
-//		size = testRig.getPreferredSize();
-//		testRig.setBounds(360 + insets.left, 370 + insets.top, size.width, size.height);
-//		this.add(testRig);
-		
+
 	}
 
 

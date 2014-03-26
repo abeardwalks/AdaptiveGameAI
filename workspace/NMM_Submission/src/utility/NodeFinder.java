@@ -2,6 +2,13 @@ package utility;
 
 import players.IntPair;
 
+/**
+ * NodeFinder is a utility class that translates coordinates into state string indexes and vice versa.
+ * It is used mainly by the different mouse action listeners. 
+ * 
+ * @author Andrew White - BSc Software Engineering, 200939787.
+ *
+ */
 public class NodeFinder {
 
 	private int x0,x1,x2,x3,x4,x5,x6;
@@ -10,7 +17,6 @@ public class NodeFinder {
 	public NodeFinder(){
 		initializeCordinates();
 	}
-	
 	
 	private void initializeCordinates() {
 		x0 = 102;
@@ -30,6 +36,13 @@ public class NodeFinder {
 		y6 = 552;
 	}
 	
+	/**
+	 * Translate a coordinate into a node index.
+	 * 
+	 * @param x	- the x coordinate.
+	 * @param y - the y coordinate.
+	 * @return  - the node index.
+	 */
 	public int getNode(int x, int y){
 		if((x >= x0 && x <= (x0 + 40)) && (y >= y0 && y <= (y0 + 40))){
 			return 0;
@@ -83,6 +96,12 @@ public class NodeFinder {
 		return -1;
 	}
 	
+	/**
+	 * Takes a node value (an int) and translates it into a coordinate.
+	 * 
+	 * @param node - the node (index) of the state string.
+	 * @return	   - the coordinate. 
+	 */
 	public IntPair getCordinates(int node){
 		IntPair cordinates = null;
 		switch (node) {
@@ -163,6 +182,5 @@ public class NodeFinder {
 		}
 		return cordinates;
 	}
-	
 
 }

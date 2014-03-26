@@ -46,20 +46,12 @@ public class PauseView extends JPanel{
 		Graphics2D g2 = (Graphics2D)g;
 		g2.setColor(new Color(255, 255, 255, 200));
 		g2.fillRect(310, 225, 170, 200);
-		
-		
 		super.paint(g2);
 	}
 	
 	private void fillView() {
 		this.setLayout(null);
-		
-		
-		
-		
-		
 		Insets insets = this.getInsets();
-		
 		
 		Dimension size = resume.getPreferredSize();
 		resume.setBounds(355 + insets.left, 260 + insets.top, size.width, size.height);
@@ -76,7 +68,6 @@ public class PauseView extends JPanel{
 		size = resume.getPreferredSize();
 		quit.setBounds(355 + insets.left, 350 + insets.top, size.width, size.height);
 		this.add(quit);
-		
 		
 	}
 }
