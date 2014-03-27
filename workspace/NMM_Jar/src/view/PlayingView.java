@@ -1,7 +1,6 @@
 package view;
 
 import interfaces.BoardViewInterface;
-import interfaces.BoardFacadeInterface;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -12,7 +11,6 @@ import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.io.File;
 import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
@@ -69,7 +67,6 @@ public class PlayingView extends JPanel implements Observer {
 		dragCandidate = -1;
 		
 		try {
-//			board = ImageIO.read(new File("src/NineMensMorris.jpg"));
 			board = ImageIO.read(this.getClass().getResource("NineMensMorris.jpg"));
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -206,7 +203,6 @@ public class PlayingView extends JPanel implements Observer {
 		if(model.gameWon()){
 			toolTip = "The Game has been won, hazzah!";
 		}
-//		((BoardFacadeInterface)model).printDetails();
 		repaint();
 	}
 	

@@ -92,29 +92,12 @@ public class SecondBestAI extends AbstractPlayer{
 			root.selectAction();						//begin searching.
 		}
 		
-		//Determine the best move from the executed search. 
-		double bestValue = Double.NEGATIVE_INFINITY;
-		AbstractMove bestMove = null;
-		
 		convertToRange();
 
 		int secondBest = secondBest();
-		int count = 0;
-//		System.out.println("SHOULD BE PRINTING CHILDREN");
-//		workingGame.printDetails();
-//		System.out.println("Children: " + root.children.length);
-		for(TreeNode child : root.children){
-//			System.out.println( "[" + count + "]" + "Rewards: " + child.rewards[0] + " | " + child.rewards[1] + ", after " + child.nVisits + " visits. (Converted: " + convertedScores[count] + ")");
-			count++;
-		}
-//		System.out.println("Selected [" + secondBest + "]" + "Rewards: " + root.children[secondBest].rewards[0] + " | " + root.children[secondBest].rewards[1] + ", after " + root.children[secondBest].nVisits + " visits. (Converted: " + convertedScores[secondBest] + ")");
 		return root.children[secondBest].move;
 	}
 	
-//	If your number X falls between A and B, and you would like Y to fall between C and D, you can apply the following linear transform:
-//
-//		Y = (X-A)/(B-A) * (D-C) + C
-
 	private int secondBest(){
 		double goal = 0.75;
 		double closest = Math.abs(convertedScores[0] - goal);

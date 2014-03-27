@@ -10,6 +10,14 @@ import move.MovementMove;
 import move.PlacementMove;
 import move.RemovalMove;
 
+/**
+ * BoardManagement is a utility class used for checking the legality of moves before the model is 
+ * updated. It provides methods for checking if mills have been made, whether players are trapped,
+ * if placements/movements/removals are valid etc. 
+ * 
+ * @author Andrew White - BSc Software Engineering, 200939787.
+ *
+ */
 public class BoardManagement {
 
 	private BoardFacadeInterface board;
@@ -19,6 +27,12 @@ public class BoardManagement {
 		this.board = board;
 	}
 	
+	/**
+	 * Checks the validity of a players move.
+	 * 
+	 * @param move - the move to check for validity. 
+	 * @return - number between -1 & 2, -1 indicates an invalid move.
+	 */
 	public int resultOfMove(AbstractMove move){
 		char action = move.getAction();
 		char turn = move.getPlayerColour();
@@ -41,67 +55,13 @@ public class BoardManagement {
 		return result;
 	}
 	
-	public AbstractMove resultOfMove1(AbstractMove move){
-		char action = move.getAction();
-		char turn = move.getPlayerColour();
-		AbstractMove newMove = null;
-		int playerOneToPlace = board.getPlayerOneToPlace();
-		int playerTwoToPlace = board.getPlayerTwoToPlace();
-		int playerOneRemaining = board.getPlayerOneRemaining();
-		int playerTwoRemaining = board.getPlayerOneToPlace();
-		int result = -1;
-		Phase phase = board.getPhase();
-		switch (action) {
-		case 'P':
-			result = placeToken(turn, ((PlacementMove) move).getPlacementIndex());
-			if(turn == 'R' && result != -1){
-				playerOneToPlace--;
-			}else if(result != -1){
-				playerTwoToPlace--;
-			}
-			break;
-		case 'R':
-			result = removeToken(turn, ((RemovalMove) move).getRemovalIndex());
-			if(turn == 'R' && result != -1){
-				playerTwoRemaining--;
-			}else if(result != -1){
-				playerOneRemaining--;
-			}
-			break;
-		case 'M':
-			result = moveToken(turn, ((MovementMove) move).getFrom(), ((MovementMove) move).getTo());
-			break;
-		default:
-			break;
-		}
-		if(playerOneToPlace == 0 && playerTwoToPlace == 0){
-			phase = Phase.TWO;
-		}
-		if(playerOneRemaining == 3 && playerTwoRemaining == 3){
-			phase = Phase.THREE;
-		}
-		
-		if(result == 0 && phase == Phase.ONE && ((turn == 'R' && board.getPlayerOneToPlace() > 0) || (turn == 'B' && board.getPlayerTwoToPlace() >0))){
-			if(turn == 'R'){
-				turn = 'B';
-			}else{
-				turn = 'R';
-			}
-			newMove = new PlacementMove(move.getStatePostAction(), turn, -1);
-			
-		}else if(result == 0){
-			if(turn == 'R'){
-				turn = 'B';
-			}else{
-				turn = 'R';
-			}
-			newMove = new MovementMove(move.getStatePostAction(), turn, -1, -1);
-		}else if(result == 1){
-			newMove = new RemovalMove(move.getStatePostAction(), turn, -1);
-		}
-		return newMove;
-	}
-	
+	/**
+	 * Determines what type of move should be executed next.
+	 * 
+	 * @param move		- the last move executed.
+	 * @param result	- the result of the last move being executed.
+	 * @return			- The type of move that should be executed next.
+	 */
 	public AbstractMove nextMove(AbstractMove move, int result) {
 		char turn = move.getPlayerColour();
 		AbstractMove newMove = null;
@@ -126,6 +86,13 @@ public class BoardManagement {
 		return newMove;
 	}
 	
+	/**
+	 * Places a token on the board, checking if the placement is valid/mill creating.
+	 * 
+	 * @param tokenColour - colour of token being placed.
+	 * @param position	  - the index in the state string bring changed.
+	 * @return			  - -1 if invalid, 0 if valid, 1 if mill made.
+	 */
 	private int placeToken(char tokenColour, int position) {
 		Integer result = 0;  		//for MVC
 		char[] stateArray = board.getState().toCharArray();
@@ -144,6 +111,13 @@ public class BoardManagement {
 		return result;
 	}
 	
+	/**
+	 * Removes a token from the board, checking if the removal is valid.
+	 * 
+	 * @param token		- the colour of the player removing the token.
+	 * @param position	- the index in the state string the token is being removed from.
+	 * @return			- the validity of the removal.
+	 */
 	private int removeToken(char token, int position) {
 		Integer result = 0;			//for MVC
 		char candidate = board.getState().charAt(position);		
@@ -156,6 +130,14 @@ public class BoardManagement {
 		return result;
 	}
 	
+	/**
+	 * Moves a token on the board, checking if the move is valid.
+	 * 
+	 * @param token - the colour of the token going to be moved.
+	 * @param from	- the index in the state string the token is being moved from.
+	 * @param to	- the index in the state string the token is being moved to.
+	 * @return      - the validity of the move, -1 for invalid, 0 for valid, 1 for mill making.
+	 */
 	private int moveToken(char token, int from, int to) {
 		Integer result = 0;			//for MVC
 		char[] stateArray = board.getState().toCharArray();
@@ -183,6 +165,13 @@ public class BoardManagement {
 		return result;
 	}
 	
+	/**
+	 * Checks to see if the passed in index is part of a mill with the passed in string.
+	 * 
+	 * @param position	- The index to check for mill participation.
+	 * @param state		- The state to check the index on.
+	 * @return			- True if part of mill, false otherwise. 
+	 */
 	public boolean partOfMill(int position, String state) {
 		char toMatch = state.charAt(position);
 
@@ -336,6 +325,14 @@ public class BoardManagement {
 		return false;
 	}
 	
+	/**
+	 * Checks if a move from one position to another is valid in relation 
+	 * to the current state of the game.
+	 * 
+	 * @param from - the index the token is leaving from.
+	 * @param to   - the index the token is moving to. 
+	 * @return	   - True if valid, false otherwise.
+	 */
 	private boolean validMove(int from, int to) {
 		
 		char[] stateArray = board.getState().toCharArray();
@@ -473,6 +470,15 @@ public class BoardManagement {
 		return true;
 	}
 	
+	/**
+	 * When removing tokens, players must select tokens that are NOT part of a mill
+	 * first over those that are if any exist. millFreeToken checks whether or not
+	 * there are any tokens on the board free of mills. 
+	 * 
+	 * @param    token - The colour of the player attempting to remove a token.
+	 * @param position - The position of the removal. 
+	 * @return         - True if there are mill free tokens, false otherwise.
+	 */
 	private boolean millFreeToken(char token, int position) {
 		char[] stateArray = board.getState().toCharArray();
 		for (int i = 0; i < stateArray.length; i++) {
@@ -485,6 +491,11 @@ public class BoardManagement {
 		return true;
 	}
 	
+	/**
+	 * Checks that both players are able to move.
+	 * 
+	 * @return - True if they can, false otherwise.
+	 */
 	public boolean playersCanMove() {
 		if(board.getPlayerOneToPlace() > 0 && board.getPlayerTwoToPlace() > 0){
 			return true;
@@ -524,9 +535,12 @@ public class BoardManagement {
 	}
 	
 	
-
+	/**
+	 * Calculates the phase based on the current state of the board.
+	 * 
+	 * @return - the phase the game is in.
+	 */
 	public Phase calculatePhase() {
-
 		if(!playersCanMove() && (board.getPlayerOneRemaining() > 3 && board.getPlayerTwoRemaining() > 3)){
 			return Phase.FOUR;
 		}else if(board.getPlayerOneToPlace() == 0 && board.getPlayerTwoToPlace() == 0){
@@ -599,6 +613,4 @@ public class BoardManagement {
 		return moves;
 	}
 
-
-	
 }

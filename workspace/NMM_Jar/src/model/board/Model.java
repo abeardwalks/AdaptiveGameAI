@@ -10,6 +10,14 @@ import move.AbstractMove;
 import interfaces.BoardFacadeInterface;
 import interfaces.Player;
 
+/**
+ * This is the new model, it works with moves and contains all the game logic. It makes use of a 
+ * board management class for checking the validity of moves. When it's state changes it updates the
+ * view. 
+ * 
+ * @author Andrew White - BSc Software Engineering, 200939787
+ *
+ */
 public class Model extends Observable implements BoardFacadeInterface {
 	
 	private String state;
@@ -28,7 +36,9 @@ public class Model extends Observable implements BoardFacadeInterface {
 	
 	private BoardManagement manager;
 	
+	@SuppressWarnings("unused")
 	private double p1millcount;
+	@SuppressWarnings("unused")
 	private double p2millcount;
 	
 	private int gamesToPlay, gamesPlayed, playerOneWins, playerTwoWins, draws;
@@ -283,9 +293,6 @@ public class Model extends Observable implements BoardFacadeInterface {
 
 	@Override
 	public Phase getPhase() {
-//		if(!manager.playersCanMove()){
-//			phase = Phase.FOUR;
-//		}
 		return phase;
 	}
 
@@ -308,13 +315,11 @@ public class Model extends Observable implements BoardFacadeInterface {
 			if(playerOneRemaining == 2){
 				playerTwoWin = true;
 				playerTwoWins++;
-//				System.err.println("PLAYER TWO WIN");
 			}
 			
 			if(playerTwoRemaining == 2){
 				playerOneWin = true;
 				playerOneWins++;
-//				System.err.println("PLAYER ONE WIN");
 			}
 			gameover = true;
 			gamesPlayed++;

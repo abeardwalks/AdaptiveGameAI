@@ -19,8 +19,6 @@ import interfaces.IntPairInterface;
  * It carries out numerous rollouts to ascertain which move is the best. This AI is the hardest to have 
  * been produced and has been successful in beating me. 
  * 
- * TODO: Adjust the AI to improve its play style during the chase phase of the game. 
- * 
  * @author Andrew White - BSc Software Engineering, 200939787
  *
  */
@@ -89,9 +87,7 @@ public class MCTSPlayerNewModel extends AbstractPlayer {
 		//Determine the best move from the executed search. 
 		double bestValue = Double.NEGATIVE_INFINITY;
 		AbstractMove bestMove = null;
-		for(TreeNode child : root.children){
-//			System.out.println("Rewards: " + child.rewards[0] + " | " + child.rewards[1] + ", after " + child.nVisits + " visits.");
-			
+		for(TreeNode child : root.children){			
 			double value = child.rewards[getPlayerID() - 1 ] / child.nVisits;
 			if(value > bestValue){
 				bestValue = value;
@@ -103,7 +99,7 @@ public class MCTSPlayerNewModel extends AbstractPlayer {
 
 	@Override
 	public String getName() {
-		return "MCTS";
+		return "MCTS (New Model)";
 	}
 	
 	/**

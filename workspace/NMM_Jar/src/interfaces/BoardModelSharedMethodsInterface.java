@@ -5,6 +5,13 @@ import java.util.Stack;
 import model.Phase;
 import move.AbstractMove;
 
+/**
+ * Group of methods used by multiple parts of the program, this interfaces helps to prevent 
+ * duplication. 
+ * 
+ * @author Andrew White - BSc Software Engineering, 200939787
+ *
+ */
 public interface BoardModelSharedMethodsInterface {
 	
 	boolean gameWon();
@@ -27,24 +34,23 @@ public interface BoardModelSharedMethodsInterface {
 	 */
 	Phase getPhase();
 	
-	
-	int getGamesPlayed();
-	
-	int getGamesToPlay();
-	
-	int getPlayerOneWins();
-	
-	int getPlayerTwoWins();
-	
-	void setGamesToPlay(int gamesToPlay);
-	
-	int getNumberOfDraws();
-	
+	/**
+	 * @return - did player one win? (True/False)
+	 */
 	boolean playerOneWin();
 	
+	/**
+	 * @return - did player two win? (True/False)
+	 */
 	boolean playerTwoWin();
 	
+	/**
+	 * @return - the stack of moves executed on the game.
+	 */
 	Stack<AbstractMove> getHistory();
 	
+	/**
+	 * @return - is the game over? (True/False). 
+	 */
 	boolean gameOver();
 }

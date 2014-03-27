@@ -77,7 +77,6 @@ public class GoodDadv2 extends AbstractPlayer {
 				i++;
 			}
 			if(opponentsPlay != null && found && opponentsPlay.nVisits != 0){
-//				System.out.println( "Opponent Played: " + "Rewards: " + opponentsPlay.rewards[0] + " | " + opponentsPlay.rewards[1] + ", after " + opponentsPlay.nVisits + " visits.");
 				
 				long stop = System.currentTimeMillis() + 1000;
 				
@@ -85,9 +84,6 @@ public class GoodDadv2 extends AbstractPlayer {
 					mc = new MoveChecker(workingGame);
 					opponentsPlay.selectAction();						//begin searching.
 				}
-
-				
-//				System.out.println( "AFTER SEARCH: Opponent Played: " + "Rewards: " + opponentsPlay.rewards[0] + " | " + opponentsPlay.rewards[1] + ", after " + opponentsPlay.nVisits + " visits.");
 			}
 		}
 	}
@@ -99,20 +95,14 @@ public class GoodDadv2 extends AbstractPlayer {
 		}
 		
 		if(opponentsPlay != null){
-			double opponentScore = opponentsPlay.rewards[opponentID - 1];
-			double ourScore = opponentsPlay.rewards[getPlayerID() - 1];
-//			if(Math.max(opponentScore, ourScore) - Math.min(opponentScore, ourScore) > 15.0){
-				if(opponentsPlay.rewards[opponentID - 1] > opponentsPlay.rewards[getPlayerID() -1] && opponentFitness < 20.0){
-					opponentFitness += 1.0;
-				}else if(opponentsPlay.rewards[opponentID - 1] < opponentsPlay.rewards[getPlayerID() -1] && opponentFitness > 5.0){
-					opponentFitness -= 1.0;
-				}
-//			}
+			if(opponentsPlay.rewards[opponentID - 1] > opponentsPlay.rewards[getPlayerID() -1] && opponentFitness < 20.0){
+				opponentFitness += 1.0;
+			}else if(opponentsPlay.rewards[opponentID - 1] < opponentsPlay.rewards[getPlayerID() -1] && opponentFitness > 5.0){
+				opponentFitness -= 1.0;
+			}
 		}else if(opponentFitness < 15.0){
 			opponentFitness += 1.0;
 		}
-//		System.out.println("Opponent Fitness: " + opponentFitness);
-//		System.out.println("     Our Fitness: " + fitness);
 	}
 
 	
@@ -152,17 +142,6 @@ public class GoodDadv2 extends AbstractPlayer {
 			root.selectAction();						//begin searching.
 		}
 		
-		//Determine the best move from the executed search. 
-		double bestValue = Double.NEGATIVE_INFINITY;
-		int count = 0;
-//		System.out.println("SHOULD BE PRINTING CHILDREN");
-//		workingGame.printDetails();
-//		System.out.println("Children: " + root.children.length);
-//		for(TreeNode child : root.children){
-//			System.out.println( "[" + count + "]" + "Rewards: " + child.rewards[0] + " | " + child.rewards[1] + ", after " + child.nVisits + " visits.");
-//			count++;
-//		}
-		
 		convertToRange();
 		
 		int index = selectAppropriatePlay();
@@ -172,8 +151,6 @@ public class GoodDadv2 extends AbstractPlayer {
 		if(root.children[index].children != null){
 			playedChildred = root.children[index].children.clone();
 		}
-//		System.out.println("Selected Child: " + index + " rewards: " + root.children[index].rewards[0] + " | " + root.children[index].rewards[1] + ", after " + root.children[index].nVisits + " visits.");
-//		fitness = opponentFitness;
 		return root.children[index].move;
 		
 	}
@@ -194,7 +171,6 @@ public class GoodDadv2 extends AbstractPlayer {
 		int count = 0;
 		int index = 0;
 		for(TreeNode child : root.children){
-//			System.out.println("Rewards: " + child.rewards[0] + " | " + child.rewards[1] + ", after " + child.nVisits + " visits.");
 			
 			double value = child.rewards[getPlayerID() - 1 ] / child.nVisits;
 			if(value > bestValue){
@@ -269,7 +245,7 @@ public class GoodDadv2 extends AbstractPlayer {
 
 	@Override
 	public String getName() {
-		return "Good Dad";
+		return "Dad v2";
 	}
 	
 	/**

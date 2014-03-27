@@ -10,12 +10,10 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -76,10 +74,8 @@ public class SetupView extends JPanel implements ActionListener{
 		this.players2 = players2;
 		
 		try {
-//			background = new ImageIcon(this.getClass().getResource("NineMensMorris.jpg"));
 			background = ImageIO.read(this.getClass().getResource("NineMensMorris.jpg"));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -119,11 +115,7 @@ public class SetupView extends JPanel implements ActionListener{
 		size = toolTip.getPreferredSize();
 		toolTip.setBounds(360 + insets.left, 340 + insets.top, size.width, size.height);
 		this.add(toolTip);
-		
-//		size = testRig.getPreferredSize();
-//		testRig.setBounds(360 + insets.left, 370 + insets.top, size.width, size.height);
-//		this.add(testRig);
-		
+
 	}
 
 

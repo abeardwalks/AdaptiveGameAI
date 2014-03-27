@@ -35,8 +35,14 @@ public interface BoardViewInterface extends BoardModelSharedMethodsInterface {
 	 */
 	char getNextAction();
 	
+	/**
+	 * @return - the first player.
+	 */
 	Player getPlayerOne();
 	
+	/**
+	 * @return - the second player.
+	 */
 	Player getPlayerTwo();
 	
 	/**

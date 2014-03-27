@@ -133,6 +133,7 @@ public class Controller {
 			}
 		}
 	}
+	
 	/**
 	 * Asks the player for appropriate action, based on the models current 'next action'.
 	 * It constructs the move objects that the model can understand.

@@ -45,8 +45,12 @@ public interface BoardControllerInterface extends BoardModelSharedMethodsInterfa
 	void reset();
 	
 
-	
-	
+	/**
+	 * Allows the players to be set. 
+	 * 
+	 * @param playerOne - first player.
+	 * @param playerTwo - second player. 
+	 */
 	void setPlayers(Player playerOne, Player playerTwo);
 
 }

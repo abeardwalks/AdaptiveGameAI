@@ -3,9 +3,6 @@ package model.board;
 import java.util.List;
 import java.util.Observable;
 import java.util.Stack;
-
-import utility.MoveChecker;
-
 import model.Phase;
 import move.AbstractMove;
 import interfaces.BoardFacadeInterface;
@@ -14,6 +11,8 @@ import interfaces.Player;
 /**
  * The Concrete class that represents the board, i.e. the model. This class extends
  * the Observable class and implements the BoardFacadeInterface.
+ * 
+ * Note: This is the old version of the model, that is still used by some of players.
  * 
  * @author Andrew White - BSc Software Engineering, 200939787
  *
@@ -354,85 +353,69 @@ public class BoardModel extends Observable implements BoardFacadeInterface {
 
 	@Override
 	public Player getPlayerOne() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Player getPlayerTwo() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void setPlayers(Player playerOne, Player playerTwo) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public List<AbstractMove> getAllPossibleMoves() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public int getGamesPlayed() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public int getGamesToPlay() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public int getPlayerOneWins() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public int getPlayerTwoWins() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public void setGamesToPlay(int gamesToPlay) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public int getNumberOfDraws() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public boolean playerOneWin() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean playerTwoWin() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public Stack<AbstractMove> getHistory() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public boolean gameOver() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 }

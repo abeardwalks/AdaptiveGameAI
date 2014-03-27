@@ -28,13 +28,20 @@ import view.ApplicationView;
 import view.PauseView;
 import view.PlayingView;
 import view.SetupView;
-import view.TestView;
 import interfaces.BoardControllerInterface;
 import interfaces.BoardViewInterface;
 import interfaces.BoardFacadeInterface;
 import interfaces.IntPairInterface;
 import interfaces.Player;
 
+/**
+ * The controller for the application, this handles the initial construction of the model and view.
+ * It translates user and AI input into what the model can understand. It contains the main control loop of the game
+ * and creates the thread it runs on.
+ * 
+ * @author Andrew White - BSc Software Engineering, 200939787
+ *
+ */
 public class Controller {
 	
 	private BoardControllerInterface model;
@@ -43,7 +50,6 @@ public class Controller {
 	private SetupView setupView;
 	private PlayingView gameView;
 	private PauseView pauseView;
-	private TestView testView;
 	
 	private Thread thread;
 	
@@ -75,14 +81,15 @@ public class Controller {
 		paused = false;
 		started = false;
 		
-		testView = new TestView((BoardViewInterface) model);
-		
 		((Observable) model).addObserver(gameView);
-		((Observable) model).addObserver(testView);
 		
 		primaryView.setVisible(true);
 	}
 	
+	/**
+	 * Takes the setup details, creates the game thread and adds the primary game panel
+	 * to the game view. Finally, this method starts the thread.
+	 */
 	private void start() {
 		primaryView.remove(setupView);
 		player1 = setupView.getPlayerOne();
@@ -109,6 +116,10 @@ public class Controller {
 		thread.start();
 	}
 	
+	/**
+	 * Main game loop for the game, calls the 'executeMove()' method of the controller,
+	 * handing it the correct player. 
+	 */
 	private void play() {
 		while(!model.gameWon()){
 			try {
@@ -128,6 +139,13 @@ public class Controller {
 		}
 	}
 
+	/**
+	 * Asks the player for appropriate action, based on the models current 'next action'.
+	 * It constructs the move objects that the model can understand.
+	 * 
+	 * @param player - the player who's turn it in.
+	 * @param model	 - the Model of the game. 
+	 */
 	private void executeMove(Player player, BoardFacadeInterface model){
 		
 		char playerColour = player.getTokenColour();

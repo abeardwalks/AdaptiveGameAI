@@ -59,6 +59,9 @@ public interface Player {
 	 */
 	public int getPlayerID();
 	
+	/**
+	 * Called when the game resets, notifying the player that the game has been reset. 
+	 */
 	public void reset();
 
 }

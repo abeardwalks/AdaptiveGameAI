@@ -2,7 +2,7 @@ package main;
 
 import controller.Controller;
 
-public class NewModelMain {
+public class NMMMain {
 
 	/**
 	 * @param args
