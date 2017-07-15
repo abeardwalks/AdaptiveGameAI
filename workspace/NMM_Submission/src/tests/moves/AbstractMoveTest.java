@@ -2,16 +2,16 @@ package tests.moves;
 
 import static org.junit.Assert.*;
 
-import move.AbstractMove;
-import move.MovementMove;
-import move.PlacementMove;
-import move.RemovalMove;
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import move.AbstractMove;
+import move.MovementMove;
+import move.PlacementMove;
+import move.RemovalMove;
 
 public class AbstractMoveTest {
 	
